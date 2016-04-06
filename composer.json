@@ -1,0 +1,34 @@
+{
+    "name" : "puzzle/amqp",
+    "description" : "AMQP implementation based on PECL extension",
+    "type" : "library",
+    "authors" : [{
+            "name" : "Nicolas Le Nardou",
+            "email" : "nico.ln@gmail.com"
+        }
+    ],
+    "keywords" : [
+        "aqmp",
+        "asynchronous"
+    ],
+    "autoload" : {
+        "psr-4" : {
+            "Puzzle\\AMQP\\" : "src"
+        }
+    },
+    "require" : {
+        "puzzle/configuration" : "~1.7",
+        "puzzle/pieces" : "~1.0",
+        "symfony/console": "~3.0",
+        "swarrot/swarrot": "~2.1",
+        "knplabs/gaufrette": "~0.2",
+        "symfony/event-dispatcher": "~3.0"
+    },
+    "require-dev" : {
+        "phpunit/phpunit" : "~5.3",
+        "empi89/php-amqp-stubs": "dev-master"
+    },
+    "suggests": {
+        "ext-amqp": "PECL AMQP extension is required"
+    }
+}
