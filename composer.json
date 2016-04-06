@@ -19,10 +19,10 @@
     "require" : {
         "puzzle/configuration" : "~1.7",
         "puzzle/pieces" : "~1.0",
-        "symfony/console": "~3.0",
+        "symfony/console": ">=2.4",
         "swarrot/swarrot": "~2.1",
         "knplabs/gaufrette": "~0.2",
-        "symfony/event-dispatcher": "~3.0"
+        "symfony/event-dispatcher": ">=2.4"
     },
     "require-dev" : {
         "phpunit/phpunit" : "~5.3",
