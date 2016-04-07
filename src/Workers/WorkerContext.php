@@ -6,6 +6,7 @@ use Psr\Log\LoggerAwareTrait;
 use Puzzle\AMQP\Consumer;
 use Psr\Log\LoggerInterface;
 use Puzzle\AMQP\Collections\MessageHookCollection;
+use Psr\Log\NullLogger;
 
 class WorkerContext
 {
@@ -33,6 +34,7 @@ class WorkerContext
         $this->worker = $worker;
         $this->consumer = $consumer;
         $this->queue = $queue;
+        $this->logger = new NullLogger();
         $this->instances = self::INSTANCES_DEFAULT_VALUE;
         $this->servers = [self::SERVER_DEFAULT_VALUE];
         $this->isDeploymentAllowed = true;
@@ -42,7 +44,8 @@ class WorkerContext
     {
         if($this->worker instanceof \Closure)
         {
-            $this->worker = $this->worker($this->dic);
+            $closure = $this->worker;
+            $this->worker = $closure();
             $this->worker->setLogger($this->logger);
         }
     

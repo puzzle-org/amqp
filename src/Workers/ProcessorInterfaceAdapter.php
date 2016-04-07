@@ -3,8 +3,8 @@
 namespace Puzzle\AMQP\Workers;
 
 use Swarrot\Processor\ProcessorInterface;
-use Puzzle\Lib4T\EventDispatcher\NullEventDispatcher;
-use Puzzle\Lib4T\EventDispatcher\EventDispatcherAware;
+use Puzzle\Pieces\EventDispatcher\NullEventDispatcher;
+use Puzzle\Pieces\EventDispatcher\EventDispatcherAware;
 
 class ProcessorInterfaceAdapter implements ProcessorInterface
 {
