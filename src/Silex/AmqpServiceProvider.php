@@ -21,10 +21,7 @@ class AmqpServiceProvider implements ServiceProviderInterface
     private function registerAmqpServices(Application $app)
     {
         $app['amqp.client'] = $app->share(function ($c) {
-            $client = new Pecl($c['configuration']);
-            $client->setLogger($c['logger.amqp']);
-
-            return $client;
+            return new Pecl($c['configuration']);
         });
 
         $app['amqp.workerProvider'] = $app->share(function ($c) {
