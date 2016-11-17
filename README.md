@@ -26,6 +26,7 @@ require '../vendor/autoload.php';
 
 use Puzzle\Configuration\Memory;
 use Puzzle\AMQP\Clients\Pecl;
+use Puzzle\AMQP\Messages\Json;
 
 $configuration = new Memory(array(
     'amqp/broker/host' => 'myRabbit',
