@@ -6,9 +6,9 @@ use Symfony\Component\Console\Application;
 use Puzzle\AMQP\Commands\Worker\Run;
 use Puzzle\AMQP\Commands\Worker\ListAll;
 use Puzzle\AMQP\Client;
-use Puzzle\Lib4T\OutputInterfaceAware;
-use Puzzle\Lib4T\EventDispatcher\EventDispatcherAware;
-use Puzzle\Lib4T\EventDispatcher\NullEventDispatcher;
+use Puzzle\Pieces\OutputInterfaceAware;
+use Puzzle\Pieces\EventDispatcher\EventDispatcherAware;
+use Puzzle\Pieces\EventDispatcher\NullEventDispatcher;
 
 class WorkerCommands
 {

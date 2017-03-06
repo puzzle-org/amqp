@@ -4,7 +4,6 @@ namespace Puzzle\AMQP\Workers\Providers;
 
 use Puzzle\AMQP\Workers\WorkerProvider;
 use Puzzle\AMQP\Workers\WorkerContext;
-use Puzzle\AMQP\Collections\MessageHookCollection;
 
 class Pimple implements WorkerProvider
 {
@@ -14,7 +13,7 @@ class Pimple implements WorkerProvider
     private
         $container;
 
-    public function __construct(\Pimple $container)
+    public function __construct(\Pimple\Container $container)
     {
         $this->container = $container;
     }
