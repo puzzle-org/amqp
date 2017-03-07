@@ -2,14 +2,14 @@
 
 namespace Puzzle\AMQP\Silex;
 
-use Silex\ServiceProviderInterface;
+use Pimple\ServiceProviderInterface;
 use Pimple\Container;
 use Puzzle\AMQP\Clients\Pecl;
 use Puzzle\AMQP\Workers\Providers\Pimple;
 use Puzzle\AMQP\Consumers;
 use Puzzle\AMQP\Subscribers\ManagedConnection as ManagedConnectionSubscribers;
 
-class AmqpServiceProvider implements \Pimple\ServiceProviderInterface
+class AmqpServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $app)
     {
