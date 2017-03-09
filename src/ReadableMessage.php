@@ -15,4 +15,6 @@ interface ReadableMessage extends Message
     public function isLastRetry();
     
     public function applyHooks(MessageHookCollection $messageHookCollection);
+    
+    public function getRoutingKeyFromHeader();
 }
