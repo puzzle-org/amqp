@@ -88,4 +88,23 @@ class RawTest extends \PHPUnit_Framework_TestCase
             array('appid', false, false),
         );
     }
+
+    /**
+     * @dataProvider providerTestSetBody
+     */
+    public function testSetBody($body, $expected)
+    {
+        $message = new Raw('burger.over.ponues');
+        $message->setBody($body);
+        
+        $this->assertSame($expected, $message->getFormattedBody());
+    }
+    
+    public function providerTestSetBody()
+    {
+        return [
+            [array('line 1', 'line 2', 'line 3'), "line 1\nline 2\nline 3"],
+            ['Just a single string', 'Just a single string'],
+        ];
+    }
 }
