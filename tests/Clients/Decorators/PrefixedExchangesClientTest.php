@@ -5,6 +5,15 @@ namespace Puzzle\AMQP\Clients\Decorators;
 use Puzzle\AMQP\Clients\InMemory;
 use Puzzle\AMQP\Messages\Json;
 use Psr\Log\NullLogger;
+use Puzzle\AMQP\Client;
+
+class MockedClient extends InMemory implements Client
+{
+    public function getExchange($exchangeName)
+    {
+        return $exchangeName;
+    }
+}
 
 class PrefixedExchangesClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -63,12 +72,9 @@ class PrefixedExchangesClientTest extends \PHPUnit_Framework_TestCase
         $client->getQueue('tail');
     }
     
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testGetExchange()
     {
-        $client = new PrefixedExchangesClient($this->memory, 'rainbow');
-        $client->getExchange('one');
+        $client = new PrefixedExchangesClient(new MockedClient(), 'rainbow');
+        $this->assertSame('rainbow.pizza', $client->getExchange('pizza'));
     }
 }

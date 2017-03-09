@@ -53,6 +53,8 @@ class PrefixedExchangesClient implements Client
     
     public function getExchange($exchangeName)
     {
-        return $this->client->getExchange($exchangeName);
+        return $this->client->getExchange(
+            $this->computeExchangeName($exchangeName)
+        );
     }
 }
