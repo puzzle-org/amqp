@@ -2,8 +2,12 @@
 
 namespace Puzzle\AMQP\Messages;
 
+use Puzzle\AMQP\WritableMessage;
+
 class RawTest extends \PHPUnit_Framework_TestCase
 {
+    use \Puzzle\Assert\ArrayRelated;
+    
     public function testPackAttributes()
     {
         $msg = new Raw('pony.black_unicorn');
@@ -87,5 +91,109 @@ class RawTest extends \PHPUnit_Framework_TestCase
             array('big_pony', false, false),
             array('appid', false, false),
         );
+    }
+
+    /**
+     * @dataProvider providerTestSetBody
+     */
+    public function testSetBody($body, $expected)
+    {
+        $message = new Raw('burger.over.ponies');
+        $message->setBody($body);
+        
+        $this->assertSame($expected, $message->getFormattedBody());
+    }
+    
+    public function providerTestSetBody()
+    {
+        return [
+            [array('line 1', 'line 2', 'line 3'), "line 1\nline 2\nline 3"],
+            ['Just a single string', 'Just a single string'],
+        ];
+    }
+    
+    public function testHeaders()
+    {
+        $message = new Raw('burger.over.ponies');
+        
+        $message->addHeader('meal', 'pizza');
+        $message->addHeaders([
+            'pet' => 'pony',
+            'drink' => 'rum'
+        ]);
+        $message->addHeader('location', 'unknown');
+        
+        $expectedHeaders = ['meal', 'pet', 'drink', 'location', 'message_datetime'];
+        $this->assertSameArrayExceptOrder(
+            $expectedHeaders,
+            array_keys($message->getHeaders())
+        );
+
+        $message->setAuthor($gregoire = 'Grégoire Labiche');
+        $headers = $message->getHeaders();
+        
+        $expectedHeaders[] = 'author';
+        $this->assertSameArrayExceptOrder(
+            $expectedHeaders,
+            array_keys($message->getHeaders())
+        );
+        
+        $this->assertSame($gregoire, $headers['author']);
+    }
+    
+    public function testSetExpiration()
+    {
+        $message = new Raw('burger.over.ponies');
+        $message->setExpiration(15);
+        
+        $this->assertSame("15000", $message->getAttribute('expiration'));
+    }
+    
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testUnknownAttribute()
+    {
+        $message = new Raw('burger.over.ponies');
+        $message->getAttribute("Does not exist");
+    }
+    
+    /**
+     * @dataProvider providerTestBuildFromReadableMessage
+     */
+    public function testBuildFromReadableMessage($newRoutingKey, $expectingRoutingKey)
+    {
+        $readableMessage = new InMemoryJson('old.routing.key');
+        $readableMessage->addHeaders([
+            'h1' => 'title',
+            'h2' => 'subtitle',
+            'h3' => 'insignificant title',
+        ]);
+        $readableMessage->setAuthor($jeanPierre = 'Jean-Pierre Fortune');
+        $readableMessage->setAttribute('content_encoding', $iso = 'ISO-66642-1');
+        $readableMessage->setBody('This is fine');
+        
+        $message = Raw::buildFromReadableMessage($readableMessage, $newRoutingKey);
+        
+        $this->assertTrue($message instanceof WritableMessage);
+        $this->assertSame($expectingRoutingKey, $message->getRoutingKey());
+        
+        $headers = $message->getHeaders();
+        $this->assertSameArrayExceptOrder(
+            ['h1', 'h2', 'h3', 'author', 'message_datetime'],
+            array_keys($headers)
+        );
+        $this->assertSame('subtitle', $headers['h2']);
+        $this->assertSame($jeanPierre, $headers['author']);
+        
+        $this->assertSame($iso, $message->getAttribute('content_encoding'));
+    }
+    
+    public function providerTestBuildFromReadableMessage()
+    {
+        return [
+            [false, 'old.routing.key'],
+            ['new.routing.key', 'new.routing.key'],
+        ];
     }
 }
