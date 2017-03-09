@@ -126,7 +126,7 @@ class Raw implements WritableMessage
             $timestamp = (new \DateTime("now"))->getTimestamp();
         }
 
-        return array_map(function ($value) use($timestamp) {
+        return array_map(function($value) use($timestamp) {
 
             if($value instanceof \Closure)
             {

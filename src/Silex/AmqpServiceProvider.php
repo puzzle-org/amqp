@@ -20,30 +20,30 @@ class AmqpServiceProvider implements ServiceProviderInterface
 
     private function registerAmqpServices(Container $app)
     {
-        $app['amqp.client'] = function ($c) {
+        $app['amqp.client'] = function($c) {
             return new Pecl($c['configuration']);
         };
 
-        $app['amqp.workerProvider'] = function ($c) {
+        $app['amqp.workerProvider'] = function($c) {
             return new Pimple($c);
         };
     }
 
     private function registerConsumers(Container $app)
     {
-        $app['amqp.consumers.simple'] = function () {
+        $app['amqp.consumers.simple'] = function() {
             return new Consumers\Simple();
         };
 
-        $app['amqp.consumers.insomniac'] = function () {
+        $app['amqp.consumers.insomniac'] = function() {
             return new Consumers\Insomniac();
         };
 
-        $app['amqp.consumers.retry'] = $app->protect(function (Container $c, $retries = null) {
+        $app['amqp.consumers.retry'] = $app->protect(function(Container $c, $retries = null) {
             return new Consumers\Retry($retries);
         });
 
-        $app['amqp.consumers.instantRetry'] = $app->protect(function (Container $c, $retries, $delayInSeconds) {
+        $app['amqp.consumers.instantRetry'] = $app->protect(function(Container $c, $retries, $delayInSeconds) {
             return new Consumers\InstantRetry($retries, $delayInSeconds);
         });
     }
