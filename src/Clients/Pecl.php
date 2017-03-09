@@ -6,12 +6,10 @@ use Puzzle\Configuration;
 use Puzzle\PrefixedConfiguration;
 
 use Puzzle\AMQP\Client;
-use Puzzle\AMQP\Messages;
 use Puzzle\AMQP\Workers\MessageAdapter;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Puzzle\AMQP\WritableMessage;
-use Puzzle\AMQP\Collections;
 
 class Pecl implements Client
 {
@@ -61,7 +59,7 @@ class Pecl implements Client
         {
             $ex = $this->getExchange($exchangeName);
         }
-        catch (\Exception $e)
+        catch(\Exception $e)
         {
             $this->logMessage($exchangeName, $message);
 
@@ -94,7 +92,7 @@ class Pecl implements Client
                 $message->packAttributes()
             );
         }
-        catch (\Exception $e)
+        catch(\Exception $e)
         {
             $this->logMessage($ex->getName(), $message);
 
