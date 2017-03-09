@@ -26,10 +26,6 @@ class InMemory implements Client
         $this->saveMessage($exchangeName, $message);
     }
 
-    public function forceUTF8($enable = true)
-    {
-    }
-
     public function getQueue($queueName)
     {
         throw new \RuntimeException('This AMQP Client must be used only for sending purpose');

@@ -3,7 +3,6 @@
 namespace Puzzle\AMQP;
 
 use Psr\Log\LoggerAwareInterface;
-use Puzzle\AMQP\Collections;
 
 interface Client extends LoggerAwareInterface
 {
