@@ -34,4 +34,16 @@ class InMemoryJson extends Json implements ReadableMessage, WritableMessage
     {
         
     }
+    
+    public function getRoutingKeyFromHeader()
+    {
+        $headers = $this->getHeaders();
+        
+        if(! array_key_exists('routing_key', $headers))
+        {
+            return null;
+        }
+        
+        return $headers['routing_key'];
+    }
 }
