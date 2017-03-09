@@ -6,12 +6,10 @@ use Puzzle\Configuration;
 use Puzzle\PrefixedConfiguration;
 
 use Puzzle\AMQP\Client;
-use Puzzle\AMQP\Messages;
 use Puzzle\AMQP\Workers\MessageAdapter;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Puzzle\AMQP\WritableMessage;
-use Puzzle\AMQP\Collections;
 
 class Pecl implements Client
 {
