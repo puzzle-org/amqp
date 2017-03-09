@@ -8,5 +8,5 @@ vendor/
 .settings/
 
 # Code coverage report
-report/
+coverage/
 
