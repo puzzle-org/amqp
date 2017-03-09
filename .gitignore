@@ -4,6 +4,7 @@ composer.lock
 vendor/
 
 # Eclipse files
+.project
 .buildpath
 .settings/
 
