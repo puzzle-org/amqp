@@ -8,7 +8,7 @@
         }
     ],
     "keywords" : [
-        "aqmp",
+        "amqp",
         "asynchronous"
     ],
     "autoload" : {
@@ -18,15 +18,15 @@
     },
     "require" : {
         "php": ">=5.6",
-        "puzzle/configuration" : "~1.7",
-        "puzzle/pieces" : "~1.0",
-        "symfony/console": ">=2.4",
-        "swarrot/swarrot": "~2.1",
+        "puzzle/configuration" : "~3.0",
+        "puzzle/pieces" : "~2.0",
+        "symfony/console": "~3.2",
+        "swarrot/swarrot": "~2.3",
         "knplabs/gaufrette": "~0.2",
-        "symfony/event-dispatcher": ">=2.4"
+        "symfony/event-dispatcher": "~3.2"
     },
     "require-dev" : {
-        "phpunit/phpunit" : "~5.3",
+        "phpunit/phpunit" : "~5.7",
         "empi89/php-amqp-stubs": "dev-master",
         "puzzle/assert": "~1.0"
     },
