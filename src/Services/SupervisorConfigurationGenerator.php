@@ -33,11 +33,11 @@ class SupervisorConfigurationGenerator
                 continue;
             }
 
-            $this->generateSupervisorConfigurationFile($worker, $autostart, $autorestart, $data, $appId, $destination, $output);
+            $this->generateSupervisorConfigurationFile($worker, $autostart, $autorestart, $appId, $destination, $output);
         }
     }
 
-    private function generateSupervisorConfigurationFile($worker, $autostart, $autorestart, array $data, $appId, $destination, OutputInterface $output)
+    private function generateSupervisorConfigurationFile($worker, $autostart, $autorestart, $appId, $destination, OutputInterface $output)
     {
         $configuration = $this->generateSupervisorConfiguration($worker, $autostart, $autorestart, $appId);
         $filename = $this->buildFilename($appId, $worker);
