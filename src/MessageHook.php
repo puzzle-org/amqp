@@ -1,6 +1,6 @@
 <?php
 
-namespace Puzzle\AMQP\Hooks;
+namespace Puzzle\AMQP;
 
 interface MessageHook
 {
