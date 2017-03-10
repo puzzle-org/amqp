@@ -39,7 +39,7 @@ class SupervisorConfigurationGenerator
 
     private function generateSupervisorConfigurationFile($worker, $autostart, $autorestart, array $data, $appId, $destination, OutputInterface $output)
     {
-        $configuration = $this->generateSupervisorConfiguration($worker, $autostart, $autorestart, $data, $appId);
+        $configuration = $this->generateSupervisorConfiguration($worker, $autostart, $autorestart, $appId);
         $filename = $this->buildFilename($appId, $worker);
 
         $this->filesystem->write($filename, $configuration, $this->overwrite);
@@ -58,7 +58,7 @@ class SupervisorConfigurationGenerator
         return sprintf('%s--%s.conf', $appId, $workerName);
     }
 
-    private function generateSupervisorConfiguration($worker, $autostart, $autorestart, array $data, $appId)
+    private function generateSupervisorConfiguration($worker, $autostart, $autorestart, $appId)
     {
         $program = sprintf('%s--%s', $appId, $worker);
         $command = $this->commandGenerator->generate($worker);
@@ -74,7 +74,7 @@ autostart=$autostart
 autorestart=$autorestart
 TXT;
     }
-    
+
     private function booleanToString($value)
     {
         return $value === true ? 'true' : 'false';

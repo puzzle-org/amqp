@@ -7,7 +7,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Puzzle\AMQP\Workers\WorkerProvider;
-use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
 class ListAll extends Command

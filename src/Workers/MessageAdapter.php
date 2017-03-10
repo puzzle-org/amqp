@@ -11,8 +11,7 @@ class MessageAdapter implements ReadableMessage
 {
     private
         $message,
-        $decodedBody,
-        $messageHooks;
+        $decodedBody;
 
     public function __construct(\Swarrot\Broker\Message $message)
     {

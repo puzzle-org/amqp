@@ -6,7 +6,6 @@ use Swarrot\Processor\ProcessorInterface;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Workers\WorkerContext;
 use Swarrot\Broker\MessagePublisher\PeclPackageMessagePublisher;
-use Psr\Log\InvalidArgumentException;
 
 class Retry extends AbstractConsumer
 {
@@ -15,7 +14,7 @@ class Retry extends AbstractConsumer
         DEFAULT_RETRY_HEADER = 'swarrot_retry_attempts',
         RETRY_EXCHANGE_NAME = 'retry',
         RETRY_ROUTING_KEY_PATTERN = '%s_retry_%%attempt%%';
-    
+
     private
         $retries;
 

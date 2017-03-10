@@ -11,14 +11,6 @@ class CommandGenerator
     use
         PathManipulation;
 
-    private
-        $rootPath;
-
-    public function __construct($rootPath)
-    {
-        $this->rootPath = $this->enforceEndingSlash($rootPath);
-    }
-
     public function generate($worker)
     {
         $pattern = '/usr/bin/php worker run %s';
