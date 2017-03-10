@@ -22,7 +22,7 @@ class Pecl implements Client
 
     public function __construct(Configuration $configuration)
     {
-        $this->applicationId = $configuration->readRequired('app/id');
+        $this->applicationId = $configuration->read('app/id', 'Unknown application');
         $this->configuration = $configuration;
         $this->channel = null;
         $this->logger = new NullLogger();
@@ -121,7 +121,7 @@ class Pecl implements Client
 
     private function updateMessageAttributes(WritableMessage $message)
     {
-        $message->setAttribute('app_id', $this->configuration->read('app/id', null));
+        $message->setAttribute('app_id', $this->applicationId);
         $message->addHeader('routing_key', $message->getRoutingKey());
     }
 
@@ -133,37 +133,5 @@ class Pecl implements Client
         $queue->setName($queueName);
 
         return $queue;
-    }
-
-    private function convertEnvelopeToMessage(\AMQPEnvelope $envelope)
-    {
-        return new MessageAdapter(
-            new \Swarrot\Broker\Message(
-                $envelope->getBody(),
-                array(
-                    'content_type'      => $envelope->getContentType(),
-                    'routing_key'       => $envelope->getRoutingKey(),
-                    'delivery_tag'      => $envelope->getDeliveryTag(),
-                    'delivery_mode'     => $envelope->getDeliveryMode(),
-                    'exchange_name'     => $envelope->getExchangeName(),
-                    'is_redelivery'     => $envelope->isRedelivery(),
-                    'content_encoding'  => $envelope->getContentEncoding(),
-                    'type'              => $envelope->getType(),
-                    'timestamp'         => $envelope->getTimeStamp(),
-                    'priority'          => $envelope->getPriority(),
-                    'expiration'        => $envelope->getExpiration(),
-                    'app_id'            => $envelope->getAppId(),
-                    'message_id'        => $envelope->getMessageId(),
-                    'reply_to'          => $envelope->getReplyTo(),
-                    'correlation_id'    => $envelope->getCorrelationId(),
-                    'headers'           => $envelope->getHeaders(),
-                    'user_id'           => $envelope->getUserId(),
-                    'cluster_id'        => 0,
-                    'channel'           => '',
-                    'consumer_tag'      => ''
-                ),
-                $envelope->getDeliveryTag()
-            )
-        );
     }
 }
