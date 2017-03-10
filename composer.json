@@ -2,6 +2,7 @@
     "name" : "puzzle/amqp",
     "description" : "AMQP implementation based on PECL extension",
     "type" : "library",
+    "license": "MIT",
     "authors" : [{
             "name" : "Nicolas Le Nardou",
             "email" : "nico.ln@gmail.com"
