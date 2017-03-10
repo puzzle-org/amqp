@@ -2,7 +2,7 @@
 
 namespace Puzzle\AMQP\Collections;
 
-use Puzzle\AMQP\Hooks\MessageHook;
+use Puzzle\AMQP\MessageHook;
 
 class MessageHookCollection implements \IteratorAggregate
 {
