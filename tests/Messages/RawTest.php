@@ -7,7 +7,7 @@ use Puzzle\AMQP\WritableMessage;
 class RawTest extends \PHPUnit_Framework_TestCase
 {
     use \Puzzle\Assert\ArrayRelated;
-    
+
     public function testPackAttributes()
     {
         $msg = new Raw('pony.black_unicorn');
@@ -62,26 +62,26 @@ class RawTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('X-Version', $headers);
         $this->assertSame('1.0', $headers['X-Version']);
     }
-    
+
     /**
      * @dataProvider providerTestSetAttribute
      */
     public function testSetAttribute($attributeName, $expectFind, $expectModification)
     {
         $newValue = 'Dark sysadmin';
-        
+
         $message = new Raw('burger.over.ponies');
         $message->setAttribute($attributeName, $newValue);
-        
+
         $attributes = $message->packAttributes();
         $this->assertSame($expectFind, array_key_exists($attributeName, $attributes));
-        
+
         if($expectFind === true)
         {
             $this->assertSame($expectModification, $attributes[$attributeName] === $newValue);
         }
     }
-    
+
     public function providerTestSetAttribute()
     {
         return array(
@@ -100,10 +100,10 @@ class RawTest extends \PHPUnit_Framework_TestCase
     {
         $message = new Raw('burger.over.ponies');
         $message->setBody($body);
-        
+
         $this->assertSame($expected, $message->getFormattedBody());
     }
-    
+
     public function providerTestSetBody()
     {
         return [
@@ -111,18 +111,18 @@ class RawTest extends \PHPUnit_Framework_TestCase
             ['Just a single string', 'Just a single string'],
         ];
     }
-    
+
     public function testHeaders()
     {
         $message = new Raw('burger.over.ponies');
-        
+
         $message->addHeader('meal', 'pizza');
         $message->addHeaders([
             'pet' => 'pony',
             'drink' => 'rum'
         ]);
         $message->addHeader('location', 'unknown');
-        
+
         $expectedHeaders = ['meal', 'pet', 'drink', 'location', 'message_datetime'];
         $this->assertSameArrayExceptOrder(
             $expectedHeaders,
@@ -131,24 +131,24 @@ class RawTest extends \PHPUnit_Framework_TestCase
 
         $message->setAuthor($gregoire = 'Grégoire Labiche');
         $headers = $message->getHeaders();
-        
+
         $expectedHeaders[] = 'author';
         $this->assertSameArrayExceptOrder(
             $expectedHeaders,
             array_keys($message->getHeaders())
         );
-        
+
         $this->assertSame($gregoire, $headers['author']);
     }
-    
+
     public function testSetExpiration()
     {
         $message = new Raw('burger.over.ponies');
         $message->setExpiration(15);
-        
+
         $this->assertSame("15000", $message->getAttribute('expiration'));
     }
-    
+
     /**
      * @expectedException \InvalidArgumentException
      */
@@ -157,7 +157,7 @@ class RawTest extends \PHPUnit_Framework_TestCase
         $message = new Raw('burger.over.ponies');
         $message->getAttribute("Does not exist");
     }
-    
+
     /**
      * @dataProvider providerTestBuildFromReadableMessage
      */
@@ -172,12 +172,12 @@ class RawTest extends \PHPUnit_Framework_TestCase
         $readableMessage->setAuthor($jeanPierre = 'Jean-Pierre Fortune');
         $readableMessage->setAttribute('content_encoding', $iso = 'ISO-66642-1');
         $readableMessage->setBody('This is fine');
-        
+
         $message = Raw::buildFromReadableMessage($readableMessage, $newRoutingKey);
-        
+
         $this->assertTrue($message instanceof WritableMessage);
         $this->assertSame($expectingRoutingKey, $message->getRoutingKey());
-        
+
         $headers = $message->getHeaders();
         $this->assertSameArrayExceptOrder(
             ['h1', 'h2', 'h3', 'author', 'message_datetime'],
@@ -185,10 +185,10 @@ class RawTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertSame('subtitle', $headers['h2']);
         $this->assertSame($jeanPierre, $headers['author']);
-        
+
         $this->assertSame($iso, $message->getAttribute('content_encoding'));
     }
-    
+
     public function providerTestBuildFromReadableMessage()
     {
         return [

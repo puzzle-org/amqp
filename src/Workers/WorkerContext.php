@@ -11,7 +11,7 @@ use Psr\Log\NullLogger;
 class WorkerContext
 {
     use LoggerAwareTrait;
-    
+
     const
         INSTANCES_DEFAULT_VALUE = 1,
         SERVER_DEFAULT_VALUE = 'worker',
@@ -23,7 +23,7 @@ class WorkerContext
         $instances,
         $servers,
         $isDeploymentAllowed;
-    
+
     private
         $consumer,
         $worker,
@@ -48,7 +48,7 @@ class WorkerContext
             $this->worker = $closure();
             $this->worker->setLogger($this->logger);
         }
-    
+
         return $this->worker;
     }
 
@@ -59,12 +59,12 @@ class WorkerContext
 
         return $this;
     }
-    
+
     public function getLogger()
     {
         return $this->logger;
     }
-    
+
     public function getConsumer()
     {
         return $this->consumer;
@@ -86,32 +86,32 @@ class WorkerContext
     {
         return $this->queue;
     }
-    
+
     public function setMessageHooks(MessageHookCollection $messageHookCollection)
     {
         $this->messageHooks = $messageHookCollection;
     }
-    
+
     public function getMessageHooks()
     {
         return $this->messageHooks;
     }
-    
+
     public function deployInstances($numberOfInstance)
     {
         if(! empty($numberOfInstance))
         {
             $this->instances = (int) $numberOfInstance;
         }
-        
+
         return $this;
     }
-    
+
     public function getInstances()
     {
         return $this->instances;
     }
-    
+
     public function deployOn($servers)
     {
         if(! empty($servers))
@@ -120,25 +120,25 @@ class WorkerContext
             {
                 $servers = [$servers];
             }
-            
+
             $this->servers = $servers;
         }
-    
+
         return $this;
     }
-    
+
     public function getServers()
     {
         return $this->servers;
     }
-    
+
     public function disableDeployment()
     {
         $this->isDeploymentAllowed = false;
-    
+
         return $this;
     }
-    
+
     public function isDeploymentAllowed()
     {
         return $this->isDeploymentAllowed;
