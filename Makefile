@@ -1,4 +1,4 @@
-PUZZLE_AMQP_DIR=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+HOST_SOURCE_PATH=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 USER_ID=$(shell id -u)
 GROUP_ID=$(shell id -g)

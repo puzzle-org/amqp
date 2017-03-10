@@ -2,10 +2,11 @@
 # PHPUnit
 #------------------------------------------------------------------------------
 CONTAINER_NAME=puzzle/amqp/phpunit
+CONTAINER_SOURCE_PATH=/usr/src/puzzle-amqp
 
 phpunit = docker run -it --rm --name phpunit \
-	                 -v ${PUZZLE_AMQP_DIR}:/usr/src/puzzle-amqp \
-	                 -w /usr/src/puzzle-amqp \
+	                 -v ${HOST_SOURCE_PATH}:${CONTAINER_SOURCE_PATH} \
+	                 -w ${CONTAINER_SOURCE_PATH} \
 	                 -u ${USER_ID}:${GROUP_ID} \
 	                 ${CONTAINER_NAME} \
 	                 vendor/bin/phpunit $1 $(CLI_ARGS)
