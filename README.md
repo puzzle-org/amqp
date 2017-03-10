@@ -1,7 +1,18 @@
-Puzzle AMQP 
+Puzzle AMQP  ![PHP >= 5.6](https://img.shields.io/badge/php-%3E%3D%205.6-blue.svg)
 ===========
 
-[![Build Status](https://travis-ci.org/puzzle-org/amqp.svg?branch=master)](https://travis-ci.org/puzzle-org/amqp) 
+QA
+--
+
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/d18675cd-9850-4115-af23-b1afa8a859bc/big.png)](https://insight.sensiolabs.com/projects/d18675cd-9850-4115-af23-b1afa8a859bc)
+
+Service | Result
+--- | ---
+**Travis CI** (PHP 5.6 .. 7.1) | [![Build Status](https://travis-ci.org/puzzle-org/amqp.svg?branch=master)](https://travis-ci.org/puzzle-org/amqp)
+**Scrutinizer** | [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/puzzle-org/amqp/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/puzzle-org/amqp/?branch=master)
+**Code coverage** | [![codecov](https://codecov.io/gh/puzzle-org/amqp/branch/master/graph/badge.svg)](https://codecov.io/gh/puzzle-org/amqp)
+**Packagist** | [![Latest Stable Version](https://poser.pugx.org/puzzle/amqp/v/stable.png)](https://packagist.org/packages/puzzle/amqp) [![Total Downloads](https://poser.pugx.org/puzzle/configuration/downloads.svg)](https://packagist.org/packages/puzzle/amqp)
+
 
 Configuration
 -------------
@@ -49,3 +60,10 @@ $message->setBody([
 $client->publish('myExchange', $message);
 ```
 
+
+Changelog
+---------
+
+**1.x -> 2.x**
+
+ - Drop support for Silex 1.x (in favor of Silex 2.x)
