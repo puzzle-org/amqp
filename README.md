@@ -64,6 +64,10 @@ $client->publish('myExchange', $message);
 Changelog
 ---------
 
+**2.x -> 3.x**
+
+ - Namespace of MessageHook interface was changed
+
 **1.x -> 2.x**
 
  - Drop support for Silex 1.x (in favor of Silex 2.x)
