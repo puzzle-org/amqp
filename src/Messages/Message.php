@@ -11,8 +11,10 @@ class Message implements WritableMessage
 {
     use BodySetter;
     
+    protected
+        $body;
+    
     private
-        $body,
         $flags,
         $headers,
         $attributes;
@@ -208,16 +210,7 @@ class Message implements WritableMessage
         }
 
         $writableMessage = new static($routingKey);
-
-        // FIXME TODO
-        $decodedBody = $readableMessage->getDecodedBody();
-        if(! is_array($decodedBody))
-        {
-            $decodedBody = array($decodedBody);
-        }
-
-        // FIXME TODO
-        $writableMessage->setText($decodedBody);
+        $writableMessage->setBody($readableMessage->getBody());
 
         $writableMessage->addHeaders($readableMessage->getHeaders());
 

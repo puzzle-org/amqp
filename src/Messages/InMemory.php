@@ -7,6 +7,11 @@ use Puzzle\AMQP\WritableMessage;
 
 class InMemory extends Message implements ReadableMessage, WritableMessage
 {
+    public function getBody()
+    {
+        return $this->body;
+    }
+    
     public function getRawBody()
     {
         return $this->getFormattedBody();
@@ -14,7 +19,7 @@ class InMemory extends Message implements ReadableMessage, WritableMessage
 
     public function getDecodedBody()
     {
-        return (new MessageDecoder())->decode($this);
+        return $this->body->decode();
     }
 
     public function getAttributes()
