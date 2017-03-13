@@ -118,7 +118,7 @@ class MessageAdapter implements ReadableMessage
     
     private function isBinary()
     {
-        $this->getContentType() === ContentType::BINARY;
+        return $this->getContentType() === ContentType::BINARY;
     }
 
     private function bodyToString()
