@@ -66,7 +66,9 @@ Changelog
 
 **2.x -> 3.x**
 
- - Namespace of MessageHook interface was changed
+ - Message hooks has been removed
+ - Raw & Json implementations of WritableMessage has been replaced by Message + implementations of Body (Text, Json, Binary)
+ - Message interface has been renamed in MessageMetadata
 
 **1.x -> 2.x**
 
