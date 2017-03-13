@@ -18,11 +18,16 @@ class Raw implements WritableMessage
 
     public function __construct($routingKey = '')
     {
-        $this->body = array();
+        $this->initBody();
         $this->flags = AMQP_NOPARAM;
         $this->headers = array();
         $this->initializeAttributes();
         $this->setAttribute('routing_key', $routingKey);
+    }
+    
+    protected function initBody()
+    {
+        $this->body = array();
     }
 
     private function initializeAttributes()
@@ -53,7 +58,7 @@ class Raw implements WritableMessage
 
     public function getContentType()
     {
-        return 'text/plain';
+        return ContentType::TEXT;
     }
 
     public function getRoutingKey()

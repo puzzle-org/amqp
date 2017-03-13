@@ -6,6 +6,7 @@ use Psr\Log\InvalidArgumentException;
 use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Collections\MessageHookCollection;
 use Puzzle\AMQP\Hooks\MessageHook;
+use Puzzle\AMQP\Messages\ContentType;
 
 class MessageAdapter implements ReadableMessage
 {
@@ -95,7 +96,7 @@ class MessageAdapter implements ReadableMessage
     private function getFormatterStrategy($contentType)
     {
         $formatterStrategies = array(
-            'application/json' => function($body) {
+            ContentType::JSON => function($body) {
                 return json_decode($body, true);
             },
         );
@@ -105,14 +106,29 @@ class MessageAdapter implements ReadableMessage
             return $formatterStrategies[$contentType];
         }
     }
-
+    
     public function __toString()
     {
         return json_encode(array(
             'routing_key' => $this->getRoutingKey(),
-            'body' => $this->getRawBody(),
+            'body' => $this->bodyToString(),
             'attributes' => $this->message->getProperties(),
         ));
+    }
+    
+    private function isBinary()
+    {
+        $this->getContentType() === ContentType::BINARY;
+    }
+
+    private function bodyToString()
+    {
+        if($this->isBinary())
+        {
+            return sprintf('<binary stream of %d bytes>', strlen($this->getRawBody()));
+        }
+        
+        return $this->getRawBody();
     }
 
     public function getService()

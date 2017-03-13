@@ -13,7 +13,7 @@ class Json extends Raw implements WritableMessage
 
     public function getContentType()
     {
-        return 'application/json';
+        return ContentType::JSON;
     }
     
     public function setBodyWithJson($json)
