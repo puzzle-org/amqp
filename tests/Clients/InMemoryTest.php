@@ -2,7 +2,7 @@
 
 namespace Puzzle\AMQP\Clients;
 
-use Puzzle\AMQP\Messages\InMemoryJson;
+use Puzzle\AMQP\Messages\Message;
 
 class InMemoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ class InMemoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEmpty($client->getSentMessages());
 
-        $message = new InMemoryJson('key');
+        $message = new Message('key');
         $client->publish('myEx', $message);
 
         $sentMessages = $client->getSentMessages();

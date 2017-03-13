@@ -4,20 +4,18 @@ namespace Puzzle\AMQP\Workers;
 
 use Psr\Log\InvalidArgumentException;
 use Puzzle\AMQP\ReadableMessage;
-use Puzzle\AMQP\Collections\MessageHookCollection;
-use Puzzle\AMQP\Hooks\MessageHook;
-use Puzzle\AMQP\Messages\ContentType;
+use Puzzle\AMQP\Messages\MessageDecoder;
 
 class MessageAdapter implements ReadableMessage
 {
     private
         $message,
-        $decodedBody;
+        $body;
 
     public function __construct(\Swarrot\Broker\Message $message)
     {
         $this->message = $message;
-        $this->decodedBody = $this->decodeBody();
+        $this->body = (new MessageDecoder())->decode($this);
     }
 
     public function getRoutingKey()
@@ -42,39 +40,12 @@ class MessageAdapter implements ReadableMessage
 
     public function getDecodedBody()
     {
-        return $this->decodedBody;
-    }
-
-    private function decodeBody()
-    {
-        $callable = $this->getFormatterStrategy($this->getContentType());
-        $body = $this->getRawBody();
-
-        if($callable instanceof \Closure)
-        {
-            $body = $callable($body);
-        }
-
-        return $body;
+        return $this->body->decode();
     }
 
     public function getRawBody()
     {
         return $this->message->getBody();
-    }
-
-    public function applyHooks(MessageHookCollection $messageHookCollection)
-    {
-        if(!empty($messageHookCollection))
-        {
-            foreach($messageHookCollection as $messageHook)
-            {
-                if($messageHook instanceof MessageHook)
-                {
-                    $this->decodedBody = $messageHook->process($this->decodedBody);
-                }
-            }
-        }
     }
 
     public function getFlags()
@@ -93,44 +64,15 @@ class MessageAdapter implements ReadableMessage
         throw new InvalidArgumentException(sprintf('Property "%s" is unknown or is not a message property', $attributeName));
     }
 
-    private function getFormatterStrategy($contentType)
-    {
-        $formatterStrategies = array(
-            ContentType::JSON => function($body) {
-                return json_decode($body, true);
-            },
-        );
-
-        if(array_key_exists($contentType, $formatterStrategies) === true)
-        {
-            return $formatterStrategies[$contentType];
-        }
-    }
-    
     public function __toString()
     {
         return json_encode(array(
             'routing_key' => $this->getRoutingKey(),
-            'body' => $this->bodyToString(),
+            'body' => (string) $this->body,
             'attributes' => $this->message->getProperties(),
         ));
     }
     
-    private function isBinary()
-    {
-        return $this->getContentType() === ContentType::BINARY;
-    }
-
-    private function bodyToString()
-    {
-        if($this->isBinary())
-        {
-            return sprintf('<binary stream of %d bytes>', strlen($this->getRawBody()));
-        }
-        
-        return $this->getRawBody();
-    }
-
     public function getService()
     {
         return $this->getHeader('service');

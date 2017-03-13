@@ -5,31 +5,27 @@ namespace Puzzle\AMQP\Messages;
 use Psr\Log\InvalidArgumentException;
 use Puzzle\AMQP\WritableMessage;
 use Puzzle\AMQP\ReadableMessage;
+use Puzzle\AMQP\Messages\Bodies\NullBody;
 
-class Raw implements WritableMessage
+class Message implements WritableMessage
 {
-    protected
-        $body;
-
+    use BodySetter;
+    
     private
+        $body,
         $flags,
         $headers,
         $attributes;
 
     public function __construct($routingKey = '')
     {
-        $this->initBody();
+        $this->body = new NullBody();
         $this->flags = AMQP_NOPARAM;
         $this->headers = array();
         $this->initializeAttributes();
         $this->setAttribute('routing_key', $routingKey);
     }
     
-    protected function initBody()
-    {
-        $this->body = array();
-    }
-
     private function initializeAttributes()
     {
         $this->attributes = array(
@@ -37,7 +33,7 @@ class Raw implements WritableMessage
             'content_type' => $this->getContentType(),
             'content_encoding' => 'utf8',
             'message_id' => function($timestamp) {
-                return sha1($this->getRoutingKey() . $timestamp . serialize($this->body) . mt_rand());
+                return sha1($this->getRoutingKey() . $timestamp . $this->body->footprint() . mt_rand());
             },
             'user_id' => null,
             'app_id' => null,
@@ -58,7 +54,7 @@ class Raw implements WritableMessage
 
     public function getContentType()
     {
-        return ContentType::TEXT;
+        return $this->body->getContentType();
     }
 
     public function getRoutingKey()
@@ -68,26 +64,22 @@ class Raw implements WritableMessage
 
     public function getFormattedBody()
     {
-        return $this->formatBody();
+        return $this->body->format();
     }
 
-    protected function formatBody()
+    public function setBody(Body $body)
     {
-        return implode("\n", $this->body);
-    }
-
-    public function setBody($body)
-    {
-        if(! is_array($body))
-        {
-            $body = array($body);
-        }
-
         $this->body = $body;
-
+        $this->updateContentType();
+        
         return $this;
     }
-
+    
+    private function updateContentType()
+    {
+        $this->attributes['content_type'] = $this->body->getContentType();
+    }
+    
     public function getFlags()
     {
         return $this->flags;
@@ -126,6 +118,8 @@ class Raw implements WritableMessage
 
     public function packAttributes($timestamp = false)
     {
+        $this->updateContentType();
+        
         if($timestamp === false)
         {
             $timestamp = (new \DateTime("now"))->getTimestamp();
@@ -189,7 +183,7 @@ class Raw implements WritableMessage
     {
         return json_encode(array(
             'routing_key' => $this->getRoutingKey(),
-            'body' => $this->getFormattedBody(),
+            'body' => (string) $this->body,
             'attributes' => $this->attributes,
             'flags' => $this->flags
         ));
@@ -215,13 +209,15 @@ class Raw implements WritableMessage
 
         $writableMessage = new static($routingKey);
 
+        // FIXME TODO
         $decodedBody = $readableMessage->getDecodedBody();
         if(! is_array($decodedBody))
         {
             $decodedBody = array($decodedBody);
         }
 
-        $writableMessage->setBody($decodedBody);
+        // FIXME TODO
+        $writableMessage->setText($decodedBody);
 
         $writableMessage->addHeaders($readableMessage->getHeaders());
 

@@ -2,10 +2,12 @@
 
 namespace Puzzle\AMQP;
 
-interface WritableMessage extends Message
+use Puzzle\AMQP\Messages\Body;
+
+interface WritableMessage extends MessageMetadata
 {
     public function getFormattedBody();
-    public function setBody($body);
+    public function setBody(Body $body);
 
     public function setFlags($flags);
     public function setExpiration($expirationInSeconds);

@@ -5,7 +5,6 @@ namespace Puzzle\AMQP\Workers;
 use Psr\Log\LoggerAwareTrait;
 use Puzzle\AMQP\Consumer;
 use Psr\Log\LoggerInterface;
-use Puzzle\AMQP\Collections\MessageHookCollection;
 use Psr\Log\NullLogger;
 
 class WorkerContext
@@ -26,9 +25,8 @@ class WorkerContext
 
     private
         $consumer,
-        $worker,
-        $messageHooks;
-
+        $worker;
+    
     public function __construct(\Closure $worker, Consumer $consumer, $queue)
     {
         $this->worker = $worker;
@@ -85,16 +83,6 @@ class WorkerContext
     public function getQueue()
     {
         return $this->queue;
-    }
-
-    public function setMessageHooks(MessageHookCollection $messageHookCollection)
-    {
-        $this->messageHooks = $messageHookCollection;
-    }
-
-    public function getMessageHooks()
-    {
-        return $this->messageHooks;
     }
 
     public function deployInstances($numberOfInstance)
