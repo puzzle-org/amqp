@@ -37,6 +37,11 @@ class MessageAdapter implements ReadableMessage
     {
         return $this->getAttribute('headers');
     }
+    
+    public function getBody()
+    {
+        return $this->body;
+    }
 
     public function getDecodedBody()
     {

@@ -4,6 +4,8 @@ namespace Puzzle\AMQP;
 
 interface ReadableMessage extends MessageMetadata
 {
+    public function getBody();
+    
     public function getRawBody();
     
     public function getDecodedBody();
