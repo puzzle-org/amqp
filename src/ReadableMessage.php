@@ -2,9 +2,7 @@
 
 namespace Puzzle\AMQP;
 
-use Puzzle\AMQP\Collections\MessageHookCollection;
-
-interface ReadableMessage extends Message
+interface ReadableMessage extends MessageMetadata
 {
     public function getRawBody();
     
@@ -13,8 +11,6 @@ interface ReadableMessage extends Message
     public function getAttributes();
     
     public function isLastRetry();
-    
-    public function applyHooks(MessageHookCollection $messageHookCollection);
     
     public function getRoutingKeyFromHeader();
 }

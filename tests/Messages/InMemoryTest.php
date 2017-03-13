@@ -2,12 +2,12 @@
 
 namespace Puzzle\AMQP\Messages;
 
-class InMemoryJsonTest extends \PHPUnit_Framework_TestCase
+class InMemoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetRoutingKeyFromHeaders()
     {
         $routingKey = 'pony.under.burgers';
-        $message = new InMemoryJson($routingKey);
+        $message = new InMemory($routingKey);
         
         $this->assertNull($message->getRoutingKeyFromHeader());
         

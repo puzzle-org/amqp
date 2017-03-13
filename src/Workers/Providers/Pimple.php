@@ -7,9 +7,6 @@ use Puzzle\AMQP\Workers\WorkerContext;
 
 class Pimple implements WorkerProvider
 {
-    const
-        MESSAGE_HOOKS_DIC_KEY = 'amqp.message.hooks';
-    
     private
         $container;
 
@@ -28,11 +25,6 @@ class Pimple implements WorkerProvider
             $workerContext = $this->container[$key];
         }
         
-        if(isset($this->container[self::MESSAGE_HOOKS_DIC_KEY]))
-        {
-            $workerContext->setMessageHooks($this->container[self::MESSAGE_HOOKS_DIC_KEY]);
-        }
-
         return $workerContext;
     }
 

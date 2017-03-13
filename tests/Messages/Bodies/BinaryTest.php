@@ -1,8 +1,10 @@
 <?php
 
-namespace Puzzle\AMQP\Messages;
+namespace Puzzle\AMQP\Messages\Bodies;
 
 use Puzzle\AMQP\Clients\InMemory;
+use Puzzle\AMQP\Messages\Message;
+use Puzzle\AMQP\Messages\ContentType;
 
 class BinaryTest extends \PHPUnit_Framework_TestCase
 {
@@ -10,8 +12,8 @@ class BinaryTest extends \PHPUnit_Framework_TestCase
     {
         $client = new InMemory();
         
-        $message = new Binary('my.routing.key');
-        $message->setBody('ABCDEF0123456789');
+        $message = new Message('my.routing.key');
+        $message->setBinary('ABCDEF0123456789');
         
         $client->publish('myExchange', $message);
         

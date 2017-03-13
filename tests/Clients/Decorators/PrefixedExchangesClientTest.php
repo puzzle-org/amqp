@@ -3,9 +3,9 @@
 namespace Puzzle\AMQP\Clients\Decorators;
 
 use Puzzle\AMQP\Clients\InMemory;
-use Puzzle\AMQP\Messages\Json;
 use Psr\Log\NullLogger;
 use Puzzle\AMQP\Client;
+use Puzzle\AMQP\Messages\Message;
 
 class MockedClient extends InMemory implements Client
 {
@@ -33,7 +33,7 @@ class PrefixedExchangesClientTest extends \PHPUnit_Framework_TestCase
         $client = new PrefixedExchangesClient($this->memory, $prefix);
         $client->setLogger(new NullLogger());
         
-        $message = new Json('routing.key');
+        $message = new Message('routing.key');
         $client->publish('unicorn', $message);
     
         $sentMessages = $this->memory->getSentMessages();

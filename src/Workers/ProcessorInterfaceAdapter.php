@@ -23,13 +23,6 @@ class ProcessorInterfaceAdapter implements ProcessorInterface
     {
         $message = new MessageAdapter($message);
         
-        $hooks = $this->workerContext->getMessageHooks();
-        
-        if(!empty($hooks))
-        {
-            $message->applyHooks($hooks);
-        }
-        
         $this->workerContext->getLogger()->debug((string) $message);
         
         $this->onWorkerProcess();

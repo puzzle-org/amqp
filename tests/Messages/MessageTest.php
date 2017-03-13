@@ -4,14 +4,14 @@ namespace Puzzle\AMQP\Messages;
 
 use Puzzle\AMQP\WritableMessage;
 
-class RawTest extends \PHPUnit_Framework_TestCase
+class MessageTest extends \PHPUnit_Framework_TestCase
 {
     use \Puzzle\Assert\ArrayRelated;
 
     public function testPackAttributes()
     {
-        $msg = new Raw('pony.black_unicorn');
-        $msg->setBody(array('burger' => 'Mc Julian Deluxe'));
+        $msg = new Message('pony.black_unicorn');
+        $msg->setText(array('burger' => 'Mc Julian Deluxe'));
 
         $t = 42;
 
@@ -32,7 +32,7 @@ class RawTest extends \PHPUnit_Framework_TestCase
         );
 
         // Body has changed => id must be different
-        $msg->setBody(array('pizza' => 'Julianita'));
+        $msg->setText(array('pizza' => 'Julianita'));
 
         $this->assertNotSame(
             $attributes2['message_id'],
@@ -43,7 +43,7 @@ class RawTest extends \PHPUnit_Framework_TestCase
 
     public function testPackAttributesWithCustomHeaders()
     {
-        $msg = new Raw('burger.french_fries');
+        $msg = new Message('burger.french_fries');
         $msg->addHeader('X-Planche', 'gourdin')
             ->addHeader('X-Version', '1.0');
 
@@ -70,7 +70,7 @@ class RawTest extends \PHPUnit_Framework_TestCase
     {
         $newValue = 'Dark sysadmin';
 
-        $message = new Raw('burger.over.ponies');
+        $message = new Message('burger.over.ponies');
         $message->setAttribute($attributeName, $newValue);
 
         $attributes = $message->packAttributes();
@@ -93,28 +93,9 @@ class RawTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @dataProvider providerTestSetBody
-     */
-    public function testSetBody($body, $expected)
-    {
-        $message = new Raw('burger.over.ponies');
-        $message->setBody($body);
-
-        $this->assertSame($expected, $message->getFormattedBody());
-    }
-
-    public function providerTestSetBody()
-    {
-        return [
-            [array('line 1', 'line 2', 'line 3'), "line 1\nline 2\nline 3"],
-            ['Just a single string', 'Just a single string'],
-        ];
-    }
-
     public function testHeaders()
     {
-        $message = new Raw('burger.over.ponies');
+        $message = new Message('burger.over.ponies');
 
         $message->addHeader('meal', 'pizza');
         $message->addHeaders([
@@ -143,7 +124,7 @@ class RawTest extends \PHPUnit_Framework_TestCase
 
     public function testSetExpiration()
     {
-        $message = new Raw('burger.over.ponies');
+        $message = new Message('burger.over.ponies');
         $message->setExpiration(15);
 
         $this->assertSame("15000", $message->getAttribute('expiration'));
@@ -154,7 +135,7 @@ class RawTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnknownAttribute()
     {
-        $message = new Raw('burger.over.ponies');
+        $message = new Message('burger.over.ponies');
         $message->getAttribute("Does not exist");
     }
 
@@ -163,7 +144,7 @@ class RawTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildFromReadableMessage($newRoutingKey, $expectingRoutingKey)
     {
-        $readableMessage = new InMemoryJson('old.routing.key');
+        $readableMessage = new InMemory('old.routing.key');
         $readableMessage->addHeaders([
             'h1' => 'title',
             'h2' => 'subtitle',
@@ -171,9 +152,9 @@ class RawTest extends \PHPUnit_Framework_TestCase
         ]);
         $readableMessage->setAuthor($jeanPierre = 'Jean-Pierre Fortune');
         $readableMessage->setAttribute('content_encoding', $iso = 'ISO-66642-1');
-        $readableMessage->setBody('This is fine');
+        $readableMessage->setText('This is fine');
 
-        $message = Raw::buildFromReadableMessage($readableMessage, $newRoutingKey);
+        $message = Message::buildFromReadableMessage($readableMessage, $newRoutingKey);
 
         $this->assertTrue($message instanceof WritableMessage);
         $this->assertSame($expectingRoutingKey, $message->getRoutingKey());

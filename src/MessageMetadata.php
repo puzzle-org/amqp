@@ -2,7 +2,7 @@
 
 namespace Puzzle\AMQP;
 
-interface Message
+interface MessageMetadata
 {
     const
         TRANSIENT = 1,
