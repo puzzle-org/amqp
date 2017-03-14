@@ -3,6 +3,7 @@
 namespace Puzzle\AMQP\Messages;
 
 use Puzzle\AMQP\WritableMessage;
+use Puzzle\AMQP\Messages\Bodies\Text;
 
 class MessageTest extends \PHPUnit_Framework_TestCase
 {
@@ -144,15 +145,14 @@ class MessageTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildFromReadableMessage($newRoutingKey, $expectingRoutingKey)
     {
-        $readableMessage = new InMemory('old.routing.key');
-        $readableMessage->addHeaders([
+        $readableMessage = InMemory::build('old.routing.key', new Text('This is fine'), [
             'h1' => 'title',
             'h2' => 'subtitle',
             'h3' => 'insignificant title',
+            'author' => $jeanPierre = 'Jean-Pierre Fortune',
+        ], [
+            'content_encoding' => $iso = 'ISO-66642-1',
         ]);
-        $readableMessage->setAuthor($jeanPierre = 'Jean-Pierre Fortune');
-        $readableMessage->setAttribute('content_encoding', $iso = 'ISO-66642-1');
-        $readableMessage->setText('This is fine');
 
         $message = Message::buildFromReadableMessage($readableMessage, $newRoutingKey);
 
@@ -161,7 +161,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
         $headers = $message->getHeaders();
         $this->assertSameArrayExceptOrder(
-            ['h1', 'h2', 'h3', 'author', 'message_datetime'],
+            ['h1', 'h2', 'h3', 'author', 'routing_key', 'app_id', 'message_datetime'],
             array_keys($headers)
         );
         $this->assertSame('subtitle', $headers['h2']);
