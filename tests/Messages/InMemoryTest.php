@@ -2,18 +2,17 @@
 
 namespace Puzzle\AMQP\Messages;
 
+use Puzzle\AMQP\ReadableMessage;
+
 class InMemoryTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetRoutingKeyFromHeaders()
+    public function testGetRoutingKeyFromHeader()
     {
         $routingKey = 'pony.under.burgers';
-        $message = new InMemory($routingKey);
-        
-        $this->assertNull($message->getRoutingKeyFromHeader());
-        
-        // Simulate client publishing that add this header
-        $message->addHeader('routing_key', $routingKey);
-        
+        $message = InMemory::build($routingKey);
+
+        $this->assertTrue($message instanceof ReadableMessage);
         $this->assertSame($routingKey, $message->getRoutingKeyFromHeader());
+        $this->assertSame($routingKey, $message->getRoutingKey());
     }
 }

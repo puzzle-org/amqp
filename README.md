@@ -71,6 +71,7 @@ Changelog
  - Message interface has been renamed into MessageMetadata
  - Some specific features removed from WorkerContext
  - Getter for specific headers removed from MessageAdapter
+ - Message InMemory implementation (for unit testing purpose) has been changed
 
 **1.x -> 2.x**
 

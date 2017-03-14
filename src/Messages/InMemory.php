@@ -2,47 +2,36 @@
 
 namespace Puzzle\AMQP\Messages;
 
-use Puzzle\AMQP\ReadableMessage;
-use Puzzle\AMQP\WritableMessage;
+use Puzzle\AMQP\Workers\MessageAdapter;
+use Puzzle\AMQP\Messages\Bodies\NullBody;
 
-class InMemory extends Message implements ReadableMessage, WritableMessage
+class InMemory
 {
-    public function getBody()
+    /**
+     * @return \Puzzle\AMQP\ReadableMessage
+     */
+    public static function build($routingKey, Body $body = null, array $additionalHeaders = [], array $additionalAttributes = [])
     {
-        return $this->body;
-    }
-    
-    public function getRawBody()
-    {
-        return $this->getFormattedBody();
-    }
-
-    public function getDecodedBody()
-    {
-        return $this->body->decode();
-    }
-
-    public function getAttributes()
-    {
-        return $this->packAttributes();
-    }
-
-    public function isLastRetry($retryOccurence = \Puzzle\AMQP\Consumers\Retry::DEFAULT_RETRY_OCCURENCE)
-    {
-        $retryHeader = $this->getHeader(\Puzzle\AMQP\Consumers\Retry::DEFAULT_RETRY_HEADER);
-
-        return (!empty($retryHeader) && (int) $retryHeader === $retryOccurence);
-    }
-
-    public function getRoutingKeyFromHeader()
-    {
-        $headers = $this->getHeaders();
-
-        if(! array_key_exists('routing_key', $headers))
+        if(! $body instanceof Body)
         {
-            return null;
+            $body = new NullBody();
         }
 
-        return $headers['routing_key'];
+        $attributes = array_merge([
+            'content_type' => $body->getContentType(),
+            'routing_key' => $routingKey,
+            'content_encoding' => 'utf8',
+            'message_id' => uniqid(true),
+        ], $additionalAttributes);
+
+        $attributes['headers'] = array_merge([
+            'routing_key' => $routingKey,
+            'app_id' => 'memory',
+            'message_datetime' => date('Y-m-d H:i:s'),
+        ], $additionalHeaders);
+
+        return new MessageAdapter(
+            new \Swarrot\Broker\Message($body->format(), $attributes)
+        );
     }
 }
