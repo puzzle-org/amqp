@@ -11,22 +11,22 @@ class NullBody implements Body
     {
         return null;
     }
-    
+
     public function footprint()
     {
         return null;
     }
-    
+
     public function getContentType()
     {
         return ContentType::EMPTY_CONTENT;
     }
-    
+
     public function __toString()
     {
         return '';
     }
-    
+
     public function decode()
     {
         return null;
