@@ -12,14 +12,16 @@ trait BodySetter
     {
         $this->setBody(new Text($text));
     }
-    
+
     public function setJson(array $content)
     {
         $this->setBody(new Json($content));
     }
-    
+
     public function setBinary($content)
     {
         $this->setBody(new Binary($content));
     }
+
+    abstract public function setBody(Body $body);
 }
