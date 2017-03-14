@@ -39,7 +39,7 @@ require '../vendor/autoload.php';
 
 use Puzzle\Configuration\Memory;
 use Puzzle\AMQP\Clients\Pecl;
-use Puzzle\AMQP\Messages\Json;
+use Puzzle\AMQP\Messages\Message;
 
 $configuration = new Memory(array(
     'amqp/broker/host' => 'myRabbit',
@@ -51,8 +51,8 @@ $configuration = new Memory(array(
 
 $client = new Pecl($configuration);
 
-$message = new Json('my.routing.key');
-$message->setBody([
+$message = new Message('my.routing.key');
+$message->setJson([
     'key' => 'value',
     'key2' => 'value2',
 ]);
@@ -68,7 +68,9 @@ Changelog
 
  - Message hooks has been removed
  - Raw & Json implementations of WritableMessage has been replaced by Message + implementations of Body (Text, Json, Binary)
- - Message interface has been renamed in MessageMetadata
+ - Message interface has been renamed into MessageMetadata
+ - Some specific features removed from WorkerContext
+ - Getter for specific headers removed from MessageAdapter
 
 **1.x -> 2.x**
 
