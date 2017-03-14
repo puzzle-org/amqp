@@ -23,7 +23,14 @@ class InMemory implements Client
 
     public function publish($exchangeName, WritableMessage $message)
     {
+        $this->updateMessageAttributes($message);
         $this->saveMessage($exchangeName, $message);
+    }
+
+    private function updateMessageAttributes(WritableMessage $message)
+    {
+        $message->setAttribute('app_id', 'memory');
+        $message->addHeader('routing_key', $message->getRoutingKey());
     }
 
     public function getQueue($queueName)
