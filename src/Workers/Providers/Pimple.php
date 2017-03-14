@@ -24,7 +24,7 @@ class Pimple implements WorkerProvider
         {
             $workerContext = $this->container[$key];
         }
-        
+
         return $workerContext;
     }
 
@@ -39,10 +39,10 @@ class Pimple implements WorkerProvider
     public function listAll()
     {
         $workers = $this->extractWorkers();
-        
+
         return $this->listWorkers($workers);
     }
-    
+
     public function listWithRegexFilter($workerNamePattern)
     {
         $workers = $this->extractWorkers();
@@ -51,28 +51,25 @@ class Pimple implements WorkerProvider
 
         return $this->listWorkers($workers);
     }
-    
+
     private function listWorkers(array $extractedWorkers)
     {
         $workers = array();
-        
+
         foreach($extractedWorkers as $worker)
         {
             $key = $this->formatWorkerName($worker);
             $worker = $this->container[$worker];
-        
+
             if($worker instanceof WorkerContext)
             {
                 $workers[$key] = [
                     'queue' => $worker->getQueue(),
                     'description' => $worker->getDescription(),
-                    'instances' => $worker->getInstances(),
-                    'servers' => $worker->getServers(),
-                    'isDeploymentAllowed' => $worker->isDeploymentAllowed(),
                 ];
             }
         }
-        
+
         return $workers;
     }
 

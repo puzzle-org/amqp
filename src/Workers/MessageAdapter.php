@@ -2,7 +2,6 @@
 
 namespace Puzzle\AMQP\Workers;
 
-use Psr\Log\InvalidArgumentException;
 use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Messages\MessageDecoder;
 
@@ -37,7 +36,7 @@ class MessageAdapter implements ReadableMessage
     {
         return $this->getAttribute('headers');
     }
-    
+
     public function getBody()
     {
         return $this->body;
@@ -66,7 +65,7 @@ class MessageAdapter implements ReadableMessage
             return $messageProperties[$attributeName];
         }
 
-        throw new InvalidArgumentException(sprintf('Property "%s" is unknown or is not a message property', $attributeName));
+        throw new \InvalidArgumentException(sprintf('Property "%s" is unknown or is not a message property', $attributeName));
     }
 
     public function __toString()
@@ -76,21 +75,6 @@ class MessageAdapter implements ReadableMessage
             'body' => (string) $this->body,
             'attributes' => $this->message->getProperties(),
         ));
-    }
-    
-    public function getService()
-    {
-        return $this->getHeader('service');
-    }
-
-    public function getAction()
-    {
-        return $this->getHeader('action');
-    }
-
-    public function getAuthor()
-    {
-        return $this->getHeader('author');
     }
 
     private function getHeader($headerName)
@@ -113,18 +97,11 @@ class MessageAdapter implements ReadableMessage
     {
         $retryHeader = $this->getHeader(\Puzzle\AMQP\Consumers\Retry::DEFAULT_RETRY_HEADER);
 
-        return (!empty($retryHeader) && (int) $retryHeader === $retryOccurence);
+        return ($retryHeader !== null && (int) $retryHeader >= $retryOccurence);
     }
 
     public function getRoutingKeyFromHeader()
     {
-        $headers = $this->getHeaders();
-
-        if(! array_key_exists('routing_key', $headers))
-        {
-            return null;
-        }
-
-        return $headers['routing_key'];
+        return $this->getHeader('routing_key');
     }
 }
