@@ -43,6 +43,11 @@ class PrefixedQueueNameClientTest extends \PHPUnit_Framework_TestCase
                 'queueName' => 'poney',
                 'expected' => 'poney',
             ],
+            'spaces' => [
+                'prefix' => "         \r\n  poney     \t     ",
+                'queueName' => 'burger',
+                'expected' => 'poney.burger',
+            ]
         ];
     }
 

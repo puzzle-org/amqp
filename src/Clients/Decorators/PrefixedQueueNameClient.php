@@ -51,6 +51,6 @@ class PrefixedQueueNameClient implements Client
 
         $queueNameParts[] = $queueName;
 
-        return trim(implode(self::DELIMITER, $queueNameParts));
+        return implode(self::DELIMITER, $queueNameParts);
     }
 }
