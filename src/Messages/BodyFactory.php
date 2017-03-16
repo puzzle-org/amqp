@@ -2,7 +2,6 @@
 
 namespace Puzzle\AMQP\Messages;
 
-use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Messages\Bodies\Text;
 use Puzzle\AMQP\Messages\Bodies\Json;
 use Puzzle\AMQP\Messages\Bodies\Binary;
@@ -10,7 +9,7 @@ use Puzzle\AMQP\Messages\Bodies\NullBody;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
-class MessageDecoder
+class BodyFactory
 {
     use LoggerAwareTrait;
     
@@ -19,24 +18,21 @@ class MessageDecoder
         $this->logger = new NullLogger();
     }
     
-    public function decode(ReadableMessage $message)
+    public function create($contentType, $contentAsTransported)
     {
-        $bodyContent = $message->getRawBody();
-        $contentType = $message->getContentType();
-        
         switch($contentType)
         {
             case ContentType::TEXT:
-                return new Text($bodyContent);
+                return new Text($contentAsTransported);
                 
             case ContentType::JSON:
                 $body = new Json();
-                $body->changeContentWithJson($bodyContent);
+                $body->changeContentWithJson($contentAsTransported);
                 
                 return $body;
                 
             case ContentType::BINARY:
-                return new Binary($bodyContent);
+                return new Binary($contentAsTransported);
         }
         
         $this->logger->warning(__CLASS__ . ": unknown content-type, use empty body");

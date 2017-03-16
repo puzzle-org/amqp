@@ -4,7 +4,7 @@ namespace Puzzle\AMQP\Messages\Bodies;
 
 class JsonTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetFormattedBody()
+    public function testGetContentInDifferentFormats()
     {
         $content = array(
             'planche' => 'gourdin',
@@ -15,10 +15,11 @@ class JsonTest extends \PHPUnit_Framework_TestCase
 
         $body = new Json($content);
 
-        $this->assertSame($content, json_decode($body->format(), true), 'Body must be encoded in json');
+        $this->assertSame($content, json_decode($body->asTransported(), true), 'Body must be encoded in json');
         
         $body->changeContent('yolo');
-        $this->assertSame(['yolo'], json_decode($body->format(), true), 'Body must be encoded in json');
+        $this->assertSame(['yolo'], json_decode($body->asTransported(), true), 'Body must be encoded in json');
+        $this->assertSame(['yolo'], $body->inOriginalFormat());
     }
 
     public function testSetBodyWithJson()
@@ -28,6 +29,6 @@ class JsonTest extends \PHPUnit_Framework_TestCase
         $body = new Json();
         $body->changeContentWithJson($content);
 
-        $this->assertSame($content, $body->format(), 'Body must not be encoded twice');
+        $this->assertSame($content, $body->asTransported(), 'Body must not be encoded twice');
     }
 }

@@ -74,9 +74,9 @@ class Message implements WritableMessage
         return $this->getAttribute('routing_key');
     }
 
-    public function getFormattedBody()
+    public function getBodyInTransportFormat()
     {
-        return $this->body->format();
+        return $this->body->asTransported();
     }
 
     public function setBody(Body $body)

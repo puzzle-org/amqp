@@ -31,7 +31,7 @@ class InMemory
         ], $additionalHeaders);
 
         return new MessageAdapter(
-            new \Swarrot\Broker\Message($body->format(), $attributes)
+            new \Swarrot\Broker\Message($body->asTransported(), $attributes)
         );
     }
 }

@@ -9,10 +9,18 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 {
     use \Puzzle\Assert\ArrayRelated;
 
+    public function testGetBodyInTransportFormat()
+    {
+        $msg = new Message('routing.key');
+        $msg->setJson($json = ['Fabrice' => 'Auzamandes']);
+        
+        $this->assertSame(json_encode($json), $msg->getBodyInTransportFormat());
+    }
+    
     public function testPackAttributes()
     {
         $msg = new Message('pony.black_unicorn');
-        $msg->setText(array('burger' => 'Mc Julian Deluxe'));
+        $msg->setJson(array('burger' => 'Mc Julian Deluxe'));
 
         $t = 42;
 

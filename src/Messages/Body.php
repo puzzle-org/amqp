@@ -5,9 +5,18 @@ namespace Puzzle\AMQP\Messages;
 interface Body
 {
     /**
-     * @return string formatted body
+     * In the same format than before message sending (before encoding in AMQP layer)
+     *
+     * @return mixed
      */
-    public function format();
+    public function inOriginalFormat();
+    
+    /**
+     * In the same format than in AMQP layer
+     *
+     * @return string
+     */
+    public function asTransported();
     
     /**
      * @return string
@@ -18,9 +27,4 @@ interface Body
      * @return string
      */
     public function __toString();
-    
-    /**
-     * @return mixed
-     */
-    public function decode();
 }

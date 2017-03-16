@@ -7,7 +7,12 @@ use Puzzle\AMQP\Messages\ContentType;
 
 class NullBody implements Body
 {
-    public function format()
+    public function inOriginalFormat()
+    {
+        return null;
+    }
+    
+    public function asTransported()
     {
         return null;
     }
@@ -20,10 +25,5 @@ class NullBody implements Body
     public function __toString()
     {
         return '';
-    }
-
-    public function decode()
-    {
-        return null;
     }
 }

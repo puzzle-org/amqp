@@ -27,4 +27,12 @@ class BinaryTest extends \PHPUnit_Framework_TestCase
         
         $this->assertNotEmpty((string) $sentMessage);
     }
+    
+    public function testGetContentInDifferentFormats()
+    {
+        $content = decbin(42516982);
+        $body = new Binary($content);
+        
+        $this->assertSame($content, $body->inOriginalFormat());
+    }
 }

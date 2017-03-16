@@ -6,7 +6,6 @@ use Puzzle\Configuration;
 use Puzzle\PrefixedConfiguration;
 
 use Puzzle\AMQP\Client;
-use Puzzle\AMQP\Workers\MessageAdapter;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Puzzle\AMQP\WritableMessage;
@@ -86,7 +85,7 @@ class Pecl implements Client
             $this->updateMessageAttributes($message);
 
             $ex->publish(
-                $message->getFormattedBody(),
+                $message->getBodyInTransportFormat(),
                 $message->getRoutingKey(),
                 $message->getFlags(),
                 $message->packAttributes()

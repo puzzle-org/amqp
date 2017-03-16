@@ -26,8 +26,7 @@ TEXT;
         $swarrotMessage = new Message($body, $properties);
         $message = new MessageAdapter($swarrotMessage);
 
-        $this->assertSame($body, $message->getRawBody(), 'Raw body must be unchanged');
-        $this->assertSame($body, $message->getDecodedBody(), 'Decoded body must be unchanged');
+        $this->assertSame($body, $message->getBodyInOriginalFormat(), 'Decoded body must be unchanged');
         $this->assertTrue($message->getBody() instanceof Text);
 
         $this->assertNotEmpty((string) $message);
@@ -62,8 +61,7 @@ TEXT;
         $swarrotMessage = new Message($body, $properties);
         $message = new MessageAdapter($swarrotMessage);
 
-        $this->assertSame($body, $message->getRawBody());
-        $this->assertSame($decodedBody, $message->getDecodedBody());
+        $this->assertSame($decodedBody, $message->getBodyInOriginalFormat());
         $this->assertTrue($message->getBody() instanceof Json);
 
         $this->assertNotEmpty((string) $message);
@@ -113,17 +111,6 @@ TEXT;
         $message = new MessageAdapter($swarrotMessage);
 
         $message->getAttribute('not_an_amqp_attribute');
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testGetFlags()
-    {
-        $message = new MessageAdapter(new Message('', [
-            'content_type' => ContentType::EMPTY_CONTENT
-        ]));
-        $message->getFlags();
     }
 
     /**
