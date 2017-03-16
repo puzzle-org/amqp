@@ -4,6 +4,7 @@ namespace Puzzle\AMQP\Workers;
 
 use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Messages\BodyFactory;
+use Puzzle\AMQP\WritableMessage;
 
 class MessageAdapter implements ReadableMessage
 {
@@ -39,11 +40,6 @@ class MessageAdapter implements ReadableMessage
     public function getHeaders()
     {
         return $this->getAttribute('headers');
-    }
-
-    public function getBody()
-    {
-        return $this->body;
     }
 
     public function getBodyInOriginalFormat()
@@ -97,5 +93,28 @@ class MessageAdapter implements ReadableMessage
     public function getRoutingKeyFromHeader()
     {
         return $this->getHeader('routing_key');
+    }
+
+    public function cloneIntoWritableMessage(WritableMessage $writable, $copyRoutingKey = false)
+    {
+        if($copyRoutingKey === true)
+        {
+            $writable->changeRoutingKey($this->getRoutingKey());
+        }
+
+        $writable->setBody($this->body);
+        $writable->addHeaders($this->getHeaders());
+
+        $attributes = $this->getAttributes();
+        $skippedAttributes = array('timestamp', 'headers', 'app_id', 'routing_key');
+        foreach($attributes as $attributeName => $value)
+        {
+            if(! in_array($attributeName, $skippedAttributes))
+            {
+                $writable->setAttribute($attributeName, $value);
+            }
+        }
+
+        return $writable;
     }
 }

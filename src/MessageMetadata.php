@@ -17,12 +17,7 @@ interface MessageMetadata
      * @return string
      */
     public function getContentType();
-    
-    /**
-     * @return string
-     */
-    public function getAppId();
-    
+
     /**
      * @return array
      */

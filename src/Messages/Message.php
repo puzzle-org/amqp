@@ -4,7 +4,6 @@ namespace Puzzle\AMQP\Messages;
 
 use Psr\Log\InvalidArgumentException;
 use Puzzle\AMQP\WritableMessage;
-use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Messages\Bodies\NullBody;
 
 class Message implements WritableMessage
@@ -25,6 +24,11 @@ class Message implements WritableMessage
         $this->canBeDroppedSilently = true;
         $this->headers = array();
         $this->initializeAttributes();
+        $this->changeRoutingKey($routingKey);
+    }
+
+    public function changeRoutingKey($routingKey)
+    {
         $this->setAttribute('routing_key', $routingKey);
     }
     
@@ -169,11 +173,6 @@ class Message implements WritableMessage
         return $this;
     }
 
-    public function getAppId()
-    {
-        return $this->getAttribute('app_id');
-    }
-
     public function getHeaders()
     {
         $attributes = $this->packAttributes();
@@ -208,32 +207,5 @@ class Message implements WritableMessage
         $this->setAttribute('expiration', (string) $ttlInMs);
 
         return $this;
-    }
-
-    public static function buildFromReadableMessage(ReadableMessage $readableMessage, $newRoutingKey = false)
-    {
-        $routingKey = $readableMessage->getRoutingKey();
-
-        if($newRoutingKey !== false)
-        {
-            $routingKey = $newRoutingKey;
-        }
-
-        $writableMessage = new static($routingKey);
-        $writableMessage->setBody($readableMessage->getBody());
-
-        $writableMessage->addHeaders($readableMessage->getHeaders());
-
-        $attributes = $readableMessage->getAttributes();
-        $skippedAttributes = array('timestamp', 'headers', 'app_id', 'routing_key');
-        foreach($attributes as $attributeName => $value)
-        {
-            if(! in_array($attributeName, $skippedAttributes))
-            {
-                $writableMessage->setAttribute($attributeName, $value);
-            }
-        }
-
-        return $writableMessage;
     }
 }
