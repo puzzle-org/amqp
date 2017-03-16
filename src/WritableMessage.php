@@ -9,12 +9,12 @@ interface WritableMessage extends MessageMetadata
     /**
      * @return int
      */
-    public function getFlags();
+    public function canBeDroppedSilently();
     
     /**
-     * @return void
+     * @return self
      */
-    public function setFlags($flags);
+    public function disallowSilentDropping();
     
     /**
      * @return mixed
