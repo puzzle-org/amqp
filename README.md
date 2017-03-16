@@ -61,8 +61,8 @@ $client->publish('myExchange', $message);
 ```
 
 
-Changelog
----------
+BC Breaks changelog
+-------------------
 
 **2.x -> 3.x**
 
