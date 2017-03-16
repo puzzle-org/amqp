@@ -6,7 +6,7 @@ use Puzzle\AMQP\Client;
 use Puzzle\AMQP\WritableMessage;
 use Psr\Log\LoggerAwareTrait;
 
-class PrefixedQueueNameClient implements Client
+class PrefixedQueueNamesClient implements Client
 {
     const
         DELIMITER = '.';
