@@ -18,14 +18,14 @@ class MockedClient extends InMemory implements Client
     }
 }
 
-class PrefixedQueueNamesClientTest extends \PHPUnit_Framework_TestCase
+class PrefixedQueuesClientTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider providerTestGetQueue
      */
     public function testGetQueue($prefix, $queueName, $expected)
     {
-        $client = new Decorators\PrefixedQueueNamesClient(new MockedClient(), $prefix);
+        $client = new Decorators\PrefixedQueuesClient(new MockedClient(), $prefix);
 
         $this->assertSame($expected, $client->getQueue($queueName));
     }
@@ -36,7 +36,7 @@ class PrefixedQueueNamesClientTest extends \PHPUnit_Framework_TestCase
             'nominal case' => [
                 'prefix' => 'burger',
                 'queueName' => 'poney',
-                'expected' => 'burger' . Decorators\PrefixedQueueNamesClient::DELIMITER . 'poney',
+                'expected' => 'burger' . Decorators\PrefixedQueuesClient::DELIMITER . 'poney',
             ],
             'empty prefix' => [
                 'prefix' => '',
@@ -53,7 +53,7 @@ class PrefixedQueueNamesClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExchange()
     {
-        $client = new Decorators\PrefixedQueueNamesClient(new MockedClient(), 'burger');
+        $client = new Decorators\PrefixedQueuesClient(new MockedClient(), 'burger');
 
         $this->assertSame('poney', $client->getExchange('poney'));
     }
@@ -61,7 +61,7 @@ class PrefixedQueueNamesClientTest extends \PHPUnit_Framework_TestCase
     public function testPublish()
     {
         $mockedClient = new MockedClient();
-        $client = new Decorators\PrefixedQueueNamesClient($mockedClient, 'pony');
+        $client = new Decorators\PrefixedQueuesClient($mockedClient, 'pony');
 
         $message = new Messages\Json('routing.key');
         $client->publish('burger', $message);
