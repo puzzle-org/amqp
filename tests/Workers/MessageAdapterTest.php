@@ -6,9 +6,14 @@ use Swarrot\Broker\Message;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\Bodies\Json;
 use Puzzle\AMQP\Messages\Bodies\Text;
+use Puzzle\AMQP\Messages\InMemory;
+use Puzzle\AMQP\WritableMessage;
+use Puzzle\Assert\ArrayRelated;
 
 class MessageAdapterTest extends \PHPUnit_Framework_TestCase
 {
+    use ArrayRelated;
+
     public function testText()
     {
         $body = <<<TEXT
@@ -27,7 +32,6 @@ TEXT;
         $message = new MessageAdapter($swarrotMessage);
 
         $this->assertSame($body, $message->getBodyInOriginalFormat(), 'Decoded body must be unchanged');
-        $this->assertTrue($message->getBody() instanceof Text);
 
         $this->assertNotEmpty((string) $message);
 
@@ -62,7 +66,6 @@ TEXT;
         $message = new MessageAdapter($swarrotMessage);
 
         $this->assertSame($decodedBody, $message->getBodyInOriginalFormat());
-        $this->assertTrue($message->getBody() instanceof Json);
 
         $this->assertNotEmpty((string) $message);
     }
@@ -167,5 +170,46 @@ TEXT;
         $this->assertFalse($message->isLastRetry());
         $this->assertFalse($message->isLastRetry(0));
         $this->assertFalse($message->isLastRetry(-1));
+    }
+
+    /**
+     * @dataProvider providerTestCloneIntoWritableMessage
+     */
+    public function testCloneIntoWritableMessage($copyOldRoutingKey, $expectingRoutingKey)
+    {
+        $readableMessage = InMemory::build('old.routing.key', new Text('This is fine'), [
+                'h1' => 'title',
+                'h2' => 'subtitle',
+                'h3' => 'insignificant title',
+                'author' => $jeanPierre = 'Jean-Pierre Fortune',
+            ], [
+                'content_encoding' => $iso = 'ISO-66642-1',
+        ]);
+
+        $message = $readableMessage->cloneIntoWritableMessage(
+            new \Puzzle\AMQP\Messages\Message('new.routing.key'),
+            $copyOldRoutingKey
+        );
+
+        $this->assertTrue($message instanceof WritableMessage);
+        $this->assertSame($expectingRoutingKey, $message->getRoutingKey());
+
+        $headers = $message->getHeaders();
+        $this->assertSameArrayExceptOrder(
+                ['h1', 'h2', 'h3', 'author', 'routing_key', 'app_id', 'message_datetime'],
+                array_keys($headers)
+                );
+        $this->assertSame('subtitle', $headers['h2']);
+        $this->assertSame($jeanPierre, $headers['author']);
+
+        $this->assertSame($iso, $message->getAttribute('content_encoding'));
+    }
+
+    public function providerTestCloneIntoWritableMessage()
+    {
+        return [
+            [true, 'old.routing.key'],
+            [false, 'new.routing.key'],
+        ];
     }
 }

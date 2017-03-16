@@ -50,4 +50,9 @@ interface WritableMessage extends MessageMetadata
      * @return void
      */
     public function setAttribute($attributeName, $value);
+
+    /**
+     * @return void
+     */
+    public function changeRoutingKey($routingKey);
 }
