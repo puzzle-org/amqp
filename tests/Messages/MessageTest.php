@@ -2,9 +2,6 @@
 
 namespace Puzzle\AMQP\Messages;
 
-use Puzzle\AMQP\WritableMessage;
-use Puzzle\AMQP\Messages\Bodies\Text;
-
 class MessageTest extends \PHPUnit_Framework_TestCase
 {
     use \Puzzle\Assert\ArrayRelated;
@@ -148,44 +145,6 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $message->getAttribute("Does not exist");
     }
 
-    /**
-     * @dataProvider providerTestBuildFromReadableMessage
-     */
-    public function testBuildFromReadableMessage($newRoutingKey, $expectingRoutingKey)
-    {
-        $readableMessage = InMemory::build('old.routing.key', new Text('This is fine'), [
-            'h1' => 'title',
-            'h2' => 'subtitle',
-            'h3' => 'insignificant title',
-            'author' => $jeanPierre = 'Jean-Pierre Fortune',
-        ], [
-            'content_encoding' => $iso = 'ISO-66642-1',
-        ]);
-
-        $message = Message::buildFromReadableMessage($readableMessage, $newRoutingKey);
-
-        $this->assertTrue($message instanceof WritableMessage);
-        $this->assertSame($expectingRoutingKey, $message->getRoutingKey());
-
-        $headers = $message->getHeaders();
-        $this->assertSameArrayExceptOrder(
-            ['h1', 'h2', 'h3', 'author', 'routing_key', 'app_id', 'message_datetime'],
-            array_keys($headers)
-        );
-        $this->assertSame('subtitle', $headers['h2']);
-        $this->assertSame($jeanPierre, $headers['author']);
-
-        $this->assertSame($iso, $message->getAttribute('content_encoding'));
-    }
-
-    public function providerTestBuildFromReadableMessage()
-    {
-        return [
-            [false, 'old.routing.key'],
-            ['new.routing.key', 'new.routing.key'],
-        ];
-    }
-    
     public function testSilentDropping()
     {
         $msg = new Message('my.key');

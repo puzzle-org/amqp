@@ -5,15 +5,15 @@ namespace Puzzle\AMQP;
 interface ReadableMessage extends MessageMetadata
 {
     /**
-     * @return \Puzzle\AMQP\Messages\Body
-     */
-    public function getBody();
-
-    /**
      * @return mixed
      */
     public function getBodyInOriginalFormat();
-    
+
+    /**
+     * @return string
+     */
+    public function getAppId();
+
     /**
      * @return array
      */
@@ -28,4 +28,9 @@ interface ReadableMessage extends MessageMetadata
      *  @return string
      */
     public function getRoutingKeyFromHeader();
+
+    /**
+     * @return WritableMessage
+     */
+    public function cloneIntoWritableMessage(WritableMessage $writable, $copyRoutingKey = false);
 }
