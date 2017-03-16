@@ -77,6 +77,7 @@ $configuration = new Memory(array(
     'amqp/broker/login' => 'guest',
     'amqp/broker/password' => 'guest',
     'amqp/broker/vhost' => '/',
+    'amqp/global/disallowSilentDropping' => false,
     'app/id' => 'myApp',
 ));
 
