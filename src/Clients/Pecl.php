@@ -87,7 +87,7 @@ class Pecl implements Client
             $ex->publish(
                 $message->getBodyInTransportFormat(),
                 $message->getRoutingKey(),
-                $message->getFlags(),
+                $this->computeMessageFlag(),
                 $message->packAttributes()
             );
         }
@@ -99,6 +99,19 @@ class Pecl implements Client
         }
 
         return true;
+    }
+    
+    private function computeMessageFlag()
+    {
+        $flag = AMQP_NOPARAM;
+        $disallowSilentDropping = $this->configuration->read('amqp/global/disallowSilentDropping', false);
+        
+        if($disallowSilentDropping === true || $message->canBeDroppedSilently() === false)
+        {
+            $flag = AMQP_MANDATORY;
+        }
+        
+        return $flag;
     }
 
     public function getExchange($exchangeName = null, $type = AMQP_EX_TYPE_TOPIC)

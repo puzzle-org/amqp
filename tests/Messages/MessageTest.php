@@ -185,4 +185,14 @@ class MessageTest extends \PHPUnit_Framework_TestCase
             ['new.routing.key', 'new.routing.key'],
         ];
     }
+    
+    public function testSilentDropping()
+    {
+        $msg = new Message('my.key');
+        
+        $this->assertTrue($msg->canBeDroppedSilently());
+        
+        $msg->disallowSilentDropping();
+        $this->assertFalse($msg->canBeDroppedSilently());
+    }
 }

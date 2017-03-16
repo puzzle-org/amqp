@@ -15,14 +15,14 @@ class Message implements WritableMessage
         $body;
     
     private
-        $flags,
+        $canBeDroppedSilently,
         $headers,
         $attributes;
 
     public function __construct($routingKey = '')
     {
         $this->body = new NullBody();
-        $this->flags = AMQP_NOPARAM;
+        $this->canBeDroppedSilently = true;
         $this->headers = array();
         $this->initializeAttributes();
         $this->setAttribute('routing_key', $routingKey);
@@ -63,6 +63,18 @@ class Message implements WritableMessage
         
         return uniqid(true);
     }
+    
+    public function canBeDroppedSilently()
+    {
+        return $this->canBeDroppedSilently;
+    }
+    
+    public function disallowSilentDropping()
+    {
+        $this->canBeDroppedSilently = false;
+        
+        return $this;
+    }
 
     public function getContentType()
     {
@@ -90,18 +102,6 @@ class Message implements WritableMessage
     private function updateContentType()
     {
         $this->attributes['content_type'] = $this->body->getContentType();
-    }
-    
-    public function getFlags()
-    {
-        return $this->flags;
-    }
-
-    public function setFlags($flags)
-    {
-        $this->flags = $flags;
-
-        return $this;
     }
 
     public function addHeader($headerName, $value)
@@ -197,7 +197,7 @@ class Message implements WritableMessage
             'routing_key' => $this->getRoutingKey(),
             'body' => (string) $this->body,
             'attributes' => $this->attributes,
-            'flags' => $this->flags
+            'can be dropped silently' => $this->canBeDroppedSilently
         ));
     }
 
