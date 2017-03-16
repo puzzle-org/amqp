@@ -20,11 +20,6 @@ class Binary implements Body
         return $this->body;
     }
     
-    public function footprint()
-    {
-        return uniqid(true);
-    }
-    
     public function changeContent($content)
     {
         $this->body = $content;

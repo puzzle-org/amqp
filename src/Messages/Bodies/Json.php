@@ -4,8 +4,9 @@ namespace Puzzle\AMQP\Messages\Bodies;
 
 use Puzzle\AMQP\Messages\Body;
 use Puzzle\AMQP\Messages\ContentType;
+use Puzzle\AMQP\Messages\Footprintable;
 
-class Json implements Body
+class Json implements Body, Footprintable
 {
     private
         $jsonAsArray;

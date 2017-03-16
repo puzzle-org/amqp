@@ -12,11 +12,6 @@ interface Body
     /**
      * @return string
      */
-    public function footprint();
-    
-    /**
-     * @return string
-     */
     public function getContentType();
     
     /**

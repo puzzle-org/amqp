@@ -30,12 +30,18 @@ class Message implements WritableMessage
     
     private function initializeAttributes()
     {
+        $bodyId = uniqid();
+        if($this->body instanceof Footprintable)
+        {
+            $bodyId = $this->body->footprint();
+        }
+        
         $this->attributes = array(
             'routing_key' => null,
             'content_type' => $this->getContentType(),
             'content_encoding' => 'utf8',
             'message_id' => function($timestamp) {
-                return sha1($this->getRoutingKey() . $timestamp . $this->body->footprint() . mt_rand());
+                return sha1($this->getRoutingKey() . $timestamp . $bodyId . mt_rand());
             },
             'user_id' => null,
             'app_id' => null,
