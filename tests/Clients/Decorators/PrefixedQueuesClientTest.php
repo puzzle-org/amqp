@@ -1,9 +1,9 @@
 <?php
 
-use Puzzle\AMQP\Clients\InMemory;
 use Puzzle\AMQP\Client;
-use Puzzle\AMQP\Clients\Decorators;
-use Puzzle\AMQP\Messages;
+use Puzzle\AMQP\Clients\InMemory;
+use Puzzle\AMQP\Clients\Decorators\PrefixedQueuesClient;
+use Puzzle\AMQP\Messages\Message;
 
 class MockedClient extends InMemory implements Client
 {
@@ -25,7 +25,7 @@ class PrefixedQueuesClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetQueue($prefix, $queueName, $expected)
     {
-        $client = new Decorators\PrefixedQueuesClient(new MockedClient(), $prefix);
+        $client = new PrefixedQueuesClient(new MockedClient(), $prefix);
 
         $this->assertSame($expected, $client->getQueue($queueName));
     }
@@ -36,7 +36,7 @@ class PrefixedQueuesClientTest extends \PHPUnit_Framework_TestCase
             'nominal case' => [
                 'prefix' => 'burger',
                 'queueName' => 'poney',
-                'expected' => 'burger' . Decorators\PrefixedQueuesClient::DELIMITER . 'poney',
+                'expected' => 'burger' . PrefixedQueuesClient::DELIMITER . 'poney',
             ],
             'empty prefix' => [
                 'prefix' => '',
@@ -53,7 +53,7 @@ class PrefixedQueuesClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExchange()
     {
-        $client = new Decorators\PrefixedQueuesClient(new MockedClient(), 'burger');
+        $client = new PrefixedQueuesClient(new MockedClient(), 'burger');
 
         $this->assertSame('poney', $client->getExchange('poney'));
     }
@@ -61,9 +61,9 @@ class PrefixedQueuesClientTest extends \PHPUnit_Framework_TestCase
     public function testPublish()
     {
         $mockedClient = new MockedClient();
-        $client = new Decorators\PrefixedQueuesClient($mockedClient, 'pony');
+        $client = new PrefixedQueuesClient($mockedClient, 'pony');
 
-        $message = new Messages\Json('routing.key');
+        $message = new Message('routing.key');
         $client->publish('burger', $message);
 
         $sentMessages = $mockedClient->getSentMessages();
