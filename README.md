@@ -31,6 +31,7 @@ id: myApp
 
 Usage
 -----
+## Sending a message
 
 ```php
 <?php
@@ -59,7 +60,68 @@ $message->setJson([
 
 $client->publish('myExchange', $message);
 ```
+## Consuming a message
 
+### Worker declaration :
+```php
+<?php
+
+use Puzzle\AMQP\Consumers;
+use Puzzle\AMQP\Clients;
+use Puzzle\AMQP\Workers\ProcessorInterfaceAdapter;
+use Puzzle\AMQP\Workers\WorkerContext;
+use Puzzle\Configuration\Memory;
+
+$configuration = new Memory(array(
+    'amqp/broker/host' => 'rabbitmq',
+    'amqp/broker/login' => 'guest',
+    'amqp/broker/password' => 'guest',
+    'amqp/broker/vhost' => '/',
+    'app/id' => 'myApp',
+));
+
+
+$amqpClient = new Clients\Pecl($configuration);
+
+$consumer = new Consumers\Simple();
+
+$workerContext = new WorkerContext(function() {
+        return new ExampleWorker();
+    },
+    $consumer,
+    'queue.name'
+);
+
+$processor = new ProcessorInterfaceAdapter($workerContext);
+
+$workerContext
+    ->getConsumer()
+    ->consume($processor, $amqpClient, $workerContext);
+```
+### Worker example :
+```php
+<?php
+
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
+use Puzzle\AMQP\ReadableMessage;
+use Puzzle\AMQP\Workers\Worker;
+
+class ExampleWorker implements Worker
+{
+    use LoggerAwareTrait;
+
+    public function __construct()
+    {
+        $this->logger = new NullLogger();
+    }
+
+    public function process(ReadableMessage $message)
+    {
+        // your code here
+    }
+}
+```
 
 BC Breaks changelog
 -------------------
