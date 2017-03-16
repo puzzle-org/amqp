@@ -3,7 +3,7 @@
 namespace Puzzle\AMQP\Workers;
 
 use Puzzle\AMQP\ReadableMessage;
-use Puzzle\AMQP\Messages\MessageDecoder;
+use Puzzle\AMQP\Messages\BodyFactory;
 
 class MessageAdapter implements ReadableMessage
 {
@@ -14,7 +14,11 @@ class MessageAdapter implements ReadableMessage
     public function __construct(\Swarrot\Broker\Message $message)
     {
         $this->message = $message;
-        $this->body = (new MessageDecoder())->decode($this);
+        
+        $this->body = (new BodyFactory())->create(
+            $this->getContentType(),
+            $message->getBody()
+        );
     }
 
     public function getRoutingKey()
@@ -42,19 +46,9 @@ class MessageAdapter implements ReadableMessage
         return $this->body;
     }
 
-    public function getDecodedBody()
+    public function getBodyInOriginalFormat()
     {
-        return $this->body->decode();
-    }
-
-    public function getRawBody()
-    {
-        return $this->message->getBody();
-    }
-
-    public function getFlags()
-    {
-        throw new \LogicException('Consumed messages have no flags');
+        return $this->body->inOriginalFormat();
     }
 
     public function getAttribute($attributeName)

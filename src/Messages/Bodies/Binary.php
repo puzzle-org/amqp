@@ -8,21 +8,21 @@ use Puzzle\AMQP\Messages\ContentType;
 class Binary implements Body
 {
     private
-        $body;
+        $content;
     
     public function __construct($content)
     {
         $this->changeContent($content);
     }
     
-    public function format()
+    public function inOriginalFormat()
     {
-        return $this->body;
+        return $this->content;
     }
     
-    public function changeContent($content)
+    public function asTransported()
     {
-        $this->body = $content;
+        return $this->content;
     }
     
     public function getContentType()
@@ -34,12 +34,12 @@ class Binary implements Body
     {
         return sprintf(
             '<binary stream of %d bytes>',
-            strlen($this->body)
+            strlen($this->content)
         );
     }
     
-    public function decode()
+    public function changeContent($content)
     {
-        return $this->body;
+        $this->content = $content;
     }
 }

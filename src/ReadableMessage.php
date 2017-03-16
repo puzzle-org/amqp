@@ -4,15 +4,28 @@ namespace Puzzle\AMQP;
 
 interface ReadableMessage extends MessageMetadata
 {
+    /**
+     * @return \Puzzle\AMQP\Messages\Body
+     */
     public function getBody();
+
+    /**
+     * @return mixed
+     */
+    public function getBodyInOriginalFormat();
     
-    public function getRawBody();
-    
-    public function getDecodedBody();
-    
+    /**
+     * @return array
+     */
     public function getAttributes();
     
+    /**
+     * @return boolean
+     */
     public function isLastRetry();
     
+    /**
+     *  @return string
+     */
     public function getRoutingKeyFromHeader();
 }

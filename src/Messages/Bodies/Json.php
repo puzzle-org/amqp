@@ -16,19 +16,29 @@ class Json implements Body, Footprintable
         $this->changeContent($content);
     }
     
-    public function format()
+    public function inOriginalFormat()
     {
-        return json_encode($this->jsonAsArray);
+        return $this->jsonAsArray;
     }
     
-    public function footprint()
+    public function asTransported()
     {
-        return sha1($this->format());
+        return json_encode($this->jsonAsArray);
     }
 
     public function getContentType()
     {
         return ContentType::JSON;
+    }
+    
+    public function __toString()
+    {
+        return $this->asTransported();
+    }
+    
+    public function footprint()
+    {
+        return sha1($this->asTransported());
     }
     
     public function changeContent($content)
@@ -44,15 +54,5 @@ class Json implements Body, Footprintable
     public function changeContentWithJson($json)
     {
         $this->jsonAsArray = json_decode($json, true);
-    }
-    
-    public function __toString()
-    {
-        return $this->format();
-    }
-    
-    public function decode()
-    {
-        return $this->jsonAsArray;
     }
 }

@@ -7,17 +7,18 @@ class TextTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider providerTestFormat
      */
-    public function testFormat($content, $expected)
+    public function testGetContentInDifferentFormats($content, $expected)
     {
         $body = new Text($content);
     
-        $this->assertSame($expected, $body->format());
+        $this->assertSame($expected, $body->asTransported());
+        $this->assertSame($expected, $body->inOriginalFormat());
     }
     
     public function providerTestFormat()
     {
         return [
-            [array('line 1', 'line 2', 'line 3'), "line 1\nline 2\nline 3"],
+            ["line 1\nline 2\nline 3", "line 1\nline 2\nline 3"],
             ['Just a single string', 'Just a single string'],
         ];
     }
@@ -29,17 +30,25 @@ class TextTest extends \PHPUnit_Framework_TestCase
     {
         $body = new Text($content);
         $body->append('Two');
-        $body->append(['Three', 'Four']);
+        $body->append('Three', 'Four');
         $body->append('Five');
         
-        $this->assertSame($expected, $body->format());
+        $this->assertSame($expected, $body->asTransported());
+        $this->assertSame($expected, $body->inOriginalFormat());
     }
     
     public function providerTestAppend()
     {
         return [
-            [array('Zero', 'One'), "Zero\nOne\nTwo\nThree\nFour\nFive"],
-            ['One', "One\nTwo\nThree\nFour\nFive"],
+            ["Zero\nOne", "Zero\nOneTwoThreeFourFive"],
+            ['One', "OneTwoThreeFourFive"],
         ];
+    }
+    
+    public function testFootprint()
+    {
+        $body = new Text("Cannot wait until the Serge Hanuque's talks !");
+        
+        $this->assertInternalType('string', $body->footprint());
     }
 }

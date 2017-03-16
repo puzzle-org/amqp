@@ -11,43 +11,21 @@ class Text implements Body, Footprintable
     private
         $content;
     
-    public function __construct($text)
+    public function __construct($text = '')
     {
         $this->changeText($text);
     }
     
-    public function format()
+    public function inOriginalFormat()
     {
-        return implode("\n", $this->content);
-    }
-    
-    public function footprint()
-    {
-        return sha1($this->format());
-    }
-    
-    public function changeText($text)
-    {
-        if(! is_array($text))
-        {
-            $text = array($text);
-        }
-        
-        $this->content = $text;
-    }
-    
-    public function append($text)
-    {
-        if(is_array($text))
-        {
-            $this->content = array_merge($this->content, $text);
-            
-            return;
-        }
-        
-        $this->content[] = $text;
+        return $this->content;
     }
 
+    public function asTransported()
+    {
+        return $this->content;
+    }
+    
     public function getContentType()
     {
         return ContentType::TEXT;
@@ -55,11 +33,24 @@ class Text implements Body, Footprintable
     
     public function __toString()
     {
-        return $this->format();
+        return $this->asTransported();
     }
     
-    public function decode()
+    public function footprint()
     {
-        return $this->format();
+        return sha1($this->asTransported());
+    }
+    
+    public function changeText($text)
+    {
+        $this->content = $text;
+    }
+    
+    public function append(...$text)
+    {
+        foreach($text as $part)
+        {
+            $this->content .= $part;
+        }
     }
 }

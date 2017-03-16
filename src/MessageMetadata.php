@@ -8,11 +8,28 @@ interface MessageMetadata
         TRANSIENT = 1,
         PERSISTENT = 2;
 
-    public function getFlags();
-
+    /**
+     * @return string
+     */
     public function getRoutingKey();
+    
+    /**
+     * @return string
+     */
     public function getContentType();
+    
+    /**
+     * @return string
+     */
     public function getAppId();
+    
+    /**
+     * @return array
+     */
     public function getHeaders();
+    
+    /**
+     * @return string
+     */
     public function getAttribute($attributeName);
 }
