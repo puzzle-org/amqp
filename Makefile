@@ -30,6 +30,9 @@ composer: composer.phar
 composer-install: composer.phar
 	php composer.phar install --ignore-platform-reqs
 
+composer-update: composer.phar
+	php composer.phar update --ignore-platform-reqs
+
 composer.phar:
 	curl -sS https://getcomposer.org/installer | php
 

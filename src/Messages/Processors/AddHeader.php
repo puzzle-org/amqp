@@ -2,17 +2,22 @@
 
 namespace Puzzle\AMQP\Messages\Processors;
 
-use Puzzle\AMQP\Messages\Processor;
 use Puzzle\AMQP\WritableMessage;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
+use Puzzle\AMQP\Messages\OnPublishProcessor;
 
-class AddHeader implements Processor
+class AddHeader implements OnPublishProcessor
 {
+    use LoggerAwareTrait;
+    
     private
         $headers;
     
     public function __construct(array $headers = [])
     {
         $this->headers = $headers;
+        $this->logger = new NullLogger();
     }
     
     public function addHeader($name, $value)

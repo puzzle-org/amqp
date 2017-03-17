@@ -5,6 +5,9 @@ namespace Puzzle\AMQP\Workers\Providers;
 use Pimple\Container;
 use Puzzle\AMQP\Workers\WorkerContext;
 use Puzzle\AMQP\Consumers\Simple;
+use Puzzle\AMQP\Messages\Processors\NullProcessor;
+use Puzzle\AMQP\Messages\Processor;
+use Puzzle\AMQP\Workers\WorkerProvider;
 
 class PimpleTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,6 +32,13 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
             $context->setDescription('Do nothing');
 
             return $context;
+        };
+        
+        $this->container[WorkerProvider::MESSAGE_PROCESSORS_SERVICE_KEY] = function () {
+            return [
+                new NullProcessor(),
+                new NullProcessor(),
+            ];
         };
     }
 
@@ -63,6 +73,28 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($context instanceof WorkerContext);
         $this->assertSame('some_queue', $context->getQueueName());
-
+    }
+    
+    public function testGetMessageProcessors()
+    {
+        $provider = new Pimple($this->container);
+        $processors = $provider->getMessageProcessors();
+        
+        $this->assertTrue(is_array($processors));
+        $this->assertCount(2, $processors);
+        
+        foreach($processors as $processor)
+        {
+            $this->assertTrue($processor instanceof Processor);
+        }
+    }
+    
+    public function testGetMessageProcessorsWhileNotDefined()
+    {
+        $provider = new Pimple(new Container());
+        $processors = $provider->getMessageProcessors();
+        
+        $this->assertTrue(is_array($processors));
+        $this->assertEmpty($processors);
     }
 }

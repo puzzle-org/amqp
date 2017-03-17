@@ -154,4 +154,13 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $msg->disallowSilentDropping();
         $this->assertFalse($msg->canBeDroppedSilently());
     }
+    
+    public function testAllowCompression()
+    {
+        $msg = new Message('my.key');
+        
+        $this->assertFalse($msg->isCompressionAllowed());
+        $msg->allowCompression();
+        $this->assertTrue($msg->isCompressionAllowed());
+    }
 }

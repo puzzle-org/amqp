@@ -8,6 +8,11 @@ interface ReadableMessage extends MessageMetadata
      * @return mixed
      */
     public function getBodyInOriginalFormat();
+    
+    /**
+     * @return mixed
+     */
+    public function getBodyAsTransported();
 
     /**
      * @return string
@@ -30,7 +35,7 @@ interface ReadableMessage extends MessageMetadata
     public function getRoutingKeyFromHeader();
 
     /**
-     * @return WritableMessage
+     * @return \Puzzle\AMQP\WritableMessage
      */
     public function cloneIntoWritableMessage(WritableMessage $writable, $copyRoutingKey = false);
 }

@@ -3,11 +3,9 @@
 namespace Puzzle\AMQP\Messages\Processors;
 
 use Puzzle\AMQP\Messages\Processor;
-use Puzzle\AMQP\WritableMessage;
+use Psr\Log\LoggerAwareTrait;
 
 class NullProcessor implements Processor
 {
-    public function onPublish(WritableMessage $message)
-    {
-    }
+    use LoggerAwareTrait;
 }
