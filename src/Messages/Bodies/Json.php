@@ -23,7 +23,7 @@ class Json implements Body, Footprintable
     
     public function asTransported()
     {
-        return json_encode($this->jsonAsArray);
+        return \Puzzle\Pieces\Json::encode($this->jsonAsArray);
     }
 
     public function getContentType()
@@ -53,6 +53,6 @@ class Json implements Body, Footprintable
     
     public function changeContentWithJson($json)
     {
-        $this->jsonAsArray = json_decode($json, true);
+        $this->jsonAsArray = \Puzzle\Pieces\Json::decode($json, true);
     }
 }
