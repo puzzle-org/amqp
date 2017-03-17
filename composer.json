@@ -20,7 +20,7 @@
     "require" : {
         "php": ">=5.6",
         "puzzle/configuration" : "~3.0",
-        "puzzle/pieces" : "~2.0",
+        "puzzle/pieces" : "~2.1",
         "symfony/console": "~3.2",
         "swarrot/swarrot": "~2.3",
         "knplabs/gaufrette": "~0.2",
