@@ -24,7 +24,7 @@ interface MessageMetadata
     public function getHeaders();
     
     /**
-     * @return string
+     * @return mixed
      */
     public function getAttribute($attributeName);
 }

@@ -87,7 +87,7 @@ class Pecl implements Client
             $ex->publish(
                 $message->getBodyInTransportFormat(),
                 $message->getRoutingKey(),
-                $this->computeMessageFlag(),
+                $this->computeMessageFlag($message),
                 $message->packAttributes()
             );
         }
@@ -101,7 +101,7 @@ class Pecl implements Client
         return true;
     }
     
-    private function computeMessageFlag()
+    private function computeMessageFlag(WritableMessage $message)
     {
         $flag = AMQP_NOPARAM;
         $disallowSilentDropping = $this->configuration->read('amqp/global/disallowSilentDropping', false);
