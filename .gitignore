@@ -13,4 +13,7 @@ coverage/
 
 # Custom env files
 .settings.mk
- 
+php_errors.log
+
+# Generated files
+config/*.yml
