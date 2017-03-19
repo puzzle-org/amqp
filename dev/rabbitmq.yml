@@ -1,0 +1,17 @@
+/:
+    parameters:
+        with_dl: false # If true, all queues will have a dl and the corresponding mapping with the exchange "dl"
+        with_unroutable: true # If true, all exchange will be declared with an unroutable config
+
+    exchanges:
+        puzzle:
+            type: topic
+            durable: true
+
+    queues:
+        test_1:
+            durable: true
+            bindings:
+                - 
+                    exchange: puzzle
+                    routing_key: "#"

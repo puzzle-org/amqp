@@ -11,3 +11,6 @@ vendor/
 # Code coverage report
 coverage/
 
+# Custom env files
+.settings.mk
+ 

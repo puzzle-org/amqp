@@ -35,5 +35,6 @@ remove-deps:
 	rm -rf vendor
 
 -include phpunit.mk
+include docker/dev.mk
 
 .PHONY: composer composer-install clean remove-deps
