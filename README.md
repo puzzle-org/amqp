@@ -24,6 +24,8 @@ broker:
     login: guest
     password: guest
     vhost: /
+global:
+    disallowSilentDropping: false
 
 # app.yml
 id: myApp
@@ -77,7 +79,6 @@ $configuration = new Memory(array(
     'amqp/broker/login' => 'guest',
     'amqp/broker/password' => 'guest',
     'amqp/broker/vhost' => '/',
-    'amqp/global/disallowSilentDropping' => false,
     'app/id' => 'myApp',
 ));
 
