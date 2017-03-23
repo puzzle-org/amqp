@@ -1,4 +1,4 @@
-FROM php:7.1-cli
+FROM php:5.6-cli
 
 RUN echo 'APT::Install-Recommends "0";' >>/etc/apt/apt.conf.d/99-recommends && \
     echo 'APT::Install-Suggests "0";' >>/etc/apt/apt.conf.d/99-suggests
@@ -12,7 +12,7 @@ RUN apt-get update && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/*
 
-ENV RABBITMQ_VERSION 0.7.1
+ENV RABBITMQ_VERSION 0.8.0
 
 RUN cd /tmp && \
     curl --stderr - -L -O https://github.com/alanxz/rabbitmq-c/releases/download/v${RABBITMQ_VERSION}/rabbitmq-c-${RABBITMQ_VERSION}.tar.gz && \
