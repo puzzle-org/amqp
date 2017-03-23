@@ -95,10 +95,7 @@ $workerContext = new WorkerContext(function() {
 );
 
 $processor = new ProcessorInterfaceAdapter($workerContext);
-
-$workerContext
-    ->getConsumer()
-    ->consume($processor, $amqpClient, $workerContext);
+$consumer->consume($processor, $amqpClient, $workerContext);
 ```
 ### Worker example :
 ```php
