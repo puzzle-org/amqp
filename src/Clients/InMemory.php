@@ -4,9 +4,7 @@ namespace Puzzle\AMQP\Clients;
 
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\WritableMessage;
-use Puzzle\AMQP\Messages\InMemoryJson;
 use Psr\Log\NullLogger;
-use Puzzle\AMQP\Collections;
 
 class InMemory implements Client
 {
