@@ -92,10 +92,7 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
      */
     public function theMessageIsATextOne()
     {
-        $firstMessage = $this->consumedMessages[0];
-        
-        \PHPUnit_Framework_Assert::assertSame($firstMessage->getRoutingKeyFromHeader(), self::TEXT_ROUTING_KEY);
-        \PHPUnit_Framework_Assert::assertSame($firstMessage->getContentType(), ContentType::TEXT);
+        $this->theMessageIs(self::TEXT_ROUTING_KEY, ContentType::TEXT);
     }
     
     /**
@@ -103,10 +100,15 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
      */
     public function theMessageIsAJsonOne()
     {
+        $this->theMessageIs(self::JSON_ROUTING_KEY, ContentType::JSON);
+    }
+    
+    private function theMessageIs($routingKey, $contentType)
+    {
         $firstMessage = $this->consumedMessages[0];
         
-        \PHPUnit_Framework_Assert::assertSame($firstMessage->getRoutingKeyFromHeader(), self::JSON_ROUTING_KEY);
-        \PHPUnit_Framework_Assert::assertSame($firstMessage->getContentType(), ContentType::JSON);
+        \PHPUnit_Framework_Assert::assertSame($firstMessage->getRoutingKeyFromHeader(), $routingKey);
+        \PHPUnit_Framework_Assert::assertSame($firstMessage->getContentType(), $contentType);
     }
     
     /**
