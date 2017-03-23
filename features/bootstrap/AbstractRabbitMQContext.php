@@ -1,5 +1,7 @@
 <?php
 
+namespace Puzzle\AMQP\Contexts;
+
 use Behat\Behat\Context\Context;
 use Puzzle\Configuration\Yaml;
 use Gaufrette\Filesystem;

@@ -14,10 +14,8 @@
     ],
     "autoload" : {
         "psr-4" : {
-            "Puzzle\\AMQP\\" : "src"
-        },
-        "psr-0": {
-            "": "features/bootstrap"
+            "Puzzle\\AMQP\\" : "src",
+            "Puzzle\\AMQP\\Contexts\\": "features/bootstrap"
         }
     },
     "require" : {

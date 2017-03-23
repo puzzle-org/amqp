@@ -1,5 +1,7 @@
 <?php
 
+namespace Puzzle\AMQP\Contexts;
+
 use Puzzle\AMQP\Messages\Message;
 use Puzzle\AMQP\Messages\Bodies\Json;
 
