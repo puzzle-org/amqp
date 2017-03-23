@@ -14,6 +14,9 @@ class Pecl implements Client
 {
     use LoggerAwareTrait;
 
+    const
+        DEFAULT_PORT = 5672;
+
     private
         $applicationId,
         $configuration,
@@ -38,6 +41,7 @@ class Pecl implements Client
             $connection->setHost($configuration->readRequired('host'));
             $connection->setLogin($configuration->readRequired('login'));
             $connection->setPassword($configuration->readRequired('password'));
+            $connection->setPort($configuration->read('port', self::DEFAULT_PORT));
 
             $vhost = $configuration->read('vhost', null);
             if($vhost !== null)
