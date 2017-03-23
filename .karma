@@ -1,5 +1,6 @@
 sourcePath:
  - config
+ - docker
 formatters:
   yaml:
     <true>: "true"

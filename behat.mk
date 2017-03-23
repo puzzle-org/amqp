@@ -1,4 +1,4 @@
-RMQ_PORT=5672
+RMQ_PORT=15672
 RMQ_VHOST=behat
 RMQ_USER=guest
 
@@ -21,10 +21,10 @@ wait:
 #------------------------------------------------------------------------------
 # Containers management
 #------------------------------------------------------------------------------
-up: 
+up: config
 	docker-compose -f docker/docker-compose.yml up -d
 
-build:
+build: config
 	docker-compose -f docker/docker-compose.yml build
 
 rebuild: build up
@@ -66,4 +66,4 @@ run-behat:
 debug-behat:
 	$(call cli_exec,vendor/bin/behat -v)
 
-full-test: config init run-behat down
+full-test: init run-behat down

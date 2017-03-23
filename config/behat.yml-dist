@@ -1,0 +1,10 @@
+default:
+    suites:
+        default:
+            paths:
+                - features/
+            contexts:
+                - SendContext:
+                    - config/
+                - ConsumeContext:
+                    - config/

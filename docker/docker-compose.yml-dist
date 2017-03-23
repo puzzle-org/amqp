@@ -14,4 +14,4 @@ services:
         hostname: rabbitmq-puzzle-amqp
         ports:
             - "${RMQ_PORT}:15672"
-            - "5672:5672"
+            - "<%amqp.port%>:5672"
