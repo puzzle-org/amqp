@@ -5,11 +5,17 @@ php:
     - 7.0
     - 7.1
 
+sudo: required
+
+services:
+  - docker
+
 before_script:
     - composer install --dev
 
 script:
     - vendor/bin/phpunit -c phpunit.xml --coverage-clover=coverage.xml
+    - make full-test
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)
