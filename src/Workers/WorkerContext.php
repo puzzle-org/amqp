@@ -11,11 +11,9 @@ class WorkerContext
 {
     use LoggerAwareTrait;
 
-    public
-        $queue,
-        $description;
-
     private
+        $queue,
+        $description,
         $consumer,
         $worker;
 
@@ -24,6 +22,7 @@ class WorkerContext
         $this->worker = $worker;
         $this->consumer = $consumer;
         $this->queue = $queue;
+        $this->description = null;
         $this->logger = new NullLogger();
     }
 

@@ -39,7 +39,10 @@ abstract class AbstractConsumer implements Consumer
 
     private function setMessageProvider()
     {
-        $this->messageProvider = new PeclPackageMessageProvider($this->client->getQueue($this->workerContext->queue));
+        $this->messageProvider = new PeclPackageMessageProvider(
+            $this->client->getQueue(
+                $this->workerContext->getQueue()
+        ));
     }
 
     protected function getBaseStack()

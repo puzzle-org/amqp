@@ -82,9 +82,6 @@ $configuration = new Memory(array(
     'app/id' => 'myApp',
 ));
 
-
-$amqpClient = new Clients\Pecl($configuration);
-
 $consumer = new Consumers\Simple();
 
 $workerContext = new WorkerContext(function() {
@@ -94,8 +91,11 @@ $workerContext = new WorkerContext(function() {
     'queue.name'
 );
 
-$processor = new ProcessorInterfaceAdapter($workerContext);
-$consumer->consume($processor, $amqpClient, $workerContext);
+$consumer->consume(
+    new ProcessorInterfaceAdapter($workerContext),
+    new Clients\Pecl($configuration),
+    $workerContext
+);
 ```
 ### Worker example :
 ```php
