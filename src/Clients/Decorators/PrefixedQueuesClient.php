@@ -5,6 +5,7 @@ namespace Puzzle\AMQP\Clients\Decorators;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\WritableMessage;
 use Psr\Log\LoggerAwareTrait;
+use Puzzle\AMQP\Messages\Processor;
 
 class PrefixedQueuesClient implements Client
 {
@@ -52,5 +53,10 @@ class PrefixedQueuesClient implements Client
         $queueNameParts[] = $queueName;
 
         return implode(self::DELIMITER, $queueNameParts);
+    }
+    
+    public function addMessageProcessor(Processor $processor)
+    {
+        return $this->client->addMessageProcessor($processor);
     }
 }

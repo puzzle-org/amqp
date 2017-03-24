@@ -22,7 +22,7 @@ interface WritableMessage extends MessageMetadata
     public function getBodyInTransportFormat();
     
     /**
-     * @return void
+     * @return self
      */
     public function setBody(Body $body);
 
@@ -32,14 +32,19 @@ interface WritableMessage extends MessageMetadata
     public function setExpiration($expirationInSeconds);
 
     /**
-     * @return void
+     * @return self
      */
     public function addHeader($headerName, $value);
 
     /**
-     * @return void
+     * @return self
      */
     public function addHeaders(array $headers);
+    
+    /**
+     * @return self
+     */
+    public function setAuthor($author);
 
     /**
      * @return void
@@ -47,7 +52,7 @@ interface WritableMessage extends MessageMetadata
     public function packAttributes($timestamp = false);
     
     /**
-     * @return void
+     * @return self
      */
     public function setAttribute($attributeName, $value);
 
