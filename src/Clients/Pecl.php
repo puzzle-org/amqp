@@ -9,10 +9,13 @@ use Puzzle\AMQP\Client;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Puzzle\AMQP\WritableMessage;
+use Puzzle\AMQP\Clients\Processors\MessageProcessorAware;
 
 class Pecl implements Client
 {
-    use LoggerAwareTrait;
+    use
+        LoggerAwareTrait,
+        MessageProcessorAware;
 
     const
         DEFAULT_PORT = 5672;
@@ -139,6 +142,8 @@ class Pecl implements Client
     {
         $message->setAttribute('app_id', $this->applicationId);
         $message->addHeader('routing_key', $message->getRoutingKey());
+
+        $this->onPublish($message);
     }
 
     public function getQueue($queueName)

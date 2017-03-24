@@ -5,6 +5,7 @@ namespace Puzzle\AMQP\Clients\Decorators;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\WritableMessage;
 use Psr\Log\LoggerAwareTrait;
+use Puzzle\AMQP\Messages\Processor;
 
 class PrefixedExchangesClient implements Client
 {
@@ -56,5 +57,10 @@ class PrefixedExchangesClient implements Client
         return $this->client->getExchange(
             $this->computeExchangeName($exchangeName)
         );
+    }
+
+    public function addMessageProcessor(Processor $processor)
+    {
+        return $this->client->addMessageProcessor($processor);
     }
 }

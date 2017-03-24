@@ -3,6 +3,7 @@
 namespace Puzzle\AMQP;
 
 use Psr\Log\LoggerAwareInterface;
+use Puzzle\AMQP\Messages\Processor;
 
 interface Client extends LoggerAwareInterface
 {
@@ -20,4 +21,9 @@ interface Client extends LoggerAwareInterface
      * @return \AMQPExchange
      */
     public function getExchange($exchangeName);
+
+    /**
+     * @return self
+     */
+    public function addMessageProcessor(Processor $processor);
 }

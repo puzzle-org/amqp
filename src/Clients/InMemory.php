@@ -5,10 +5,13 @@ namespace Puzzle\AMQP\Clients;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\WritableMessage;
 use Psr\Log\NullLogger;
+use Puzzle\AMQP\Clients\Processors\MessageProcessorAware;
 
 class InMemory implements Client
 {
-    use \Psr\Log\LoggerAwareTrait;
+    use
+        \Psr\Log\LoggerAwareTrait,
+        MessageProcessorAware;
 
     private
         $sentMessages;
@@ -29,6 +32,8 @@ class InMemory implements Client
     {
         $message->setAttribute('app_id', 'memory');
         $message->addHeader('routing_key', $message->getRoutingKey());
+        
+        $this->onPublish($message);
     }
 
     public function getQueue($queueName)
