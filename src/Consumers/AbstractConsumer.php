@@ -41,7 +41,7 @@ abstract class AbstractConsumer implements Consumer
     {
         $this->messageProvider = new PeclPackageMessageProvider(
             $this->client->getQueue(
-                $this->workerContext->getQueue()
+                $this->workerContext->getQueueName()
         ));
     }
 

@@ -62,7 +62,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
         $context = $provider->getWorker('pony');
 
         $this->assertTrue($context instanceof WorkerContext);
-        $this->assertSame('some_queue', $context->getQueue());
+        $this->assertSame('some_queue', $context->getQueueName());
 
     }
 }
