@@ -64,7 +64,7 @@ class Pimple implements WorkerProvider
             if($worker instanceof WorkerContext)
             {
                 $workers[$key] = [
-                    'queue' => $worker->getQueue(),
+                    'queue' => $worker->getQueueName(),
                     'description' => $worker->getDescription(),
                 ];
             }

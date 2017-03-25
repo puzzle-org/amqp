@@ -12,16 +12,16 @@ class WorkerContext
     use LoggerAwareTrait;
 
     private
-        $queue,
+        $queueName,
         $description,
         $consumer,
         $worker;
 
-    public function __construct(\Closure $worker, Consumer $consumer, $queue)
+    public function __construct(\Closure $worker, Consumer $consumer, $queueName)
     {
         $this->worker = $worker;
         $this->consumer = $consumer;
-        $this->queue = $queue;
+        $this->queueName = $queueName;
         $this->description = null;
         $this->logger = new NullLogger();
     }
@@ -68,8 +68,8 @@ class WorkerContext
         return $this->description;
     }
 
-    public function getQueue()
+    public function getQueueName()
     {
-        return $this->queue;
+        return $this->queueName;
     }
 }
