@@ -14,7 +14,8 @@
     ],
     "autoload" : {
         "psr-4" : {
-            "Puzzle\\AMQP\\" : "src"
+            "Puzzle\\AMQP\\" : "src",
+            "Puzzle\\AMQP\\Contexts\\": "features/bootstrap"
         }
     },
     "require" : {
@@ -26,11 +27,20 @@
         "knplabs/gaufrette": "~0.2",
         "symfony/event-dispatcher": "~3.2"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/niktux/RabbitMQ-Management-API-Client"
+        }
+    ],
     "require-dev" : {
         "phpunit/phpunit" : "~5.7",
         "empi89/php-amqp-stubs": "dev-master",
         "puzzle/assert": "~1.0",
-        "pimple/pimple": "~3.0"
+        "pimple/pimple": "~3.0",
+        "odolbeau/rabbit-mq-admin-toolkit": "~3.0",
+        "behat/behat": "~3.3",
+        "alchemy/rabbitmq-management-client": "dev-retrieve-messages@dev"
     },
     "suggest": {
         "ext-amqp": "PECL AMQP extension is required"

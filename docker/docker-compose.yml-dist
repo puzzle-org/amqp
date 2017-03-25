@@ -1,0 +1,17 @@
+version: '2'
+services:
+    app-server:
+        build: images/apache
+        image: puzzle-amqp/app-server
+        container_name: puzzle-amqp-app-server
+        volumes:
+            - ..:/var/www/puzzle-amqp
+        links:
+            - rabbitmq
+    rabbitmq:
+        image: rabbitmq:3-management-alpine
+        container_name: puzzle-amqp-rabbitmq
+        hostname: rabbitmq-puzzle-amqp
+        ports:
+            - "${RMQ_PORT}:15672"
+            - "<%amqp.port%>:5672"

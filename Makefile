@@ -6,11 +6,17 @@ GROUP_ID=$(shell id -g)
 export USER_ID
 export GROUP_ID
 
+# Spread cli arguments for composer & phpunit
 ifneq (,$(filter $(firstword $(MAKECMDGOALS)),composer phpunit))
     CLI_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
     $(eval $(CLI_ARGS):;@:)
 endif
 
+#------------------------------------------------------------------------------
+# Composer
+#------------------------------------------------------------------------------
+
+# Add ignore platform reqs for composer install & update
 COMPOSER_ARGS=
 ifeq (composer, $(firstword $(MAKECMDGOALS)))
     ifneq (,$(filter install update,$(CLI_ARGS)))
@@ -34,6 +40,20 @@ clean: remove-deps
 remove-deps:
 	rm -rf vendor
 
--include phpunit.mk
+#------------------------------------------------------------------------------
+# Karma
+#------------------------------------------------------------------------------
+config: karma
+	./karma hydrate -e behat
 
-.PHONY: composer composer-install clean remove-deps
+karma:
+	$(eval LATEST_VERSION := $(shell curl -L -s -H 'Accept: application/json' https://github.com/niktux/karma/releases/latest | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/'))
+	@echo "Latest version of Karma is ${LATEST_VERSION}"
+	wget -O karma -q https://github.com/Niktux/karma/releases/download/${LATEST_VERSION}/karma.phar
+	chmod 0755 karma
+
+
+-include phpunit.mk
+-include behat.mk
+
+.PHONY: composer composer-install clean remove-deps config

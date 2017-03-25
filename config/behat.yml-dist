@@ -1,0 +1,10 @@
+default:
+    suites:
+        default:
+            paths:
+                - features/
+            contexts:
+                - Puzzle\AMQP\Contexts\SendContext:
+                    - config/
+                - Puzzle\AMQP\Contexts\ConsumeContext:
+                    - config/
