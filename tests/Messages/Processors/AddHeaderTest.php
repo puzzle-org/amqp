@@ -22,7 +22,7 @@ class AddHeaderTest extends \PHPUnit_Framework_TestCase
         $processor->addHeader('author', 'Lucien Pétochard');
         
         $client = new InMemory();
-        $client->addMessageProcessor($processor);
+        $client->appendMessageProcessor($processor);
         $client->publish('ex', $message);
         
         $this->assertSomeHeaders([
@@ -34,6 +34,33 @@ class AddHeaderTest extends \PHPUnit_Framework_TestCase
             // 'message_datetime' => random value, not checkable in unit tests
         ], $message);
     }
+    
+    public function testAppendOrder()
+    {
+        $message = new Message('my.key');
+        
+        $client = new InMemory();
+        $client->appendMessageProcessor(new AddHeader([
+            'Kimberley' => 'Tartines',
+        ]));
+        $client->appendMessageProcessor(new AddHeader([
+            'Eat' => 'me',
+        ]));
+        $client->appendMessageProcessor(new AddHeader([
+            'Kimberley' => 'Steaks',
+            'eAT' => 'you',
+        ]));
+        $client->publish('ex', $message);
+        
+        $this->assertSomeHeaders([
+            'routing_key' => 'my.key',
+            'Kimberley' => 'Tartines',
+            'Eat' => 'me',
+            'eAT' => 'you',
+             // 'message_datetime' => random value, not checkable in unit tests
+        ], $message);
+    }
+   
     
     private function assertSomeHeaders($expectedHeaders, WritableMessage $message)
     {

@@ -25,5 +25,5 @@ interface Client extends LoggerAwareInterface
     /**
      * @return self
      */
-    public function addMessageProcessor(Processor $processor);
+    public function appendMessageProcessor(Processor $processor);
 }

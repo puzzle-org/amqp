@@ -55,7 +55,7 @@ class PrefixedQueuesClient implements Client
         return implode(self::DELIMITER, $queueNameParts);
     }
     
-    public function addMessageProcessor(Processor $processor)
+    public function appendMessageProcessor(Processor $processor)
     {
         return $this->client->addMessageProcessor($processor);
     }

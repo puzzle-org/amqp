@@ -59,7 +59,7 @@ class PrefixedExchangesClient implements Client
         );
     }
 
-    public function addMessageProcessor(Processor $processor)
+    public function appendMessageProcessor(Processor $processor)
     {
         return $this->client->addMessageProcessor($processor);
     }

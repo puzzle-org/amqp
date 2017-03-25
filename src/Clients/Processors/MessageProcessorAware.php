@@ -10,7 +10,7 @@ trait MessageProcessorAware
     private
         $messageProcessors = [];
     
-    public function addMessageProcessor(Processor $processor)
+    public function appendMessageProcessor(Processor $processor)
     {
         $this->messageProcessors[] = $processor;
         
