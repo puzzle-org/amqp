@@ -48,7 +48,7 @@ class Retry extends AbstractConsumer
     {
         $options = array(
             'max_execution_time' => self::DEFAULT_MAX_EXECUTION_TIME,
-            'retry_key_pattern' => sprintf(self::RETRY_ROUTING_KEY_PATTERN, $workerContext->getQueue()),
+            'retry_key_pattern' => sprintf(self::RETRY_ROUTING_KEY_PATTERN, $workerContext->getQueueName()),
         );
 
         if(! empty($this->retries))
