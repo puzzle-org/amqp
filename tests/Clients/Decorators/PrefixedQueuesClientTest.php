@@ -1,11 +1,13 @@
 <?php
 
+namespace Puzzle\AMQP\Clients\Decorators;
+
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Clients\InMemory;
-use Puzzle\AMQP\Clients\Decorators\PrefixedQueuesClient;
 use Puzzle\AMQP\Messages\Message;
+use Puzzle\AMQP\Messages\Processors\NullProcessor;
 
-class MockedClient extends InMemory implements Client
+class MockedClientQueue extends InMemory implements Client
 {
     public function getQueue($queueName)
     {
@@ -25,7 +27,7 @@ class PrefixedQueuesClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetQueue($prefix, $queueName, $expected)
     {
-        $client = new PrefixedQueuesClient(new MockedClient(), $prefix);
+        $client = new PrefixedQueuesClient(new MockedClientQueue(), $prefix);
 
         $this->assertSame($expected, $client->getQueue($queueName));
     }
@@ -53,14 +55,14 @@ class PrefixedQueuesClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExchange()
     {
-        $client = new PrefixedQueuesClient(new MockedClient(), 'burger');
+        $client = new PrefixedQueuesClient(new MockedClientQueue(), 'burger');
 
         $this->assertSame('poney', $client->getExchange('poney'));
     }
 
     public function testPublish()
     {
-        $mockedClient = new MockedClient();
+        $mockedClient = new MockedClientQueue();
         $client = new PrefixedQueuesClient($mockedClient, 'pony');
 
         $message = new Message('routing.key');
@@ -72,5 +74,14 @@ class PrefixedQueuesClientTest extends \PHPUnit_Framework_TestCase
         $firstMessage = array_shift($sentMessages);
 
         $this->assertSame($message, $firstMessage['message']);
+    }
+    
+    public function testGetAppendProcessor()
+    {
+        $client = new PrefixedQueuesClient(new MockedClientQueue(), 'rainbow');
+        $client->appendMessageProcessor(new NullProcessor());
+        $this->assertTrue(
+            $client->publish('exchange', new Message('null'))
+        );
     }
 }

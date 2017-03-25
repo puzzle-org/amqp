@@ -57,6 +57,6 @@ class PrefixedQueuesClient implements Client
     
     public function appendMessageProcessor(Processor $processor)
     {
-        return $this->client->addMessageProcessor($processor);
+        return $this->client->appendMessageProcessor($processor);
     }
 }

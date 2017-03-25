@@ -26,6 +26,8 @@ class InMemory implements Client
     {
         $this->updateMessageAttributes($message);
         $this->saveMessage($exchangeName, $message);
+        
+        return true;
     }
 
     private function updateMessageAttributes(WritableMessage $message)

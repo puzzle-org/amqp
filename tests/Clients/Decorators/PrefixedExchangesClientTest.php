@@ -6,6 +6,7 @@ use Puzzle\AMQP\Clients\InMemory;
 use Psr\Log\NullLogger;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Messages\Message;
+use Puzzle\AMQP\Messages\Processors\NullProcessor;
 
 class MockedClient extends InMemory implements Client
 {
@@ -76,5 +77,14 @@ class PrefixedExchangesClientTest extends \PHPUnit_Framework_TestCase
     {
         $client = new PrefixedExchangesClient(new MockedClient(), 'rainbow');
         $this->assertSame('rainbow.pizza', $client->getExchange('pizza'));
+    }
+    
+    public function testGetAppendProcessor()
+    {
+        $client = new PrefixedExchangesClient(new MockedClient(), 'rainbow');
+        $client->appendMessageProcessor(new NullProcessor());
+        $this->assertTrue(
+            $client->publish('exchange', new Message('null'))
+        );
     }
 }
