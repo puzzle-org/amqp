@@ -24,7 +24,8 @@ coverage/
 php_errors.log
 
 # =============================================================================
-# Generated files
+# Configuration
 # =============================================================================
+karma
 config/*.yml
 docker/docker-compose.yml
