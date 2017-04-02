@@ -14,4 +14,11 @@ behat:
             bindings:
                 - 
                     exchange: puzzle
-                    routing_key: "#"
+                    routing_key: "normal.#"
+
+        test_zip:
+            durable: true
+            bindings:
+                -
+                    exchange: puzzle
+                    routing_key: "zip.#"

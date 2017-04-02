@@ -25,3 +25,10 @@ Scenario: Consuming many messages
     And one of the messages contains "Puzzle is great"
     And one of the messages contains "Puzzle is wonderful"
     And one of the messages contains the json '{"lastName":"Poteau", "firstName":"Alexis"}'
+
+Scenario: Consuming a compressed text message
+    Given The queue 'test_zip' contains the compressed text message "Puzzle is great"
+    When I consume all the messages in the queue 'test_zip'
+    Then I have consumed 1 message
+    And the message is an uncompressed text one
+    And the message contains "Puzzle is great"
