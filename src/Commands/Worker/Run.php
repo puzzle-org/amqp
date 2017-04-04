@@ -51,8 +51,7 @@ class Run extends Command
         {
             $output->writeln("Launching <info>$workerName</info>");
 
-            $processor = new ProcessorInterfaceAdapter($workerContext);
-            $processor->setEventDispatcher($this->eventDispatcher);
+            $processor = $this->createProcessor($workerContext);
 
             $this->eventDispatcher->dispatch('worker.run');
 
@@ -60,5 +59,17 @@ class Run extends Command
         }
 
         $output->writeln("<error>Worker $workerName not found</error>");
+    }
+
+    private function createProcessor(WorkerContext $workerContext)
+    {
+        $processor = new ProcessorInterfaceAdapter($workerContext);
+        $processor->setEventDispatcher($this->eventDispatcher);
+
+        $processor->setMessageProcessors(
+            $this->workerProvider->getMessageProcessors()
+        );
+
+        return $processor;
     }
 }

@@ -8,12 +8,14 @@ use Gaufrette\Filesystem;
 use Gaufrette\Adapter\Local;
 use RabbitMQ\Management\APIClient;
 use Puzzle\AMQP\Clients\Pecl;
+use Puzzle\AMQP\Messages\Processors\GZip;
 
 abstract class AbstractRabbitMQContext implements Context
 {
     const
-        TEXT_ROUTING_KEY = 'text.key',
-        JSON_ROUTING_KEY = 'json.key';
+        TEXT_ROUTING_KEY = 'normal.text.key',
+        JSON_ROUTING_KEY = 'normal.json.key',
+        COMPRESSED_ROUTING_KEY = 'zip.text.key';
     
     protected
         $api,
@@ -25,9 +27,11 @@ abstract class AbstractRabbitMQContext implements Context
     {
         $this->configuration = new Yaml(new Filesystem(new Local($path)));
         $this->exchange = 'puzzle';
-    
+
         $this->api = APIClient::factory(['host' => $this->host()]);
+
         $this->client = new Pecl($this->configuration);
+        $this->client->appendMessageProcessor(new GZip());
     }
     
     private function host()

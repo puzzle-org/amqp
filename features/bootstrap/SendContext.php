@@ -82,7 +82,6 @@ class SendContext extends AbstractRabbitMQContext
         \PHPUnit_Framework_Assert::assertSame($contentType, $message->properties['content_type']);
     }
     
-    
     private function assertMessagesInQueue($queue, $expectedNbMessages, $waitingSeconds = 11)
     {
         $nbMessages = $this->nbMessagesInQueue($queue);

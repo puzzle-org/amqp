@@ -2,12 +2,8 @@
 
 namespace Puzzle\AMQP\Messages;
 
-use Puzzle\AMQP\WritableMessage;
+use Psr\Log\LoggerAwareInterface;
 
-interface Processor
+interface Processor extends LoggerAwareInterface
 {
-    /**
-     * @return void
-     */
-    public function onPublish(WritableMessage $message);
 }

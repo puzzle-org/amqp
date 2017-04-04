@@ -5,25 +5,29 @@ namespace Puzzle\AMQP\Messages;
 use Psr\Log\InvalidArgumentException;
 use Puzzle\AMQP\WritableMessage;
 use Puzzle\AMQP\Messages\Bodies\NullBody;
+use Puzzle\Pieces\ConvertibleToString;
 
-class Message implements WritableMessage
+class Message implements WritableMessage, ConvertibleToString
 {
     use BodySetter;
     
-    protected
-        $body;
-    
     private
+        $body,
         $canBeDroppedSilently,
+        $allowCompression,
         $headers,
         $attributes;
 
     public function __construct($routingKey = '')
     {
         $this->body = new NullBody();
+        
         $this->canBeDroppedSilently = true;
+        $this->allowCompression = false;
+        
         $this->headers = array();
         $this->initializeAttributes();
+        
         $this->changeRoutingKey($routingKey);
     }
 
@@ -206,6 +210,18 @@ class Message implements WritableMessage
 
         $this->setAttribute('expiration', (string) $ttlInMs);
 
+        return $this;
+    }
+    
+    public function isCompressionAllowed()
+    {
+        return $this->allowCompression;
+    }
+    
+    public function allowCompression()
+    {
+        $this->allowCompression = true;
+        
         return $this;
     }
 }

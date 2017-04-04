@@ -12,6 +12,7 @@ use Psr\Log\NullLogger;
 use Puzzle\AMQP\Workers\ProcessorInterfaceAdapter;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\Bodies\Json;
+use Puzzle\AMQP\Messages\Processors\GZip;
 
 class ConsumeContext extends AbstractRabbitMQContext implements Worker
 {
@@ -72,6 +73,8 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
         );
         
         $processor = new ProcessorInterfaceAdapter($workerContext);
+        $processor->appendMessageProcessor(new GZip());
+
         $consumer->consume($processor, $this->client, $workerContext);
     }
     
@@ -188,5 +191,25 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
         }
         
         \PHPUnit_Framework_Assert::assertTrue($found);
+    }
+
+    /**
+     * @Given The queue :queue contains the compressed text message :bodyContent
+     */
+    public function theQueueContainsTheCompressedTextMessage($bodyContent, $queue)
+    {
+        $message = new Message(self::COMPRESSED_ROUTING_KEY);
+        $message->setText($bodyContent);
+        $message->allowCompression();
+
+        $this->client->publish($this->exchange, $message);
+    }
+
+    /**
+     * @Then the message is an uncompressed text one
+     */
+    public function theMessageIsAnUncompressedTextOne()
+    {
+        $this->theMessageIs(self::COMPRESSED_ROUTING_KEY, ContentType::TEXT);
     }
 }

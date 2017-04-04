@@ -60,4 +60,14 @@ interface WritableMessage extends MessageMetadata
      * @return void
      */
     public function changeRoutingKey($routingKey);
+    
+    /**
+     * @return boolean
+     */
+    public function isCompressionAllowed();
+
+    /**
+     * @return self
+     */
+    public function allowCompression();
 }

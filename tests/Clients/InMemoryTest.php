@@ -3,12 +3,17 @@
 namespace Puzzle\AMQP\Clients;
 
 use Puzzle\AMQP\Messages\Message;
+use Puzzle\AMQP\Messages\Processors\NullProcessor;
 
 class InMemoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testAll()
     {
         $client = new InMemory();
+        $client->setMessageProcessors([
+            new NullProcessor(),
+            new NullProcessor(),
+        ]);
 
         $this->assertEmpty($client->getSentMessages());
 

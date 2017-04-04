@@ -14,6 +14,9 @@ phpunit = docker run -it --rm --name phpunit \
 phpunit: vendor/bin/phpunit create-phpunit-image
 	$(call phpunit, )
 
+phpunit-dox: vendor/bin/phpunit create-phpunit-image
+	$(call phpunit, --testdox )
+
 phpunit-coverage: vendor/bin/phpunit create-phpunit-image
 	$(call phpunit, --coverage-html=coverage/)
 

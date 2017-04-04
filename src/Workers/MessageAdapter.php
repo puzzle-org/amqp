@@ -46,6 +46,11 @@ class MessageAdapter implements ReadableMessage
     {
         return $this->body->inOriginalFormat();
     }
+    
+    public function getBodyAsTransported()
+    {
+        return $this->message->getBody();
+    }
 
     public function getAttribute($attributeName)
     {

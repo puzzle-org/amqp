@@ -85,4 +85,14 @@ class Pimple implements WorkerProvider
     {
         return str_replace('worker.', '', $workerServiceName);
     }
+    
+    public function getMessageProcessors()
+    {
+        if(isset($this->container[self::MESSAGE_PROCESSORS_SERVICE_KEY]))
+        {
+            return $this->container[self::MESSAGE_PROCESSORS_SERVICE_KEY];
+        }
+        
+        return [];
+    }
 }

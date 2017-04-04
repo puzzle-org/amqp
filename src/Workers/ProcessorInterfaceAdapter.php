@@ -5,10 +5,13 @@ namespace Puzzle\AMQP\Workers;
 use Swarrot\Processor\ProcessorInterface;
 use Puzzle\Pieces\EventDispatcher\NullEventDispatcher;
 use Puzzle\Pieces\EventDispatcher\EventDispatcherAware;
+use Puzzle\AMQP\Clients\Processors\MessageProcessorAware;
 
 class ProcessorInterfaceAdapter implements ProcessorInterface
 {
-    use EventDispatcherAware;
+    use
+        EventDispatcherAware,
+        MessageProcessorAware;
     
     private
         $workerContext;
@@ -22,6 +25,7 @@ class ProcessorInterfaceAdapter implements ProcessorInterface
     public function process(\Swarrot\Broker\Message $message, array $options)
     {
         $message = new MessageAdapter($message);
+        $message = $this->onConsume($message);
         
         $this->workerContext->getLogger()->debug((string) $message);
         
