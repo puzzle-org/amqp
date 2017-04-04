@@ -93,7 +93,7 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
             return;
         }
         
-        $compressedContent = gzencode($message->getBodyInTransportFormat(), $this->compressionLevel);
+        $compressedContent = gzencode($message->getBodyInTransportFormat(), $this->compressionLevel, $this->encodingMode);
         
         $this->updateCompressedMessage($message, $compressedContent);
     }
