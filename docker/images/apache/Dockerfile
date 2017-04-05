@@ -8,9 +8,19 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get install -y automake \
                        build-essential \
-                       libtool && \
+                       libtool \
+                       php5-dev \
+                       zlib1g-dev \
+                       git \
+                       unzip && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/*
+
+# Due to issue https://github.com/docker-library/php/issues/233
+# Crappy workaround
+RUN docker-php-ext-install zlib; exit 0
+RUN cp /usr/src/php/ext/zlib/config0.m4 /usr/src/php/ext/zlib/config.m4
+RUN docker-php-ext-install zlib zip
 
 ENV RABBITMQ_VERSION 0.8.0
 
@@ -28,6 +38,17 @@ RUN cd /tmp && \
 
 RUN pecl install xdebug amqp-1.7.0 && \
     docker-php-ext-enable xdebug amqp
+
+RUN git clone https://github.com/BitOne/php-meminfo.git && \
+	cd php-meminfo/extension && \
+	phpize && \
+	./configure --enable-meminfo && \
+	make && \
+	make install 
+
+RUN cd php-meminfo/analyzer && \
+	curl -sS https://getcomposer.org/installer | php && \
+	php composer.phar update
 
 WORKDIR /var/www/puzzle-amqp
 

@@ -51,7 +51,7 @@ class Pecl implements Client
             {
                 $connection->setVhost($vhost);
             }
-
+            
             $connection->connect();
 
             // Create a channel

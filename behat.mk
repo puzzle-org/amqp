@@ -67,3 +67,12 @@ debug-behat:
 	$(call cli_exec,vendor/bin/behat -v)
 
 full-test: init run-behat down
+
+poc: 
+	$(call cli_exec, php test.php)
+
+analyze: 
+	$(call cli_exec, /php-meminfo/analyzer/bin/analyzer query -f "class~Binary" -v var/poc.json)
+	
+connect:
+	$(call cli_exec, /bin/bash)

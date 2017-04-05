@@ -25,7 +25,8 @@
         "symfony/console": "~3.2",
         "swarrot/swarrot": "~2.3",
         "knplabs/gaufrette": "~0.2",
-        "symfony/event-dispatcher": "~3.2"
+        "symfony/event-dispatcher": "~3.2",
+        "ramsey/uuid": "~3.6"
     },
     "repositories": [
         {
