@@ -40,7 +40,6 @@ class GenerateSupervisorConfigurationFiles extends Command
             ->setName('generate:supervisord:configuration')
             ->setDescription('Generate supervisord configuration for workers.')
             ->addOption('destination', null, InputOption::VALUE_REQUIRED, '[REQUIRED] The directory where to write the generated configuration file.')
-            ->addOption('server', null, InputOption::VALUE_REQUIRED, '[REQUIRED] The server to generate configuration files for. (ex: worker, server, etc.)')
             ->addOption('autostart', null, InputOption::VALUE_REQUIRED, 'Configure the autostart value. (default true)', 'true')
             ->addOption('autorestart', null, InputOption::VALUE_REQUIRED, 'Configure the autorestart value. (default true)', 'true')
             ->addOption('quiet', 'q', InputOption::VALUE_NONE, 'Quiet mode.')
@@ -61,7 +60,6 @@ class GenerateSupervisorConfigurationFiles extends Command
     {
         $this->checkRequirements($input);
         $destination = $this->retrieveDestination($input, $output);
-        $server = $this->retrieveServer($input, $output);
 
         $workers = $this->workerProvider->listAll();
 
@@ -70,7 +68,7 @@ class GenerateSupervisorConfigurationFiles extends Command
 
         $fs = new Filesystem(new Local($destination, true));
         $supervisorConfigurationGenerator = new SupervisorConfigurationGenerator($fs, $this->commandGenerator);
-        $supervisorConfigurationGenerator->generate($workers, $autostart, $autorestart, $server, $this->appId, $destination, $output);
+        $supervisorConfigurationGenerator->generate($workers, $autostart, $autorestart, $this->appId, $destination, $output);
     }
 
     private function retrieveboolean($name, InputInterface $input)
@@ -92,12 +90,6 @@ class GenerateSupervisorConfigurationFiles extends Command
         {
             throw new \InvalidArgumentException('The option --destination is required.');
         }
-
-        $server = $input->getOption('server');
-        if(empty($server))
-        {
-            throw new \InvalidArgumentException('The option --server is required.');
-        }
     }
 
     private function retrieveDestination(InputInterface $input, OutputInterface $output)
@@ -110,17 +102,5 @@ class GenerateSupervisorConfigurationFiles extends Command
         }
 
         return $destination;
-    }
-
-    private function retrieveServer(InputInterface $input, OutputInterface $output)
-    {
-        $server = $input->getOption('server');
-
-        if( ! $input->getOption('quiet'))
-        {
-            $output->writeln(sprintf('<info>Server : <comment>%s</comment></info>', $server));
-        }
-
-        return $server;
     }
 }
