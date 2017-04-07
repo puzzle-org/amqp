@@ -91,7 +91,7 @@ class MessageSplitter
     }
 }
 
-$chunkSize= 1000000;
+$chunkSize= 10 * 1000 * 1000;
 
 $chunkProvider= function() use($chunkSize) {
     $offset = 0;
@@ -99,6 +99,7 @@ $chunkProvider= function() use($chunkSize) {
     $filepath = 'lutece-2013-04-06.tgz'; // 'composer.phar';
     $stream = fopen($filepath, 'r');
     $document = new ChunkedDocument(filesize($filepath), sha1_file($filepath), $chunkSize);
+    $threshold = 100 * 1000 * 1000 / $chunkSize;
     
     while (! feof($stream))
     {
@@ -106,13 +107,9 @@ $chunkProvider= function() use($chunkSize) {
         $contentSize = strlen($content);
         $playhead++;
         
-        if($playhead % 71 === 0)
+        if($playhead % $threshold === 0)
         {
-            //gc_collect_cycles();
-            echo "YOLO\n";
-            meminfo_objects_list(fopen('var/obj.json', 'w'));
-            meminfo_info_dump(fopen('var/poc.json', 'w'));
-            meminfo_objects_summary(fopen('var/summary.json', 'w'));
+            gc_collect_cycles();
         }
         
         $chunk = new Chunk($offset, $playhead, $content, $document);
