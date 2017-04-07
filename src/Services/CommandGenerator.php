@@ -13,7 +13,7 @@ class CommandGenerator
 
     public function generate($worker)
     {
-        $pattern = '/usr/bin/php worker run %s';
+        $pattern = 'php worker run %s';
 
         return sprintf($pattern, $worker);
     }
