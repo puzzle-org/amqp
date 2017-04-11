@@ -152,7 +152,7 @@ class SupervisorConfigurationGeneratorTest extends \PHPUnit_Framework_TestCase
 
         return <<<TXT
 [program:$appId--$worker]
-command=php worker run $worker
+command=/usr/bin/env php worker run $worker
 directory=/var/www/app
 user=www-data
 autostart=$autostart
