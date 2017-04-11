@@ -21,11 +21,11 @@ class SupervisorConfigurationGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $generator = new SupervisorConfigurationGenerator($filesystem, new CommandGenerator(__DIR__));
 
-        $generator->generate($workers, $autostart, $autorestart, $server, 'burger_poney', 'var/system/supervisor', $output);
+        $generator->generate($workers, $autostart, $autorestart, 'burger_poney', 'var/system/supervisor', $output);
 
         foreach($filesystem->keys() as $filename)
         {
-            $this->assertTrue(in_array($filename, $expectedFilenames), sprintf('The file %s cannot be found.', $filename));
+            $this->assertTrue(in_array($filename, $expectedFilenames), sprintf('The file %s cannot be found in %s', $filename, implode($expectedFilenames, ',')));
 
             $key = array_search($filename, $expectedFilenames);
             $this->assertEquals($expectedTemplates[$key], $filesystem->get($filename)->getContent());
@@ -42,7 +42,7 @@ class SupervisorConfigurationGeneratorTest extends \PHPUnit_Framework_TestCase
                 => array(
                     'server' => 'worker',
                     'workers' => [
-                        'poney.run-1-worker-1',
+                        'poney.run',
                     ],
                     'autostart' => true,
                     'autorestart' => true,
@@ -58,9 +58,9 @@ class SupervisorConfigurationGeneratorTest extends \PHPUnit_Framework_TestCase
                 => array(
                     'server' => 'worker',
                     'workers' => [
-                        'poney.run-1-worker-1',
-                        'poney.eat-1-worker-1',
-                        'poney.sleep-1-worker-1'
+                        'poney.run',
+                        'poney.eat',
+                        'poney.sleep'
                     ],
                     'autostart' => true,
                     'autorestart' => true,
@@ -80,9 +80,9 @@ class SupervisorConfigurationGeneratorTest extends \PHPUnit_Framework_TestCase
                 => array(
                     'server' => 'worker',
                     'workers' => [
-                        'poney.run-1-worker-1',
-                        'poney.eat-1-worker-1',
-                        'poney.sleep-1-worker-1'
+                        'poney.run',
+                        'poney.eat',
+                        'poney.sleep'
                     ],
                     'autostart' => false,
                     'autorestart' => true,
@@ -102,9 +102,9 @@ class SupervisorConfigurationGeneratorTest extends \PHPUnit_Framework_TestCase
                 => array(
                     'server' => 'worker',
                     'workers' => [
-                        'poney.run-1-worker-1',
-                        'poney.eat-1-worker-1',
-                        'poney.sleep-1-worker-1'
+                        'poney.run',
+                        'poney.eat',
+                        'poney.sleep'
                     ],
                     'autostart' => false,
                     'autorestart' => false,
@@ -124,9 +124,9 @@ class SupervisorConfigurationGeneratorTest extends \PHPUnit_Framework_TestCase
                 => array(
                     'server' => 'worker',
                     'workers' => [
-                        'poney.run-1-worker-1',
-                        'poney.eat-1-worker-1',
-                        'poney.sleep-1-worker-1'
+                        'poney.run',
+                        'poney.eat',
+                        'poney.sleep'
                     ],
                     'autostart' => true,
                     'autorestart' => false,
@@ -142,76 +142,6 @@ class SupervisorConfigurationGeneratorTest extends \PHPUnit_Framework_TestCase
                     ],
                 ),
 
-            'one server not corresponding to any worker'
-                => array(
-                    'server' => 'worker',
-                    'workers' => [
-                        'poney.run-1-front-1',
-                        'poney.eat-1-front-1',
-                        'poney.sleep-1-front-1'
-                    ],
-                    'autostart' => true,
-                    'autorestart' => true,
-                    'files' => [
-                    ],
-                    'templates' => [
-                    ],
-                ),
-
-            'one server corresponding to few workers'
-            => array(
-                'server' => 'worker',
-                'workers' => [
-                    'poney.run-1-front-1',
-                    'poney.eat-1-worker-1',
-                    'poney.sleep-1-front-1'
-                ],
-                'autostart' => true,
-                'autorestart' => true,
-                'files' => [
-                    'burger_poney--poney.eat.conf',
-                ],
-                'templates' => [
-                    $this->generateExpectedTemplate($appId, 'poney.eat', true, true),
-                ],
-            ),
-
-            'one worker disabled'
-                => array(
-                    'server' => 'worker',
-                    'workers' => [
-                        'poney.run-1-worker-1',
-                        'poney.eat-1-worker-1',
-                        'poney.sleep-1-worker-0'
-                    ],
-                    'autostart' => true,
-                    'autorestart' => true,
-                    'files' => [
-                        'burger_poney--poney.run.conf',
-                        'burger_poney--poney.eat.conf',
-                    ],
-                    'templates' => [
-                        $this->generateExpectedTemplate($appId, 'poney.run', true, true),
-                        $this->generateExpectedTemplate($appId, 'poney.eat', true, true),
-                    ],
-                ),
-
-            'all workers disabled'
-                => array(
-                    'server' => 'worker',
-                    'workers' => [
-                        'poney.run-1-worker-0',
-                        'poney.eat-1-worker-0',
-                        'poney.sleep-1-worker-0'
-                    ],
-                    'autostart' => true,
-                    'autorestart' => true,
-                    'files' => [
-                    ],
-                    'templates' => [
-                    ],
-                ),
-
         ];
     }
 
@@ -222,7 +152,7 @@ class SupervisorConfigurationGeneratorTest extends \PHPUnit_Framework_TestCase
 
         return <<<TXT
 [program:$appId--$worker]
-command=/usr/bin/php worker run $worker
+command=/usr/bin/env php worker run $worker
 directory=/var/www/app
 user=www-data
 autostart=$autostart
@@ -232,18 +162,6 @@ TXT;
 
     private function generateWorkers(array $workers)
     {
-        $generatedWorkers = array();
-        foreach($workers as $worker)
-        {
-            list($name, $instances, $servers, $isDeploymentAllowed) = explode('-', $worker);
-
-            $generatedWorkers[$name] = [
-                'instances' => intval($instances),
-                'servers' => explode('.', $servers),
-                'isDeploymentAllowed' => (bool) $isDeploymentAllowed
-            ];
-        }
-
-        return $generatedWorkers;
+        return array_flip($workers);
     }
 }
