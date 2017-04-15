@@ -22,6 +22,7 @@ coverage/
 # =============================================================================
 .settings.mk
 php_errors.log
+var/
 
 # =============================================================================
 # Configuration
@@ -29,3 +30,10 @@ php_errors.log
 karma
 config/*.yml
 docker/docker-compose.yml
+
+#================================================
+# Whalephant files
+#================================================
+docker/images/phpunit/Dockerfile
+docker/images/phpunit/php.ini
+whalephant
