@@ -5,9 +5,13 @@ namespace Puzzle\AMQP\Messages\Bodies;
 use Puzzle\AMQP\Messages\Body;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\Footprintable;
+use Puzzle\Pieces\StringManipulation;
 
 class Text implements Body, Footprintable
 {
+    use
+        StringManipulation;
+
     private
         $content;
     
@@ -43,6 +47,11 @@ class Text implements Body, Footprintable
     
     public function changeText($text)
     {
+        if(! $this->isConvertibleToString($text))
+        {
+            throw new \LogicException('Body of type Text must be string convertible.');
+        }
+
         $this->content = (string) $text;
     }
     

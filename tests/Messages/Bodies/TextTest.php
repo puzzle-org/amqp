@@ -39,6 +39,17 @@ class TextTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testToStringOnNonStringConvertible()
+    {
+        $body = new Text(['burger', 'pizza']);
+
+        (string) $body;
+    }
+
     /**
      * @dataProvider providerTestFormat
      */
