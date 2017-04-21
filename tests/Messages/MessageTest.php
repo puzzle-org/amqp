@@ -38,7 +38,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         );
 
         // Body has changed => id must be different
-        $msg->setText(array('pizza' => 'Julianita'));
+        $msg->setText('deuteranope');
 
         $this->assertNotSame(
             $attributes2['message_id'],

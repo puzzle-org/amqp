@@ -43,7 +43,7 @@ class Text implements Body, Footprintable
     
     public function changeText($text)
     {
-        $this->content = $text;
+        $this->content = (string) $text;
     }
     
     public function append(...$text)
