@@ -140,14 +140,15 @@ class GZipTest extends \PHPUnit_Framework_TestCase
             new Binary(gzencode($originalText)),
             [
                 Gzip::HEADER_COMPRESSION => Gzip::COMPRESSION_ALGORITHM,
-                GZip::HEADER_COMPRESSION_CONTENT_TYPE => ContentType::TEXT
+                GZip::HEADER_COMPRESSION_CONTENT_TYPE => 'application/custom',
+                'transport_content_type' => ContentType::TEXT,
             ]
         );
         
         $gzip = new GZip();
         $message = $gzip->onConsume($message);
 
-        $this->assertCompressionHeadersAreNotPresent($message, ContentType::TEXT);
+        $this->assertCompressionHeadersAreNotPresent($message, 'application/custom');
         $this->assertSame($originalText, $message->getBodyInOriginalFormat());
     }
     

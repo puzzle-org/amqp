@@ -15,6 +15,7 @@ class Message implements WritableMessage, ConvertibleToString
         $body,
         $canBeDroppedSilently,
         $allowCompression,
+        $contentType,
         $headers,
         $attributes;
 
@@ -24,6 +25,7 @@ class Message implements WritableMessage, ConvertibleToString
         
         $this->canBeDroppedSilently = true;
         $this->allowCompression = false;
+        $this->contentType = false;
         
         $this->headers = array();
         $this->initializeAttributes();
@@ -86,7 +88,24 @@ class Message implements WritableMessage, ConvertibleToString
 
     public function getContentType()
     {
+        if($this->contentType !== false)
+        {
+            return $this->contentType;
+        }
+
+        return $this->getTransportContentType();
+    }
+
+    public function getTransportContentType()
+    {
         return $this->body->getContentType();
+    }
+
+    public function setContentType($contentType)
+    {
+        $this->contentType = $contentType;
+
+        return $this;
     }
 
     public function getRoutingKey()
@@ -109,7 +128,7 @@ class Message implements WritableMessage, ConvertibleToString
     
     private function updateContentType()
     {
-        $this->attributes['content_type'] = $this->body->getContentType();
+        $this->attributes['content_type'] = $this->getContentType();
     }
 
     public function addHeader($headerName, $value)
@@ -160,6 +179,7 @@ class Message implements WritableMessage, ConvertibleToString
     private function packHeaders($timestamp)
     {
         $this->headers['message_datetime'] = date('Y-m-d H:i:s', $timestamp);
+        $this->headers['transport_content_type'] = $this->getTransportContentType();
 
         return $this->headers;
     }

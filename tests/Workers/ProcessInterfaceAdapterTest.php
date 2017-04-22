@@ -60,6 +60,9 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
         $message = new Message('body', [
             'content_type' => ContentType::TEXT,
             'routing_key' => 'ponies.over.unicorns',
+            'headers' => [
+                'transport_content_type' => ContentType::TEXT,
+            ],
         ]);
         $processor->process($message, []);
 
@@ -82,6 +85,9 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
         $processor->process(new Message('horse', [
             'content_type' => ContentType::TEXT,
             'routing_key' => 'ponies.over.unicorns',
+            'headers' => [
+                'transport_content_type' => ContentType::TEXT,
+            ],
         ]), []);
         
         $this->assertSame('pony', $worker->lastProcessedMessages->getBodyInOriginalFormat());
@@ -89,6 +95,9 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
         $processor->process(new Message('lamb', [
             'content_type' => ContentType::TEXT,
             'routing_key' => 'ponies.over.unicorns',
+            'headers' => [
+                'transport_content_type' => ContentType::TEXT,
+            ],
         ]), []);
         
         $this->assertSame('pony', $worker->lastProcessedMessages->getBodyInOriginalFormat());
@@ -98,6 +107,9 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
         $processor->process(new Message('donkey', [
             'content_type' => ContentType::TEXT,
             'routing_key' => 'ponies.over.unicorns',
+            'headers' => [
+                'transport_content_type' => ContentType::TEXT,
+            ],
         ]), []);
         
         $this->assertSame('pony', $worker->lastProcessedMessages->getBodyInOriginalFormat());
@@ -111,6 +123,9 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
         $processor->process(new Message('donkey', [
             'content_type' => ContentType::TEXT,
             'routing_key' => 'ponies.over.unicorns',
+            'headers' => [
+                'transport_content_type' => ContentType::TEXT,
+            ],
         ]), []);
         
         $this->assertSame('pegasus', $worker->lastProcessedMessages->getBodyInOriginalFormat());

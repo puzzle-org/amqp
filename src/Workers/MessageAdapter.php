@@ -17,7 +17,7 @@ class MessageAdapter implements ReadableMessage
         $this->message = $message;
         
         $this->body = (new BodyFactory())->create(
-            $this->getContentType(),
+            $this->getTransportContentType(),
             $message->getBody()
         );
     }
@@ -30,6 +30,11 @@ class MessageAdapter implements ReadableMessage
     public function getContentType()
     {
         return $this->getAttribute('content_type');
+    }
+
+    public function getTransportContentType()
+    {
+        return $this->getHeader('transport_content_type');
     }
 
     public function getAppId()
