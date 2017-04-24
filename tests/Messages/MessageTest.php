@@ -43,6 +43,34 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
         $this->assertArrayHasKey('transport_content_type', $headers);
         $this->assertSame(ContentType::TEXT, $headers['transport_content_type']);
+
+        $msg->setText('<burger><bread><sauce /><cheese /><meat /></bread></burger>');
+        $msg->setContentType('');
+
+        $attributes = $msg->packAttributes();
+
+        $this->assertArrayHasKey('content_type', $attributes);
+        $this->assertSame(ContentType::TEXT, $attributes['content_type']);
+
+        $this->assertArrayHasKey('headers', $attributes);
+        $headers = $attributes['headers'];
+
+        $this->assertArrayHasKey('transport_content_type', $headers);
+        $this->assertSame(ContentType::TEXT, $headers['transport_content_type']);
+
+        $msg->setJson([]);
+        $msg->setContentType(null);
+
+        $attributes = $msg->packAttributes();
+
+        $this->assertArrayHasKey('content_type', $attributes);
+        $this->assertSame(ContentType::JSON, $attributes['content_type']);
+
+        $this->assertArrayHasKey('headers', $attributes);
+        $headers = $attributes['headers'];
+
+        $this->assertArrayHasKey('transport_content_type', $headers);
+        $this->assertSame(ContentType::JSON, $headers['transport_content_type']);
     }
 
     public function testPackAttributes()

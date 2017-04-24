@@ -88,7 +88,7 @@ class Message implements WritableMessage, ConvertibleToString
 
     public function getContentType()
     {
-        if($this->contentType !== false)
+        if(! empty($this->contentType))
         {
             return $this->contentType;
         }
