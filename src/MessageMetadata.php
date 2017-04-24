@@ -19,6 +19,11 @@ interface MessageMetadata
     public function getContentType();
 
     /**
+     * @return string
+     */
+    public function getTransportContentType();
+
+    /**
      * @return array
      */
     public function getHeaders();

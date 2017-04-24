@@ -141,7 +141,7 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
         $headers = $message->getHeaders();
         $newContentType = $headers[self::HEADER_COMPRESSION_CONTENT_TYPE];
         
-        $newBody = (new BodyFactory())->create($newContentType, $uncompressedContent);
+        $newBody = (new BodyFactory())->create($message->getTransportContentType(), $uncompressedContent);
         
         $builder
             ->changeBody($newBody)

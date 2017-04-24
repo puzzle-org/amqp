@@ -128,6 +128,11 @@ class ReadableMessageModifier
             }
         }
         
+        if($this->newBody instanceof Body)
+        {
+            $headers['transport_content_type'] = $this->newBody->getContentType();
+        }
+
         foreach($this->newHeaders as $name => $value)
         {
             $headers[$name] = $value;

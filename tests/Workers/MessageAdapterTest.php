@@ -14,7 +14,10 @@ class MessageAdapterTest extends \PHPUnit_Framework_TestCase
 {
     use ArrayRelated;
 
-    public function testText()
+    /**
+     * @dataProvider providerTestText
+     */
+    public function testText($contentType)
     {
         $body = <<<TEXT
 Et interdum acciderat, ut siquid in penetrali secreto nullo citerioris vitae ministro praesente paterfamilias uxori
@@ -23,9 +26,12 @@ Ideoque etiam parietes arcanorum soli conscii timebantur.
 TEXT;
 
         $properties = [
-            'content_type' => ContentType::TEXT,
+            'content_type' => $contentType,
             'routing_key' => 'burger.over.ponies',
-            'app_id' => 'puzzle/ui'
+            'app_id' => 'puzzle/ui',
+            'headers' => [
+                'transport_content_type' => ContentType::TEXT,
+            ],
         ];
 
         $swarrotMessage = new Message($body, $properties);
@@ -40,6 +46,15 @@ TEXT;
         $this->assertArrayHasKey('routing_key', $attributes);
 
         $this->assertSame('puzzle/ui', $message->getAppId());
+    }
+
+    public function providerTestText()
+    {
+        return [
+            [ContentType::TEXT],
+            ['application/xml'],
+            [ContentType::JSON],
+        ];
     }
 
     public function testJson()
@@ -60,6 +75,9 @@ TEXT;
         $properties = [
             'content_type' => ContentType::JSON,
             'routing_key' => 'burger.with.fries',
+            'headers' => [
+                'transport_content_type' => ContentType::JSON,
+            ],
         ];
 
         $swarrotMessage = new Message($body, $properties);
@@ -75,6 +93,7 @@ TEXT;
         $swarrotMessage = new Message('body', [
             'headers' => [
                 'routing_key' => 'my.routing.key.from.header',
+                'transport_content_type' => ContentType::TEXT,
             ],
             'routing_key' => 'my.routing.key',
             'content_type' => ContentType::TEXT,
@@ -91,6 +110,7 @@ TEXT;
         $swarrotMessage = new Message('body', [
             'headers' => [
                 'author' => 'Thierry Coquonneau',
+                'transport_content_type' => ContentType::TEXT,
             ],
             'routing_key' => 'my.routing.key',
             'content_type' => ContentType::TEXT,
@@ -135,6 +155,7 @@ TEXT;
             'content_type' => ContentType::EMPTY_CONTENT,
             'headers' => [
                 \Puzzle\AMQP\Consumers\Retry::DEFAULT_RETRY_HEADER => $nbTries,
+                'transport_content_type' => ContentType::EMPTY_CONTENT,
             ]
         ]));
 
@@ -164,7 +185,9 @@ TEXT;
     {
         $message = new MessageAdapter(new Message('', [
             'content_type' => ContentType::EMPTY_CONTENT,
-            'headers' => [],
+            'headers' => [
+                'transport_content_type' => ContentType::EMPTY_CONTENT,
+            ],
         ]));
 
         $this->assertFalse($message->isLastRetry());
@@ -196,7 +219,7 @@ TEXT;
 
         $headers = $message->getHeaders();
         $this->assertSameArrayExceptOrder(
-                ['h1', 'h2', 'h3', 'author', 'routing_key', 'app_id', 'message_datetime'],
+                ['h1', 'h2', 'h3', 'author', 'routing_key', 'app_id', 'message_datetime', 'transport_content_type'],
                 array_keys($headers)
                 );
         $this->assertSame('subtitle', $headers['h2']);

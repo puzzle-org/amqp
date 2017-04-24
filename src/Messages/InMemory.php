@@ -28,6 +28,7 @@ class InMemory
             'routing_key' => $routingKey,
             'app_id' => 'memory',
             'message_datetime' => date('Y-m-d H:i:s'),
+            'transport_content_type' => $body->getContentType(),
         ], $additionalHeaders);
 
         return new MessageAdapter(
