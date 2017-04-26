@@ -29,7 +29,7 @@ TEXT;
         ];
 
         $swarrotMessage = new Message($body, $properties);
-        $message = new MessageAdapter($swarrotMessage);
+        $message = (new MessageAdapterFactory())->build($swarrotMessage);
 
         $this->assertSame($body, $message->getBodyInOriginalFormat(), 'Decoded body must be unchanged');
 
@@ -63,8 +63,9 @@ TEXT;
         ];
 
         $swarrotMessage = new Message($body, $properties);
-        $message = new MessageAdapter($swarrotMessage);
-
+        
+        $message = (new MessageAdapterFactory())->build($swarrotMessage);
+        
         $this->assertSame($decodedBody, $message->getBodyInOriginalFormat());
 
         $this->assertNotEmpty((string) $message);
@@ -80,7 +81,7 @@ TEXT;
             'content_type' => ContentType::TEXT,
         ]);
 
-        $message = new MessageAdapter($swarrotMessage);
+        $message = (new MessageAdapterFactory())->build($swarrotMessage);
 
         $this->assertSame('my.routing.key', $message->getRoutingKey());
         $this->assertSame('my.routing.key.from.header', $message->getRoutingKeyFromHeader());
@@ -96,7 +97,7 @@ TEXT;
             'content_type' => ContentType::TEXT,
         ]);
 
-        $message = new MessageAdapter($swarrotMessage);
+        $message = (new MessageAdapterFactory())->build($swarrotMessage);
 
         $this->assertSame('my.routing.key', $message->getRoutingKey());
         $this->assertNull($message->getRoutingKeyFromHeader());
@@ -111,7 +112,7 @@ TEXT;
             'content_type' => ContentType::EMPTY_CONTENT,
             'content_encoding' => 'utf-8'
         ]);
-        $message = new MessageAdapter($swarrotMessage);
+        $message = (new MessageAdapterFactory())->build($swarrotMessage);
 
         $message->getAttribute('not_an_amqp_attribute');
     }
@@ -121,9 +122,11 @@ TEXT;
      */
     public function testInvalidConstruction()
     {
-        $message = new MessageAdapter(new Message('', [
+        $swarrotMessage = new Message('', [
             'no_content_type_attribute' => 2
-        ]));
+        ]);
+        
+        $message = (new MessageAdapterFactory())->build($swarrotMessage);
     }
 
     /**

@@ -2,8 +2,8 @@
 
 namespace Puzzle\AMQP\Messages;
 
-use Puzzle\AMQP\Workers\MessageAdapter;
 use Puzzle\AMQP\Messages\Bodies\NullBody;
+use Puzzle\AMQP\Workers\MessageAdapterFactory;
 
 class InMemory
 {
@@ -30,8 +30,8 @@ class InMemory
             'message_datetime' => date('Y-m-d H:i:s'),
         ], $additionalHeaders);
 
-        return new MessageAdapter(
-            new \Swarrot\Broker\Message($body->asTransported(), $attributes)
-        );
+        $factory = new MessageAdapterFactory();
+        
+        return $factory->build(new \Swarrot\Broker\Message($body->asTransported(), $attributes));
     }
 }

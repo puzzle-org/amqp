@@ -13,6 +13,7 @@ use Puzzle\AMQP\Workers\WorkerContext;
 use Puzzle\Pieces\OutputInterfaceAware;
 use Puzzle\Pieces\EventDispatcher\EventDispatcherAware;
 use Puzzle\Pieces\EventDispatcher\NullEventDispatcher;
+use Puzzle\AMQP\Workers\MessageAdapterFactory;
 
 class Run extends Command
 {
@@ -21,6 +22,7 @@ class Run extends Command
     private
         $client,
         $workerProvider,
+        $messageAdapterFactory,
         $outputInterfaceAware;
 
     public function __construct(Client $client, WorkerProvider $workerProvider, OutputInterfaceAware $outputInterfaceAware)
@@ -29,8 +31,16 @@ class Run extends Command
 
         $this->client = $client;
         $this->workerProvider = $workerProvider;
+        $this->messageAdapterFactory = null;
         $this->outputInterfaceAware = $outputInterfaceAware;
         $this->eventDispatcher = new NullEventDispatcher();
+    }
+    
+    public function setMessageAdapterFactory(MessageAdapterFactory $factory)
+    {
+        $this->messageAdapterFactory = $factory;
+        
+        return $this;
     }
 
     protected function configure()
@@ -63,7 +73,7 @@ class Run extends Command
 
     private function createProcessor(WorkerContext $workerContext)
     {
-        $processor = new ProcessorInterfaceAdapter($workerContext);
+        $processor = new ProcessorInterfaceAdapter($workerContext, $this->messageAdapterFactory);
         $processor->setEventDispatcher($this->eventDispatcher);
 
         $processor->setMessageProcessors(

@@ -8,6 +8,8 @@ use Puzzle\AMQP\Clients\Pecl;
 use Puzzle\AMQP\Workers\Providers\Pimple;
 use Puzzle\AMQP\Consumers;
 use Puzzle\AMQP\Subscribers\ManagedConnection as ManagedConnectionSubscribers;
+use Puzzle\AMQP\Messages\BodyFactories\Standard;
+use Puzzle\AMQP\Workers\MessageAdapterFactory;
 
 class AmqpServiceProvider implements ServiceProviderInterface
 {
@@ -26,6 +28,14 @@ class AmqpServiceProvider implements ServiceProviderInterface
 
         $app['amqp.workerProvider'] = function($c) {
             return new Pimple($c);
+        };
+        
+        $app['amqp.bodyFactory'] = function($c) {
+            return new Standard();
+        };
+        
+        $app['amqp.messageAdapterFactory'] = function($c) {
+            return new MessageAdapterFactory($c['amqp.bodyFactory']);
         };
     }
 

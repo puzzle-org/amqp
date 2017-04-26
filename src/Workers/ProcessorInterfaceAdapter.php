@@ -14,17 +14,25 @@ class ProcessorInterfaceAdapter implements ProcessorInterface
         MessageProcessorAware;
     
     private
+        $messageAdapterFactory,
         $workerContext;
     
-    public function __construct(WorkerContext $workerContext)
+    public function __construct(WorkerContext $workerContext, MessageAdapterFactory $factory = null)
     {
         $this->workerContext = $workerContext;
         $this->eventDispatcher = new NullEventDispatcher();
+        
+        if(! $factory instanceof MessageAdapterFactory)
+        {
+            $factory = new MessageAdapterFactory();
+        }
+        $this->messageAdapterFactory = $factory;
     }
     
     public function process(\Swarrot\Broker\Message $message, array $options)
     {
-        $message = new MessageAdapter($message);
+        $message = $this->messageAdapterFactory->build($message);
+        
         $message = $this->onConsume($message);
         
         $this->workerContext->getLogger()->debug((string) $message);
