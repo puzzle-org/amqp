@@ -3,6 +3,7 @@
 namespace Puzzle\AMQP\Messages\BodyFactories;
 
 use Puzzle\AMQP\Messages\ContentType;
+use Puzzle\AMQP\Messages\TypedBodyFactories\Json;
 
 class StandardTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,5 +42,16 @@ class StandardTest extends \PHPUnit_Framework_TestCase
                 null,
             ],
         ];
+    }
+    
+    public function testHandleContentType()
+    {
+        $factory = new Standard();
+        $factory->handleContentType('application/config', new Json());
+        
+        $body = $factory->build('application/config', '{"pony": "Shetland"}');
+        
+        $this->assertTrue($body instanceof \Puzzle\AMQP\Messages\Bodies\Json);
+        $this->assertSame(['pony' => 'Shetland'], $body->inOriginalFormat());
     }
 }

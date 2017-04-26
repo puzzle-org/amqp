@@ -8,6 +8,7 @@ use Puzzle\AMQP\Messages\TypedBodyFactories;
 use Puzzle\AMQP\Messages\BodyFactory;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\Bodies\NullBody;
+use Puzzle\AMQP\Messages\TypedBodyFactory;
 
 class Standard implements BodyFactory
 {
@@ -29,6 +30,13 @@ class Standard implements BodyFactory
             ContentType::JSON => new TypedBodyFactories\Json(),
             ContentType::BINARY => new TypedBodyFactories\Binary(),
         ];
+    }
+    
+    public function handleContentType($contentType, TypedBodyFactory $factory)
+    {
+        $this->factories[$contentType] = $factory;
+        
+        return $this;
     }
     
     public function build($contentType, $contentAsTransported)

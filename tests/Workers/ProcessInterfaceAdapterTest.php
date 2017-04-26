@@ -10,6 +10,9 @@ use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\OnConsumeProcessor;
 use Puzzle\AMQP\Workers\ReadableMessageModifier;
 use Puzzle\AMQP\Messages\Bodies\Text;
+use Puzzle\Pieces\EventDispatcher\Adapters\Symfony;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Puzzle\AMQP\Messages\BodyFactories\Standard;
 
 class ChangeBodyProcessor implements OnConsumeProcessor
 {
@@ -59,6 +62,32 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
         $processor = new ProcessorInterfaceAdapter($workerContext);
         $message = new Message('body', [
             'content_type' => ContentType::TEXT,
+            'routing_key' => 'ponies.over.unicorns',
+        ]);
+        $processor->process($message, []);
+
+        $this->assertTrue($worker->lastProcessedMessages instanceof ReadableMessage);
+        $this->assertSame('ponies.over.unicorns', $worker->lastProcessedMessages->getRoutingKey());
+    }
+    
+    public function testProcessWithCustomDependencies()
+    {
+        $worker = new Collect();
+        $workerClosure = function() use($worker) {
+            return $worker;
+        };
+
+        $workerContext = new WorkerContext($workerClosure, new Simple(), 'fake_queue');
+        $bodyFactory = new Standard();
+        $bodyFactory->handleContentType('application/x-custom', new \Puzzle\AMQP\Messages\TypedBodyFactories\Text());
+        
+        $processor = new ProcessorInterfaceAdapter($workerContext);
+        $processor
+            ->setEventDispatcher(new Symfony(new EventDispatcher()))
+            ->setMessageAdapterFactory(new MessageAdapterFactory($bodyFactory));
+        
+        $message = new Message('body', [
+            'content_type' => 'application/x-custom',
             'routing_key' => 'ponies.over.unicorns',
         ]);
         $processor->process($message, []);
