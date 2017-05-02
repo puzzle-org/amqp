@@ -10,6 +10,7 @@ use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\OnConsumeProcessor;
 use Puzzle\AMQP\Workers\ReadableMessageModifier;
 use Puzzle\AMQP\Messages\Bodies\Text;
+use Psr\Log\NullLogger;
 
 class ChangeBodyProcessor implements OnConsumeProcessor
 {
@@ -75,6 +76,8 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
         };
 
         $workerContext = new WorkerContext($workerClosure, new Simple(), 'fake_queue');
+        $workerContext->setLogger(new NullLogger());
+        $workerContext->setWorkerLogger(new NullLogger());
 
         $processor = new ProcessorInterfaceAdapter($workerContext);
         $processor->appendMessageProcessor(new ChangeBodyProcessor('pony'));
