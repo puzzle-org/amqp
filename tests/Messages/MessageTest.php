@@ -2,6 +2,8 @@
 
 namespace Puzzle\AMQP\Messages;
 
+use Puzzle\AMQP\MessageMetadata;
+
 class MessageTest extends \PHPUnit_Framework_TestCase
 {
     use \Puzzle\Assert\ArrayRelated;
@@ -163,4 +165,46 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $msg->allowCompression();
         $this->assertTrue($msg->isCompressionAllowed());
     }
+    
+    public function testChangingContentType()
+    {
+        $msg = new Message('my.key');
+        $this->assertContentTypeIs(ContentType::EMPTY_CONTENT, $msg);
+        
+        $msg->setText('unicorn');
+        $this->assertContentTypeIs(ContentType::TEXT, $msg);
+
+        $msg->setJson([]);
+        $this->assertContentTypeIs(ContentType::JSON, $msg);
+
+        $msg->packAttributes();
+        $this->assertContentTypeIs(ContentType::JSON, $msg);
+        
+        $msg->setText('pony');
+        $this->assertContentTypeIs(ContentType::TEXT, $msg);
+        
+        $msg->setAttribute(Message::ATTRIBUTE_CONTENT_TYPE, 'application/xml');
+        $this->assertContentTypeIs('application/xml', $msg);
+        
+        $msg->setJson([]);
+        $this->assertContentTypeIs('application/xml', $msg);
+        
+        $msg->packAttributes();
+        $this->assertContentTypeIs('application/xml', $msg);
+
+        $msg->setAttribute(Message::ATTRIBUTE_CONTENT_TYPE, 'X-pony');
+        $this->assertContentTypeIs('X-pony', $msg);
+        
+        $msg->setJson([]);
+        $this->assertContentTypeIs('X-pony', $msg);
+        
+        $msg->packAttributes();
+        $this->assertContentTypeIs('X-pony', $msg);
+    }
+    
+    private function assertContentTypeIs($contentType, MessageMetadata $message)
+    {
+        $this->assertSame($contentType, $message->getContentType());
+    }
+    
 }
