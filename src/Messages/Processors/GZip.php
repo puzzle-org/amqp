@@ -12,6 +12,7 @@ use Puzzle\AMQP\Messages\OnConsumeProcessor;
 use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Workers\ReadableMessageModifier;
 use Puzzle\AMQP\Messages\BodyFactory;
+use Puzzle\AMQP\Messages\BodyFactories\Standard;
 
 class GZip implements OnPublishProcessor, OnConsumeProcessor
 {
@@ -26,13 +27,20 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
     
     private
         $compressionLevel,
-        $encodingMode;
+        $encodingMode,
+        $bodyFactory;
     
-    public function __construct()
+    public function __construct(BodyFactory $bodyFactory = null)
     {
         $this->compressionLevel = -1;
         $this->encodingMode = FORCE_GZIP;
         $this->logger = new NullLogger();
+        
+        if(! $bodyFactory instanceof BodyFactory)
+        {
+            $bodyFactory = new Standard();
+        }
+        $this->bodyFactory = $bodyFactory;
     }
         
     /**
@@ -141,7 +149,7 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
         $headers = $message->getHeaders();
         $newContentType = $headers[self::HEADER_COMPRESSION_CONTENT_TYPE];
         
-        $newBody = (new BodyFactory())->create($newContentType, $uncompressedContent);
+        $newBody = $this->bodyFactory->build($newContentType, $uncompressedContent);
         
         $builder
             ->changeBody($newBody)

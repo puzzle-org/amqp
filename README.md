@@ -133,6 +133,7 @@ BC Breaks changelog
  - Some specific features removed from WorkerContext
  - Getter for specific headers removed from MessageAdapter
  - Message InMemory implementation (for unit testing purpose) has been changed
+ - MessageAdapter must not be directly constructed anymore, use MessageAdapterFactory instead
 
 **1.x -> 2.x**
 

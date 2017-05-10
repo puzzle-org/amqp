@@ -11,6 +11,7 @@ class ProcessorInterfaceAdapter implements ProcessorInterface
 {
     use
         EventDispatcherAware,
+        MessageAdapterFactoryAware,
         MessageProcessorAware;
     
     private
@@ -20,11 +21,12 @@ class ProcessorInterfaceAdapter implements ProcessorInterface
     {
         $this->workerContext = $workerContext;
         $this->eventDispatcher = new NullEventDispatcher();
+        $this->messageAdapterFactory = null;
     }
     
     public function process(\Swarrot\Broker\Message $message, array $options)
     {
-        $message = new MessageAdapter($message);
+        $message = $this->createMessageAdapter($message);
         $message = $this->onConsume($message);
         
         $this->workerContext->getLogger()->debug((string) $message);

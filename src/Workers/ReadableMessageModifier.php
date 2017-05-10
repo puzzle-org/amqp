@@ -71,7 +71,9 @@ class ReadableMessageModifier
             $this->extractHeaders($properties)
         );
         
-        return new MessageAdapter(
+        $factory = new MessageAdapterFactory();
+        
+        return $factory->build(
             new \Swarrot\Broker\Message($this->buildBody(), $properties)
         );
     }

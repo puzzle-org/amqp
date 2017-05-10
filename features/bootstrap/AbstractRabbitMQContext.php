@@ -14,6 +14,7 @@ abstract class AbstractRabbitMQContext implements Context
 {
     const
         TEXT_ROUTING_KEY = 'normal.text.key',
+        XML_ROUTING_KEY = 'normal.xml.key',
         JSON_ROUTING_KEY = 'normal.json.key',
         COMPRESSED_ROUTING_KEY = 'zip.text.key';
     
