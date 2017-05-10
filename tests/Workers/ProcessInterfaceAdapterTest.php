@@ -13,6 +13,7 @@ use Puzzle\AMQP\Messages\Bodies\Text;
 use Puzzle\Pieces\EventDispatcher\Adapters\Symfony;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Puzzle\AMQP\Messages\BodyFactories\Standard;
+use Psr\Log\NullLogger;
 
 class ChangeBodyProcessor implements OnConsumeProcessor
 {
@@ -104,6 +105,8 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
         };
 
         $workerContext = new WorkerContext($workerClosure, new Simple(), 'fake_queue');
+        $workerContext->setLogger(new NullLogger());
+        $workerContext->setWorkerLogger(new NullLogger());
 
         $processor = new ProcessorInterfaceAdapter($workerContext);
         $processor->appendMessageProcessor(new ChangeBodyProcessor('pony'));

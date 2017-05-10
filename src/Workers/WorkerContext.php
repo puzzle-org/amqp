@@ -15,6 +15,7 @@ class WorkerContext
         $queueName,
         $description,
         $consumer,
+        $workerLogger,
         $worker;
 
     public function __construct(\Closure $worker, Consumer $consumer, $queueName)
@@ -24,6 +25,7 @@ class WorkerContext
         $this->queueName = $queueName;
         $this->description = null;
         $this->logger = new NullLogger();
+        $this->workerLogger = null;
     }
 
     public function getWorker()
@@ -32,16 +34,33 @@ class WorkerContext
         {
             $closure = $this->worker;
             $this->worker = $closure();
-            $this->worker->setLogger($this->logger);
+            $this->worker->setLogger($this->getLoggerForWorker());
         }
 
         return $this->worker;
+    }
+
+    private function getLoggerForWorker()
+    {
+        if($this->workerLogger instanceof LoggerInterface)
+        {
+            return $this->workerLogger;
+        }
+
+        return $this->logger;
     }
 
     public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
         $this->consumer->setLogger($logger);
+
+        return $this;
+    }
+
+    public function setWorkerLogger(LoggerInterface $logger)
+    {
+        $this->workerLogger = $logger;
 
         return $this;
     }
