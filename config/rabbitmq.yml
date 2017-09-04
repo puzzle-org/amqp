@@ -14,7 +14,7 @@ behat:
             bindings:
                 - 
                     exchange: puzzle
-                    routing_key: "normal.#"
+                    routing_key: "part.#"
 
         test_zip:
             durable: true

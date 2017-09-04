@@ -50,7 +50,7 @@ reconfigure: clean-configuration configure
 #------------------------------------------------------------------------------
 # Behat test suite
 #------------------------------------------------------------------------------
-cli_exec = docker run -it --rm --name puzzle-amqp-cli \
+cli_exec = docker run -it --rm \
 	                 -v ${HOST_SOURCE_PATH}:${CONTAINER_SOURCE_PATH} \
 	                 -w ${CONTAINER_SOURCE_PATH} \
 	                 --link puzzle-amqp-rabbitmq:rabbitmq \
@@ -68,8 +68,10 @@ debug-behat:
 
 full-test: init run-behat down
 
-poc: 
+poc-send: 
 	$(call cli_exec, php test.php)
+poc-receive: 
+	$(call cli_exec, php test-receive.php)
 
 analyze: 
 	$(call cli_exec, /php-meminfo/analyzer/bin/analyzer query -f "class~Binary" -v var/poc.json)
