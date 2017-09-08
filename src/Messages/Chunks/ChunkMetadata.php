@@ -45,4 +45,13 @@ final class ChunkMetadata
     {
         return $this->size;
     }
+
+    public function toHeaders()
+    {
+        return [
+            'offset' => $this->offset,
+            'playhead' => $this->playhead,
+            'size' => $this->size,
+        ];
+    }
 }

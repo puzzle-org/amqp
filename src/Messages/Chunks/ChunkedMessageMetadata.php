@@ -54,4 +54,14 @@ final class ChunkedMessageMetadata
     {
         return $this->checksum;
     }
+
+    public function toHeaders()
+    {
+        return [
+            'uuid' => $this->uuid->value(),
+            'size' => $this->size,
+            'checksum' => $this->checksum,
+            'nbChunks' => $this->nbChunks,
+        ];
+    }
 }

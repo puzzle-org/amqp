@@ -6,11 +6,13 @@ final class Chunk
 {
     private
         $metadata,
+        $messageMetadata,
         $content;
 
-    public function __construct($playhead, $offset, $content)
+    public function __construct($playhead, $offset, $content, ChunkedMessageMetadata $messageMetadata)
     {
         $this->metadata = new ChunkMetadata($playhead, $offset, strlen($content));
+        $this->messageMetadata = $messageMetadata;
         $this->content = $content;
     }
 
@@ -24,12 +26,11 @@ final class Chunk
         return $this->metadata->size();
     }
 
-    public function getMetadataHeaders()
+    public function getHeaders()
     {
         return [
-            'offset' => $this->metadata->offset(),
-            'playhead' => $this->metadata->playhead(),
-            'size' => $this->metadata->size(),
+            'chunk' => $this->metadata->toHeaders(),
+            'chunkedMessage' => $this->messageMetadata->toHeaders(),
         ];
     }
 

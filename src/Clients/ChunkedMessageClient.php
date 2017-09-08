@@ -2,7 +2,6 @@
 
 namespace Puzzle\AMQP\Clients;
 
-use Puzzle\AMQP\Messages\Chunks\ChunkedMessage;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Clients\MemoryManagementStrategies\NullMemoryManagementStrategy;
 use Puzzle\AMQP\Messages\Message;
@@ -24,21 +23,27 @@ class ChunkedMessageClient
         $this->client = $client;
     }
 
-    public function publish($exchangeName, ChunkedMessage $chunkedMessage)
+    public function publish($exchangeName, Message $chunkedMessage)
     {
+        $streamedContent = $chunkedMessage->getBodyInTransportFormat();
+
+        if(! $streamedContent instanceof \Generator)
+        {
+            return $this->client->publish($exchangeName, $chunkedMessage);
+        }
+
+        $this->memory->init();
+
         $allowCompression = $chunkedMessage->isCompressionAllowed();
 
-        $this->memory->init($chunkedMessage);
-
-        foreach($chunkedMessage->getChunkProvider() as $index => $chunk)
+        foreach($streamedContent as $index => $chunk)
         {
             $message = new Message('part.' . $chunkedMessage->getRoutingKey());
             $message->setBinary($chunk->getContent());
             $message->allowCompression($allowCompression);
 
+            $message->addHeaders($chunk->getHeaders());
             $message->addHeaders([
-                'chunkedMessage' => $chunkedMessage->getMetadataHeaders(),
-                'chunk' => $chunk->getMetadataHeaders(),
                 'message' => [
                     'routingKey' => $chunkedMessage->getRoutingKey(),
                     'contentType' => $chunkedMessage->getContentType(),
@@ -48,10 +53,12 @@ class ChunkedMessageClient
 
             $this->client->publish($exchangeName, $message);
 
+            $size = $chunk->size();
+
             unset($message);
             unset($chunk);
 
-            $this->memory->manage($index);
+            $this->memory->manage($size);
         }
     }
 }
