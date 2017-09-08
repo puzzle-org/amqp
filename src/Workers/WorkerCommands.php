@@ -9,10 +9,13 @@ use Puzzle\AMQP\Client;
 use Puzzle\Pieces\OutputInterfaceAware;
 use Puzzle\Pieces\EventDispatcher\EventDispatcherAware;
 use Puzzle\Pieces\EventDispatcher\NullEventDispatcher;
+use Puzzle\Pieces\EventDispatcher\EventDispatcher;
 
 class WorkerCommands
 {
-    use EventDispatcherAware;
+    use
+        EventDispatcherAware,
+        MessageAdapterFactoryAware;
 
     private
         $console,
@@ -26,6 +29,8 @@ class WorkerCommands
         $this->client = $client;
         $this->workerProvider = $workerProvider;
         $this->outputInterfaceAware = $outputInterfaceAware;
+        
+        $this->messageAdapterFactory = null;
         $this->eventDispatcher = new NullEventDispatcher();
     }
 
@@ -36,7 +41,9 @@ class WorkerCommands
             $this->workerProvider,
             $this->outputInterfaceAware
         );
-        $run->setEventDispatcher($this->eventDispatcher);
+        $run
+            ->setEventDispatcher($this->eventDispatcher)
+            ->setMessageAdapterFactory($this->messageAdapterFactory);
 
         $this->console->add($run);
 

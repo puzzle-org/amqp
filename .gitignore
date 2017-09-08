@@ -31,7 +31,9 @@ karma
 config/*.yml
 docker/docker-compose.yml
 
-# =============================================================================
-# Generated files
-# =============================================================================
+#================================================
+# Whalephant files
+#================================================
+docker/images/phpunit/Dockerfile
+docker/images/phpunit/php.ini
 whalephant

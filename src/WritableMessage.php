@@ -7,7 +7,7 @@ use Puzzle\AMQP\Messages\Body;
 interface WritableMessage extends MessageMetadata
 {
     /**
-     * @return int
+     * @return bool
      */
     public function canBeDroppedSilently();
 
@@ -62,7 +62,7 @@ interface WritableMessage extends MessageMetadata
     public function changeRoutingKey($routingKey);
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isCompressionAllowed();
 

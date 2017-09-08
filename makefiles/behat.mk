@@ -1,3 +1,6 @@
+#------------------------------------------------------------------------------
+# Behat
+#------------------------------------------------------------------------------
 RMQ_PORT=15672
 RMQ_VHOST=behat
 RMQ_USER=guest
@@ -58,7 +61,9 @@ cli_exec = docker run -it --rm \
 	                 puzzle-amqp/app-server \
 	                 $1
 
-behat: reconfigure run-behat
+full-test: init run-behat down ## Run behat tests (and manage containers)
+
+behat: reconfigure run-behat ## Run behat tests with already existing containers
 
 run-behat:
 	$(call cli_exec,vendor/bin/behat )

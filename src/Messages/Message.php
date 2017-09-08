@@ -9,12 +9,16 @@ use Puzzle\Pieces\ConvertibleToString;
 
 class Message implements WritableMessage, ConvertibleToString
 {
+    const
+        ATTRIBUTE_CONTENT_TYPE = 'content_type';
+
     use BodySetter;
 
     private
         $body,
         $canBeDroppedSilently,
         $allowCompression,
+        $userContentType,
         $headers,
         $attributes;
 
@@ -24,7 +28,7 @@ class Message implements WritableMessage, ConvertibleToString
 
         $this->canBeDroppedSilently = true;
         $this->allowCompression = false;
-
+        $this->userContentType = null;
         $this->headers = array();
         $this->initializeAttributes();
 
@@ -40,7 +44,7 @@ class Message implements WritableMessage, ConvertibleToString
     {
         $this->attributes = array(
             'routing_key' => null,
-            'content_type' => $this->getContentType(),
+            self::ATTRIBUTE_CONTENT_TYPE=> $this->getContentType(),
             'content_encoding' => 'utf8',
             'message_id' => function($timestamp) {
                 return sha1($this->getRoutingKey() . $timestamp . $this->generateBodyId() . mt_rand());
@@ -86,7 +90,12 @@ class Message implements WritableMessage, ConvertibleToString
 
     public function getContentType()
     {
-        return $this->body->getContentType();
+        if($this->userContentType === null)
+        {
+            return $this->body->getContentType();
+        }
+
+        return $this->userContentType;
     }
 
     public function getRoutingKey()
@@ -109,7 +118,7 @@ class Message implements WritableMessage, ConvertibleToString
 
     private function updateContentType()
     {
-        $this->attributes['content_type'] = $this->body->getContentType();
+        $this->attributes[self::ATTRIBUTE_CONTENT_TYPE] = $this->getContentType();
     }
 
     public function addHeader($headerName, $value)
@@ -171,6 +180,11 @@ class Message implements WritableMessage, ConvertibleToString
             if(array_key_exists($attributeName, $this->attributes))
             {
                 $this->attributes[$attributeName] = $value;
+
+                if($attributeName === self::ATTRIBUTE_CONTENT_TYPE)
+                {
+                    $this->userContentType = $value;
+                }
             }
         }
 

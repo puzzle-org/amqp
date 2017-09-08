@@ -5,6 +5,52 @@ namespace Puzzle\AMQP\Messages\Bodies;
 class TextTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @dataProvider providerTestToString
+     */
+    public function testToString($expected, $content)
+    {
+        $body = new Text($content);
+
+        $this->assertSame($expected, (string) $body);
+    }
+
+    public function providerTestToString()
+    {
+        return [
+            'null' => [
+                'expected' => '',
+                'content' => null,
+            ],
+            'integer' => [
+                'expected' => '42',
+                'content' => 42,
+            ],
+            'float' => [
+                'expected' => '42.1337',
+                'content' => 42.1337,
+            ],
+            'boolean' => [
+                'expected' => '1',
+                'content' => true,
+            ],
+            'object string convertible' => [
+                'expected' => 'Deuteranope rex',
+                'content' => new Text('Deuteranope rex'),
+            ],
+        ];
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testToStringOnNonStringConvertible()
+    {
+        $body = new Text(['burger', 'pizza']);
+
+        (string) $body;
+    }
+
+    /**
      * @dataProvider providerTestFormat
      */
     public function testGetContentInDifferentFormats($content, $expected)

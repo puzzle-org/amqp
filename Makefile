@@ -1,4 +1,4 @@
-HOST_SOURCE_PATH=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+HOST_SOURCE_PATH=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 USER_ID=$(shell id -u)
 GROUP_ID=$(shell id -g)
@@ -13,50 +13,23 @@ ifneq (,$(filter $(firstword $(MAKECMDGOALS)),composer phpunit))
 endif
 
 #------------------------------------------------------------------------------
-# Composer
+# Includes
 #------------------------------------------------------------------------------
 
-# Add ignore platform reqs for composer install & update
-COMPOSER_ARGS=
-ifeq (composer, $(firstword $(MAKECMDGOALS)))
-    ifneq (,$(filter install update,$(CLI_ARGS)))
-        COMPOSER_ARGS=--ignore-platform-reqs
-    endif
-endif
-
-composer: composer.phar
-	php composer.phar $(CLI_ARGS) $(COMPOSER_ARGS)
-
-composer-install: composer.phar
-	php composer.phar install --ignore-platform-reqs
-
-composer-update: composer.phar
-	php composer.phar update --ignore-platform-reqs
-
-composer.phar:
-	curl -sS https://getcomposer.org/installer | php
-
-clean: remove-deps
-	rm -f composer.lock
-	rm -f composer.phar
-
-remove-deps:
-	rm -rf vendor
+include makefiles/composer.mk
+include makefiles/whalephant.mk
+include makefiles/phpunit.mk
+include makefiles/karma.mk
+include makefiles/behat.mk
 
 #------------------------------------------------------------------------------
-# Karma
+# Help
 #------------------------------------------------------------------------------
-config: karma
-	./karma hydrate -e behat
+.DEFAULT_GOAL := help
 
-karma:
-	$(eval LATEST_VERSION := $(shell curl -L -s -H 'Accept: application/json' https://github.com/niktux/karma/releases/latest | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/'))
-	@echo "Latest version of Karma is ${LATEST_VERSION}"
-	wget -O karma -q https://github.com/Niktux/karma/releases/download/${LATEST_VERSION}/karma.phar
-	chmod 0755 karma
+help:
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
+clean-all: down clean clean-karma clean-whalephant clean-phpunit-dockerfile clean-phpunit-image ## Clean all generated artefacts
 
--include phpunit.mk
--include behat.mk
-
-.PHONY: composer composer-install clean remove-deps config
+.PHONY: help clean-all

@@ -19,20 +19,10 @@ class SupervisorConfigurationGenerator
         $this->overwrite = true;
     }
 
-    public function generate(array $workers, $autostart, $autorestart, $server, $appId, $destination, OutputInterface $output)
+    public function generate(array $workers, $autostart, $autorestart, $appId, $destination, OutputInterface $output)
     {
         foreach($workers as $worker => $data)
         {
-            if( ! $data['isDeploymentAllowed'])
-            {
-                continue;
-            }
-
-            if( ! in_array($server, $data['servers']))
-            {
-                continue;
-            }
-
             $this->generateSupervisorConfigurationFile($worker, $autostart, $autorestart, $appId, $destination, $output);
         }
     }
