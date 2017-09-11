@@ -10,6 +10,8 @@ use Puzzle\AMQP\Consumers;
 use Puzzle\AMQP\Subscribers\ManagedConnection as ManagedConnectionSubscribers;
 use Puzzle\AMQP\Messages\BodyFactories\Standard;
 use Puzzle\AMQP\Workers\MessageAdapterFactory;
+use Puzzle\AMQP\Clients\ChunkedMessageClient;
+use Puzzle\AMQP\Clients\MemoryManagementStrategies\NullMemoryManagementStrategy;
 
 class AmqpServiceProvider implements ServiceProviderInterface
 {
@@ -26,14 +28,22 @@ class AmqpServiceProvider implements ServiceProviderInterface
             return new Pecl($c['configuration']);
         };
 
+        $app['amqp.memory.management'] = function($c) {
+            return new NullMemoryManagementStrategy();
+        };
+
+        $app['amqp.client.chunk'] = function($c) {
+            return new ChunkedMessageClient($c['amqp.client'], $c['amqp.memory.management']);
+        };
+
         $app['amqp.workerProvider'] = function($c) {
             return new Pimple($c);
         };
-        
+
         $app['amqp.bodyFactory'] = function($c) {
             return new Standard();
         };
-        
+
         $app['amqp.messageAdapterFactory'] = function($c) {
             return new MessageAdapterFactory($c['amqp.bodyFactory']);
         };
