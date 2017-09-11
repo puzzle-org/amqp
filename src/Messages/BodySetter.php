@@ -6,6 +6,7 @@ use Puzzle\AMQP\Messages\Bodies\Text;
 use Puzzle\AMQP\Messages\Bodies\Json;
 use Puzzle\AMQP\Messages\Bodies\Binary;
 use Puzzle\AMQP\Messages\Bodies\StreamedFile;
+use Puzzle\AMQP\Messages\Chunks\ChunkSize;
 
 trait BodySetter
 {
@@ -30,9 +31,9 @@ trait BodySetter
         return $this;
     }
 
-    public function setStreamedFile($filepath, $chunkSize)
+    public function setStreamedFile($filepath, ChunkSize $size)
     {
-        $this->setBody(new StreamedFile($filepath, $chunkSize));
+        $this->setBody(new StreamedFile($filepath, $size));
 
         $this->addHeaders([
             'file' => [
