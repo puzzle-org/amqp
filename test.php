@@ -11,6 +11,7 @@ use Puzzle\AMQP\Messages\Processors\GZip;
 use Puzzle\AMQP\Clients\MemoryManagementStrategy;
 use Puzzle\AMQP\Clients\ChunkedMessageClient;
 use Puzzle\AMQP\Messages\Message;
+use Puzzle\AMQP\Messages\Chunks\ChunkSize;
 
 $configuration = new Yaml(new Filesystem(new Local(__DIR__ . '/config')));
 $client = new Pecl($configuration);
@@ -40,7 +41,7 @@ class GCTrigger implements MemoryManagementStrategy
     }
 }
 
-$chunkSize = 10 * 1000 * 1000;
+$chunkSize = new ChunkSize('10M');
 $message = new Message('media.fau.xml');
 $message->setStreamedFile('FAU.xml', $chunkSize);
 //$message->allowCompression();

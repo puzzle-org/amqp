@@ -7,6 +7,7 @@ use Puzzle\AMQP\Messages\Chunks\Chunk;
 use Puzzle\AMQP\Messages\Chunks\ChunkedMessageMetadata;
 use Puzzle\ValueObjects\Uuid;
 use Puzzle\AMQP\Messages\ContentType;
+use Puzzle\AMQP\Messages\Chunks\ChunkSize;
 
 class StreamedFile implements Body
 {
@@ -15,7 +16,7 @@ class StreamedFile implements Body
         $chunkSize,
         $metadata;
 
-    public function __construct($filepath, $chunkSize)
+    public function __construct($filepath, ChunkSize $chunkSize)
     {
         $this->ensureFilepathIsValid($filepath);
 
@@ -23,7 +24,7 @@ class StreamedFile implements Body
         $this->chunkSize = $chunkSize;
 
         $size = filesize($filepath);
-        $nbChunks = (int) ceil($size / $chunkSize);
+        $nbChunks = (int) ceil($size / $chunkSize->toBytes());
 
         $this->metadata = new ChunkedMessageMetadata(new Uuid(), $size, $nbChunks, sha1_file($filepath));
     }
@@ -53,7 +54,7 @@ class StreamedFile implements Body
 
         while(! feof($stream))
         {
-            $content = fread($stream, $this->chunkSize);
+            $content = fread($stream, $this->chunkSize->toBytes());
             $playhead++;
 
             $chunk = new Chunk($playhead, $offset, $content, $this->metadata);
