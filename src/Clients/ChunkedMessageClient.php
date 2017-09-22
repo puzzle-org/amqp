@@ -8,12 +8,18 @@ use Puzzle\AMQP\Messages\Message;
 
 class ChunkedMessageClient
 {
+    const
+        DEFAULT_ROUTING_KEY_PREFIX = 'part';
+
     private
+        $prefix,
         $client,
         $memory;
 
     public function __construct(Client $client, MemoryManagementStrategy $memory = null)
     {
+        $this->changeRoutingKeyPrefix(self::DEFAULT_ROUTING_KEY_PREFIX);
+
         if(! $memory instanceof MemoryManagementStrategy)
         {
             $memory = new NullMemoryManagementStrategy();
@@ -21,6 +27,16 @@ class ChunkedMessageClient
 
         $this->memory = $memory;
         $this->client = $client;
+    }
+
+    public function changeRoutingKeyPrefix($prefix)
+    {
+        if(is_string($prefix))
+        {
+            $prefix = rtrim($prefix, '.');
+
+            $this->prefix = $prefix . ".";
+        }
     }
 
     public function publish($exchangeName, Message $chunkedMessage)
@@ -38,7 +54,7 @@ class ChunkedMessageClient
 
         foreach($streamedContent as $index => $chunk)
         {
-            $message = new Message('part.' . $chunkedMessage->getRoutingKey());
+            $message = new Message($this->prefix . $chunkedMessage->getRoutingKey());
             $message->setBinary($chunk->getContent());
             $message->allowCompression($allowCompression);
 

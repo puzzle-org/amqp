@@ -5,8 +5,9 @@ namespace Puzzle\AMQP\Messages;
 use Puzzle\AMQP\Messages\Bodies\Text;
 use Puzzle\AMQP\Messages\Bodies\Json;
 use Puzzle\AMQP\Messages\Bodies\Binary;
-use Puzzle\AMQP\Messages\Bodies\StreamedFile;
 use Puzzle\AMQP\Messages\Chunks\ChunkSize;
+use Puzzle\AMQP\Messages\Bodies\StreamedFile;
+use Puzzle\AMQP\Messages\Bodies\StreamedBinary;
 
 trait BodySetter
 {
@@ -41,6 +42,13 @@ trait BodySetter
                 'filename' => basename($filepath),
             ]
         ]);
+
+        return $this;
+    }
+
+    public function setStreamedBinary($content, ChunkSize $size)
+    {
+        $this->setBody(new StreamedBinary($content, $size));
 
         return $this;
     }
