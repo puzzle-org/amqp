@@ -12,9 +12,12 @@ behat:
         test_1:
             durable: true
             bindings:
-                - 
+                -
                     exchange: puzzle
                     routing_key: "normal.#"
+                -
+                    exchange: puzzle
+                    routing_key: "part.#"
 
         test_zip:
             durable: true

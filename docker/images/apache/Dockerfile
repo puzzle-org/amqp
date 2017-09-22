@@ -8,9 +8,17 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get install -y automake \
                        build-essential \
-                       libtool && \
+                       libtool \
+                       zlib1g-dev \
+                       unzip && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/*
+
+# Due to issue https://github.com/docker-library/php/issues/233
+# Crappy workaround
+RUN docker-php-ext-install zlib; exit 0
+RUN cp /usr/src/php/ext/zlib/config0.m4 /usr/src/php/ext/zlib/config.m4
+RUN docker-php-ext-install zlib zip
 
 ENV RABBITMQ_VERSION 0.8.0
 

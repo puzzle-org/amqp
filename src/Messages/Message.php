@@ -11,9 +11,9 @@ class Message implements WritableMessage, ConvertibleToString
 {
     const
         ATTRIBUTE_CONTENT_TYPE = 'content_type';
-    
+
     use BodySetter;
-    
+
     private
         $body,
         $canBeDroppedSilently,
@@ -25,14 +25,13 @@ class Message implements WritableMessage, ConvertibleToString
     public function __construct($routingKey = '')
     {
         $this->body = new NullBody();
-        
+
         $this->canBeDroppedSilently = true;
         $this->allowCompression = false;
-        
         $this->userContentType = null;
         $this->headers = array();
         $this->initializeAttributes();
-        
+
         $this->changeRoutingKey($routingKey);
     }
 
@@ -40,7 +39,7 @@ class Message implements WritableMessage, ConvertibleToString
     {
         $this->setAttribute('routing_key', $routingKey);
     }
-    
+
     private function initializeAttributes()
     {
         $this->attributes = array(
@@ -66,26 +65,26 @@ class Message implements WritableMessage, ConvertibleToString
             },
         );
     }
-    
+
     private function generateBodyId()
     {
         if($this->body instanceof Footprintable)
         {
             return $this->body->footprint();
         }
-        
+
         return uniqid(true);
     }
-    
+
     public function canBeDroppedSilently()
     {
         return $this->canBeDroppedSilently;
     }
-    
+
     public function disallowSilentDropping()
     {
         $this->canBeDroppedSilently = false;
-        
+
         return $this;
     }
 
@@ -95,7 +94,7 @@ class Message implements WritableMessage, ConvertibleToString
         {
             return $this->body->getContentType();
         }
-        
+
         return $this->userContentType;
     }
 
@@ -113,10 +112,10 @@ class Message implements WritableMessage, ConvertibleToString
     {
         $this->body = $body;
         $this->updateContentType();
-        
+
         return $this;
     }
-    
+
     private function updateContentType()
     {
         $this->attributes[self::ATTRIBUTE_CONTENT_TYPE] = $this->getContentType();
@@ -149,7 +148,7 @@ class Message implements WritableMessage, ConvertibleToString
     public function packAttributes($timestamp = false)
     {
         $this->updateContentType();
-        
+
         if($timestamp === false)
         {
             $timestamp = (new \DateTime("now"))->getTimestamp();
@@ -181,7 +180,7 @@ class Message implements WritableMessage, ConvertibleToString
             if(array_key_exists($attributeName, $this->attributes))
             {
                 $this->attributes[$attributeName] = $value;
-                
+
                 if($attributeName === self::ATTRIBUTE_CONTENT_TYPE)
                 {
                     $this->userContentType = $value;
@@ -227,16 +226,16 @@ class Message implements WritableMessage, ConvertibleToString
 
         return $this;
     }
-    
+
     public function isCompressionAllowed()
     {
         return $this->allowCompression;
     }
-    
-    public function allowCompression()
+
+    public function allowCompression($allow = true)
     {
-        $this->allowCompression = true;
-        
+        $this->allowCompression = (bool) $allow;
+
         return $this;
     }
 }

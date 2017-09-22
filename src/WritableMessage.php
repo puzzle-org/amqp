@@ -10,17 +10,17 @@ interface WritableMessage extends MessageMetadata
      * @return bool
      */
     public function canBeDroppedSilently();
-    
+
     /**
      * @return self
      */
     public function disallowSilentDropping();
-    
+
     /**
      * @return mixed
      */
     public function getBodyInTransportFormat();
-    
+
     /**
      * @return self
      */
@@ -40,7 +40,7 @@ interface WritableMessage extends MessageMetadata
      * @return self
      */
     public function addHeaders(array $headers);
-    
+
     /**
      * @return self
      */
@@ -50,7 +50,7 @@ interface WritableMessage extends MessageMetadata
      * @return void
      */
     public function packAttributes($timestamp = false);
-    
+
     /**
      * @return self
      */
@@ -60,7 +60,7 @@ interface WritableMessage extends MessageMetadata
      * @return void
      */
     public function changeRoutingKey($routingKey);
-    
+
     /**
      * @return bool
      */
@@ -69,5 +69,5 @@ interface WritableMessage extends MessageMetadata
     /**
      * @return self
      */
-    public function allowCompression();
+    public function allowCompression($allow = true);
 }

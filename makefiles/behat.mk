@@ -53,7 +53,7 @@ reconfigure: clean-configuration configure
 #------------------------------------------------------------------------------
 # Behat test suite
 #------------------------------------------------------------------------------
-cli_exec = docker run -it --rm --name puzzle-amqp-cli \
+cli_exec = docker run -it --rm \
 	                 -v ${HOST_SOURCE_PATH}:${CONTAINER_SOURCE_PATH} \
 	                 -w ${CONTAINER_SOURCE_PATH} \
 	                 --link puzzle-amqp-rabbitmq:rabbitmq \
@@ -70,4 +70,3 @@ run-behat:
 
 debug-behat:
 	$(call cli_exec,vendor/bin/behat -v)
-
