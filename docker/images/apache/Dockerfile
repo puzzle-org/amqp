@@ -9,9 +9,7 @@ RUN apt-get update && \
     apt-get install -y automake \
                        build-essential \
                        libtool \
-                       php5-dev \
                        zlib1g-dev \
-                       git \
                        unzip && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/*
@@ -38,17 +36,6 @@ RUN cd /tmp && \
 
 RUN pecl install xdebug amqp-1.7.0 && \
     docker-php-ext-enable xdebug amqp
-
-RUN git clone https://github.com/BitOne/php-meminfo.git && \
-	cd php-meminfo/extension && \
-	phpize && \
-	./configure --enable-meminfo && \
-	make && \
-	make install 
-
-RUN cd php-meminfo/analyzer && \
-	curl -sS https://getcomposer.org/installer | php && \
-	php composer.phar update
 
 WORKDIR /var/www/puzzle-amqp
 
