@@ -10,19 +10,24 @@ interface Body
      * @return mixed
      */
     public function inOriginalFormat();
-    
+
     /**
      * In the same format than in AMQP layer
      *
      * @return string
      */
     public function asTransported();
-    
+
     /**
      * @return string
      */
     public function getContentType();
-    
+
+    /**
+     * @return bool
+     */
+    public function isChunked();
+
     /**
      * @return string
      */

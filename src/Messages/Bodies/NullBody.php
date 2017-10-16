@@ -11,7 +11,7 @@ class NullBody implements Body
     {
         return null;
     }
-    
+
     public function asTransported()
     {
         return null;
@@ -25,5 +25,10 @@ class NullBody implements Body
     public function __toString()
     {
         return '';
+    }
+
+    public function isChunked()
+    {
+        return false;
     }
 }

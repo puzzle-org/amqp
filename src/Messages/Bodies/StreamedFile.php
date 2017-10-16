@@ -16,7 +16,7 @@ class StreamedFile implements Body
         $chunkSize,
         $metadata;
 
-    public function __construct($filepath, ChunkSize $chunkSize)
+    public function __construct($filepath, ChunkSize $chunkSize = null)
     {
         $this->ensureFilepathIsValid($filepath);
 
@@ -43,10 +43,15 @@ class StreamedFile implements Body
     }
 
     /**
-     * @return \Generator
+     * @return \Generator|string
      */
     public function asTransported()
     {
+        if($this->isChunked() === false)
+        {
+            return $this->inOriginalFormat();
+        }
+
         $offset = 0;
         $playhead = 0;
 
@@ -78,5 +83,10 @@ class StreamedFile implements Body
             '<binary stream of %d bytes>',
             filesize($this->filepath)
         );
+    }
+
+    public function isChunked()
+    {
+        return $this->chunkSize instanceof ChunkSize;
     }
 }

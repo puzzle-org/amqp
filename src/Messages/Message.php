@@ -238,4 +238,9 @@ class Message implements WritableMessage, ConvertibleToString
 
         return $this;
     }
+
+    public function isChunked()
+    {
+        return $this->body->isChunked();
+    }
 }

@@ -44,4 +44,9 @@ class StreamedBinary extends Binary
             unset($chunk, $content);
         }
     }
+
+    public function isChunked()
+    {
+        return true;
+    }
 }
