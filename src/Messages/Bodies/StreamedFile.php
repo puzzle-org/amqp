@@ -23,10 +23,15 @@ class StreamedFile implements Body
         $this->filepath = $filepath;
         $this->chunkSize = $chunkSize;
 
-        $size = filesize($filepath);
-        $nbChunks = (int) ceil($size / $chunkSize->toBytes());
+        $this->metadata = null;
 
-        $this->metadata = new ChunkedMessageMetadata(new Uuid(), $size, $nbChunks, sha1_file($filepath));
+        if($chunkSize instanceof ChunkSize)
+        {
+            $size = filesize($filepath);
+            $nbChunks = (int) ceil($size / $chunkSize->toBytes());
+
+            $this->metadata = new ChunkedMessageMetadata(new Uuid(), $size, $nbChunks, sha1_file($filepath));
+        }
     }
 
     private function ensureFilepathIsValid($filepath)
@@ -42,9 +47,6 @@ class StreamedFile implements Body
         return file_get_contents($this->filepath);
     }
 
-    /**
-     * @return \Generator|string
-     */
     public function asTransported()
     {
         if($this->isChunked() === false)
@@ -52,6 +54,14 @@ class StreamedFile implements Body
             return $this->inOriginalFormat();
         }
 
+        return $this->asTransportedInChunks();
+    }
+
+    /**
+     * @return \Generator
+     */
+    private function asTransportedInChunks()
+    {
         $offset = 0;
         $playhead = 0;
 

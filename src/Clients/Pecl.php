@@ -73,7 +73,7 @@ class Pecl implements Client
     {
         if($message->isChunked())
         {
-            $client = new ChunkedMessageClient($client, $this->memoryManagementStrategy);
+            $client = new ChunkedMessageClient($this, $this->memoryManagementStrategy);
 
             return $client->publish($exchangeName, $message);
         }
