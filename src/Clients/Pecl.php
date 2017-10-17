@@ -10,6 +10,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Puzzle\AMQP\WritableMessage;
 use Puzzle\AMQP\Clients\Processors\MessageProcessorAware;
+use Puzzle\AMQP\Clients\MemoryManagementStrategies\NullMemoryManagementStrategy;
 
 class Pecl implements Client
 {
@@ -23,14 +24,23 @@ class Pecl implements Client
     private
         $applicationId,
         $configuration,
-        $channel;
+        $channel,
+        $memoryManagementStrategy;
 
     public function __construct(Configuration $configuration)
     {
         $this->applicationId = $configuration->read('app/id', 'Unknown application');
         $this->configuration = $configuration;
         $this->channel = null;
+        $this->memoryManagementStrategy = new NullMemoryManagementStrategy();
         $this->logger = new NullLogger();
+    }
+
+    public function setMemoryManagementStrategy(MemoryManagementStrategy $strategy)
+    {
+        $this->memoryManagementStrategy = $strategy;
+
+        return $this;
     }
 
     private function ensureIsConnected()
@@ -51,7 +61,7 @@ class Pecl implements Client
             {
                 $connection->setVhost($vhost);
             }
-            
+
             $connection->connect();
 
             // Create a channel
@@ -61,6 +71,13 @@ class Pecl implements Client
 
     public function publish($exchangeName, WritableMessage $message)
     {
+        if($message->isChunked())
+        {
+            $client = new ChunkedMessageClient($this, $this->memoryManagementStrategy);
+
+            return $client->publish($exchangeName, $message);
+        }
+
         try
         {
             $ex = $this->getExchange($exchangeName);
@@ -107,17 +124,17 @@ class Pecl implements Client
 
         return true;
     }
-    
+
     private function computeMessageFlag(WritableMessage $message)
     {
         $flag = AMQP_NOPARAM;
         $disallowSilentDropping = $this->configuration->read('amqp/global/disallowSilentDropping', false);
-        
+
         if($disallowSilentDropping === true || $message->canBeDroppedSilently() === false)
         {
             $flag = AMQP_MANDATORY;
         }
-        
+
         return $flag;
     }
 

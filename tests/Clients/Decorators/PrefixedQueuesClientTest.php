@@ -75,11 +75,24 @@ class PrefixedQueuesClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($message, $firstMessage['message']);
     }
-    
+
     public function testGetAppendProcessor()
     {
         $client = new PrefixedQueuesClient(new MockedClientQueue(), 'rainbow');
         $client->appendMessageProcessor(new NullProcessor());
+        $this->assertTrue(
+            $client->publish('exchange', new Message('null'))
+        );
+    }
+
+    public function testSetMessageProcessors()
+    {
+        $client = new PrefixedQueuesClient(new MockedClient(), 'rainbow');
+        $client->setMessageProcessors([
+            new NullProcessor(),
+            new NullProcessor(),
+            new NullProcessor(),
+        ]);
         $this->assertTrue(
             $client->publish('exchange', new Message('null'))
         );

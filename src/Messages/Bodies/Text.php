@@ -14,12 +14,12 @@ class Text implements Body, Footprintable
 
     private
         $content;
-    
+
     public function __construct($text = '')
     {
         $this->changeText($text);
     }
-    
+
     public function inOriginalFormat()
     {
         return $this->content;
@@ -29,22 +29,22 @@ class Text implements Body, Footprintable
     {
         return $this->content;
     }
-    
+
     public function getContentType()
     {
         return ContentType::TEXT;
     }
-    
+
     public function __toString()
     {
         return $this->asTransported();
     }
-    
+
     public function footprint()
     {
         return sha1($this->asTransported());
     }
-    
+
     public function changeText($text)
     {
         if(! $this->isConvertibleToString($text))
@@ -54,12 +54,17 @@ class Text implements Body, Footprintable
 
         $this->content = (string) $text;
     }
-    
+
     public function append(...$text)
     {
         foreach($text as $part)
         {
             $this->content .= $part;
         }
+    }
+
+    public function isChunked()
+    {
+        return false;
     }
 }

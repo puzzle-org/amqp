@@ -4,6 +4,7 @@ namespace Puzzle\AMQP\Clients;
 
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Clients\MemoryManagementStrategies\NullMemoryManagementStrategy;
+use Puzzle\AMQP\WritableMessage;
 use Puzzle\AMQP\Messages\Message;
 
 class ChunkedMessageClient
@@ -39,7 +40,7 @@ class ChunkedMessageClient
         }
     }
 
-    public function publish($exchangeName, Message $chunkedMessage)
+    public function publish($exchangeName, WritableMessage $chunkedMessage)
     {
         $streamedContent = $chunkedMessage->getBodyInTransportFormat();
 

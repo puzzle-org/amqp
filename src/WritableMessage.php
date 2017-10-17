@@ -70,4 +70,9 @@ interface WritableMessage extends MessageMetadata
      * @return self
      */
     public function allowCompression($allow = true);
+
+    /**
+     * @return bool
+     */
+    public function isChunked();
 }
