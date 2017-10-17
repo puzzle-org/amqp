@@ -125,6 +125,10 @@ class ExampleWorker implements Worker
 BC Breaks changelog
 -------------------
 
+**3.x -> 4.x**
+
+ - Chunk management introduced in 3.1 has been refactored and made easier : just use Streamed* bodies and same client as usual 
+
 **2.x -> 3.x**
 
  - Message hooks has been removed
