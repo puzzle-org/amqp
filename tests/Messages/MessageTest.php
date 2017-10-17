@@ -3,6 +3,7 @@
 namespace Puzzle\AMQP\Messages;
 
 use Puzzle\AMQP\MessageMetadata;
+use Puzzle\AMQP\Messages\Chunks\ChunkSize;
 
 class MessageTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,10 +13,10 @@ class MessageTest extends \PHPUnit_Framework_TestCase
     {
         $msg = new Message('routing.key');
         $msg->setJson($json = ['Fabrice' => 'Auzamandes']);
-        
+
         $this->assertSame(json_encode($json), $msg->getBodyInTransportFormat());
     }
-    
+
     public function testPackAttributes()
     {
         $msg = new Message('pony.black_unicorn');
@@ -150,27 +151,27 @@ class MessageTest extends \PHPUnit_Framework_TestCase
     public function testSilentDropping()
     {
         $msg = new Message('my.key');
-        
+
         $this->assertTrue($msg->canBeDroppedSilently());
-        
+
         $msg->disallowSilentDropping();
         $this->assertFalse($msg->canBeDroppedSilently());
     }
-    
+
     public function testAllowCompression()
     {
         $msg = new Message('my.key');
-        
+
         $this->assertFalse($msg->isCompressionAllowed());
         $msg->allowCompression();
         $this->assertTrue($msg->isCompressionAllowed());
     }
-    
+
     public function testChangingContentType()
     {
         $msg = new Message('my.key');
         $this->assertContentTypeIs(ContentType::EMPTY_CONTENT, $msg);
-        
+
         $msg->setText('unicorn');
         $this->assertContentTypeIs(ContentType::TEXT, $msg);
 
@@ -179,32 +180,56 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
         $msg->packAttributes();
         $this->assertContentTypeIs(ContentType::JSON, $msg);
-        
+
+        $msg->setStreamedBinary('pony', new ChunkSize(1));
+        $this->assertContentTypeIs(ContentType::BINARY, $msg);
+
         $msg->setText('pony');
         $this->assertContentTypeIs(ContentType::TEXT, $msg);
-        
+
         $msg->setAttribute(Message::ATTRIBUTE_CONTENT_TYPE, 'application/xml');
         $this->assertContentTypeIs('application/xml', $msg);
-        
+
         $msg->setJson([]);
         $this->assertContentTypeIs('application/xml', $msg);
-        
+
         $msg->packAttributes();
         $this->assertContentTypeIs('application/xml', $msg);
 
         $msg->setAttribute(Message::ATTRIBUTE_CONTENT_TYPE, 'X-pony');
         $this->assertContentTypeIs('X-pony', $msg);
-        
+
         $msg->setJson([]);
         $this->assertContentTypeIs('X-pony', $msg);
-        
+
         $msg->packAttributes();
         $this->assertContentTypeIs('X-pony', $msg);
     }
-    
+
     private function assertContentTypeIs($contentType, MessageMetadata $message)
     {
         $this->assertSame($contentType, $message->getContentType());
     }
-    
+
+    /**
+     * @dataProvider providerTestIsChunked
+     */
+    public function testIsChunked(Message $message, $expected)
+    {
+        $this->assertSame($expected, $message->isChunked());
+    }
+
+    public function providerTestIsChunked()
+    {
+        return [
+            [(new Message()), false],
+            [(new Message())->setJson([]), false],
+            [(new Message())->setText(''), false],
+            [(new Message())->setBinary(''), false],
+            [(new Message())->setStreamedBinary('', new ChunkSize('1M')), true],
+            [(new Message())->setStreamedFile(__FILE__, new ChunkSize('1M')), true],
+            [(new Message())->setStreamedFile(__FILE__), false],
+        ];
+    }
+
 }
