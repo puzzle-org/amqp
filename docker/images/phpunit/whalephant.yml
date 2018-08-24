@@ -2,7 +2,7 @@ name: puzzle-amqp
 php:
     version: 5.6
 extensions:
-    - xdebug
+    - xdebug:2.5.5
 ini:
     - "error_reporting = E_ALL;"
     - "xdebug.var_display_max_depth = 5;"
