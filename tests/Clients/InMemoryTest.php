@@ -2,10 +2,11 @@
 
 namespace Puzzle\AMQP\Clients;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Messages\Message;
 use Puzzle\AMQP\Messages\Processors\NullProcessor;
 
-class InMemoryTest extends \PHPUnit_Framework_TestCase
+class InMemoryTest extends TestCase
 {
     public function testAll()
     {

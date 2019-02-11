@@ -2,6 +2,7 @@
 
 namespace Puzzle\AMQP\Workers;
 
+use PHPUnit\Framework\TestCase;
 use Swarrot\Broker\Message;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\Bodies\Json;
@@ -10,7 +11,7 @@ use Puzzle\AMQP\Messages\InMemory;
 use Puzzle\AMQP\WritableMessage;
 use Puzzle\Assert\ArrayRelated;
 
-class MessageAdapterTest extends \PHPUnit_Framework_TestCase
+class MessageAdapterTest extends TestCase
 {
     use ArrayRelated;
 

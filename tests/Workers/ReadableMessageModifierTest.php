@@ -2,12 +2,13 @@
 
 namespace Puzzle\AMQP\Workers;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Messages\InMemory;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Messages\Bodies\Json;
 
-class ReadableMessageModifierTest extends \PHPUnit_Framework_TestCase
+class ReadableMessageModifierTest extends TestCase
 {
     private
         $originalMessage;

@@ -2,7 +2,9 @@
 
 namespace Puzzle\AMQP\Messages\Bodies;
 
-class TextTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class TextTest extends TestCase
 {
     /**
      * @dataProvider providerTestToString

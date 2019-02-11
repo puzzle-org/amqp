@@ -4,9 +4,10 @@ namespace Puzzle\AMQP\Services;
 
 use Gaufrette\Filesystem;
 use Gaufrette\Adapter\InMemory;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\NullOutput;
 
-class SupervisorConfigurationGeneratorTest extends \PHPUnit_Framework_TestCase
+class SupervisorConfigurationGeneratorTest extends TestCase
 {
     /**
      * @dataProvider providerTestGenerate

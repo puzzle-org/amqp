@@ -2,13 +2,13 @@
 
 namespace Puzzle\AMQP\Workers;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Consumers\Simple;
 use Psr\Log\LoggerAwareTrait;
 use Swarrot\Broker\Message;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\OnConsumeProcessor;
-use Puzzle\AMQP\Workers\ReadableMessageModifier;
 use Puzzle\AMQP\Messages\Bodies\Text;
 use Puzzle\Pieces\EventDispatcher\Adapters\Symfony;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -49,7 +49,7 @@ class Collect implements Worker
     }
 }
 
-class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
+class ProcessInterfaceAdapterTest extends TestCase
 {
     public function testProcess()
     {
