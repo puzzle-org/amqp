@@ -125,6 +125,11 @@ class ExampleWorker implements Worker
 BC Breaks changelog
 -------------------
 
+**4.x -> 5.x**
+
+ - Drop support for php 5.6
+ - Worker now catch Throwable, not only Exceptions
+
 **3.x -> 4.x**
 
  - Chunk management introduced in 3.1 has been refactored and made easier : just use Streamed* bodies and same client as usual 
