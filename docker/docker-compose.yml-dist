@@ -9,7 +9,7 @@ services:
         links:
             - rabbitmq
     rabbitmq:
-        image: rabbitmq:3-management-alpine
+        image: rabbitmq:3.6-management-alpine
         container_name: puzzle-amqp-rabbitmq
         hostname: rabbitmq-puzzle-amqp
         ports:
