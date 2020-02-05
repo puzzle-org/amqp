@@ -19,7 +19,7 @@
         }
     },
     "require" : {
-        "php": ">=7.0",
+        "php": ">=7.1",
         "puzzle/configuration" : ">=3.0",
         "puzzle/pieces" : "~2.2",
         "symfony/console": "~3.2",
