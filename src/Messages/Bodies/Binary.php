@@ -25,12 +25,12 @@ class Binary implements Body
         return $this->content;
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         return ContentType::BINARY;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf(
             '<binary stream of %d bytes>',
@@ -38,12 +38,12 @@ class Binary implements Body
         );
     }
 
-    public function changeContent($content)
+    public function changeContent($content): void
     {
         $this->content = $content;
     }
 
-    public function isChunked()
+    public function isChunked(): bool
     {
         return false;
     }

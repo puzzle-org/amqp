@@ -18,30 +18,30 @@ class PrefixedQueuesClient implements Client
         $client,
         $queueNamePrefix;
 
-    public function __construct(Client $client, $queueNamePrefix)
+    public function __construct(Client $client, ?string $queueNamePrefix)
     {
         $this->client = $client;
         $this->queueNamePrefix = $queueNamePrefix;
     }
 
-    public function publish($exchangeName, WritableMessage $message)
+    public function publish(string $exchangeName, WritableMessage $message): bool
     {
         return $this->client->publish($exchangeName, $message);
     }
 
-    public function getQueue($queueName)
+    public function getQueue(string $queueName): \AMQPQueue
     {
         $prefixedQueueName = $this->computePrefixedQueueName($queueName);
 
         return $this->client->getQueue($prefixedQueueName);
     }
 
-    public function getExchange($exchangeName)
+    public function getExchange(?string $exchangeName = null, string $type = AMQP_EX_TYPE_TOPIC): \AMQPExchange
     {
-        return $this->client->getExchange($exchangeName);
+        return $this->client->getExchange($exchangeName, $type);
     }
 
-    private function computePrefixedQueueName($queueName)
+    public function computePrefixedQueueName(string $queueName): string
     {
         $queueNameParts = [];
 

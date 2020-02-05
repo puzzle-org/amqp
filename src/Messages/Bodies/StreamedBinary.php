@@ -13,7 +13,7 @@ class StreamedBinary extends Binary
         $chunkSize,
         $metadata;
 
-    public function __construct($content, ChunkSize $chunkSize)
+    public function __construct(string $content, ChunkSize $chunkSize)
     {
         parent::__construct($content);
 
@@ -45,7 +45,7 @@ class StreamedBinary extends Binary
         }
     }
 
-    public function isChunked()
+    public function isChunked(): bool
     {
         return true;
     }

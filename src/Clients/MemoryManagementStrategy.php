@@ -4,6 +4,6 @@ namespace Puzzle\AMQP\Clients;
 
 interface MemoryManagementStrategy
 {
-    public function init();
-    public function manage($sentSize);
+    public function init(): void;
+    public function manage(int $sentSize): void;
 }

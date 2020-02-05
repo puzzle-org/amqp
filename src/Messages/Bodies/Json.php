@@ -21,27 +21,27 @@ class Json implements Body, Footprintable
         return $this->jsonAsArray;
     }
 
-    public function asTransported()
+    public function asTransported(): string
     {
         return \Puzzle\Pieces\Json::encode($this->jsonAsArray);
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         return ContentType::JSON;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->asTransported();
     }
 
-    public function footprint()
+    public function footprint(): string
     {
         return sha1($this->asTransported());
     }
 
-    public function changeContent($content)
+    public function changeContent($content): void
     {
         if(! is_array($content))
         {
@@ -51,12 +51,12 @@ class Json implements Body, Footprintable
         $this->jsonAsArray = $content;
     }
 
-    public function changeContentWithJson($json)
+    public function changeContentWithJson($json): void
     {
         $this->jsonAsArray = \Puzzle\Pieces\Json::decode($json, true);
     }
 
-    public function isChunked()
+    public function isChunked(): bool
     {
         return false;
     }

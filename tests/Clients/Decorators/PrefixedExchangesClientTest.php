@@ -9,14 +9,6 @@ use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Messages\Message;
 use Puzzle\AMQP\Messages\Processors\NullProcessor;
 
-class MockedClient extends InMemory implements Client
-{
-    public function getExchange($exchangeName)
-    {
-        return $exchangeName;
-    }
-}
-
 class PrefixedExchangesClientTest extends TestCase
 {
     private
@@ -30,7 +22,7 @@ class PrefixedExchangesClientTest extends TestCase
     /**
      * @dataProvider providerTestPublish
      */
-    public function testPublish($prefix, $expectedExchange)
+    public function testPublish(?string $prefix, string $expectedExchange): void
     {
         $client = new PrefixedExchangesClient($this->memory, $prefix);
         $client->setLogger(new NullLogger());
@@ -47,7 +39,7 @@ class PrefixedExchangesClientTest extends TestCase
         $this->assertSame($expectedExchange, $firstMessage['exchange']);
     }
 
-    public function providerTestPublish()
+    public function providerTestPublish(): array
     {
         return [
             'nominal' =>
@@ -68,30 +60,33 @@ class PrefixedExchangesClientTest extends TestCase
     /**
      * @expectedException \RuntimeException
      */
-    public function testGetQueue()
+    public function testGetQueue(): void
     {
         $client = new PrefixedExchangesClient($this->memory, 'rainbow');
         $client->getQueue('tail');
     }
 
-    public function testGetExchange()
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testGetExchange(): void
     {
-        $client = new PrefixedExchangesClient(new MockedClient(), 'rainbow');
+        $client = new PrefixedExchangesClient(new InMemory(), 'rainbow');
         $this->assertSame('rainbow.pizza', $client->getExchange('pizza'));
     }
 
-    public function testGetAppendProcessor()
+    public function testGetAppendProcessor(): void
     {
-        $client = new PrefixedExchangesClient(new MockedClient(), 'rainbow');
+        $client = new PrefixedExchangesClient(new InMemory(), 'rainbow');
         $client->appendMessageProcessor(new NullProcessor());
         $this->assertTrue(
             $client->publish('exchange', new Message('null'))
         );
     }
 
-    public function testSetMessageProcessors()
+    public function testSetMessageProcessors(): void
     {
-        $client = new PrefixedExchangesClient(new MockedClient(), 'rainbow');
+        $client = new PrefixedExchangesClient(new InMemory(), 'rainbow');
         $client->setMessageProcessors([
             new NullProcessor(),
             new NullProcessor(),

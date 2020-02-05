@@ -12,7 +12,7 @@ final class ChunkedMessageMetadata
         $nbChunks,
         $checksum;
 
-    public function __construct(Uuid $uuid, $size, $nbChunks, $checksum)
+    public function __construct(Uuid $uuid, int $size, int $nbChunks, string $checksum)
     {
         $this->uuid = $uuid;
         $this->size = $size;
@@ -32,30 +32,32 @@ final class ChunkedMessageMetadata
             }
         }
 
-        return new self(new Uuid($headers['uuid']), $headers['size'], $headers['nbChunks'], $headers['checksum']);
+        return new self(
+            new Uuid($headers['uuid']), $headers['size'], $headers['nbChunks'], $headers['checksum']
+        );
     }
 
-    public function uuid()
+    public function uuid(): Uuid
     {
         return $this->uuid;
     }
 
-    public function size()
+    public function size(): int
     {
         return $this->size;
     }
 
-    public function nbChunks()
+    public function nbChunks(): int
     {
         return $this->nbChunks;
     }
 
-    public function checksum()
+    public function checksum(): string
     {
         return $this->checksum;
     }
 
-    public function toHeaders()
+    public function toHeaders(): array
     {
         return [
             'uuid' => $this->uuid->value(),
