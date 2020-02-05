@@ -2,7 +2,9 @@
 
 namespace Puzzle\AMQP\Messages\Bodies;
 
-class JsonTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class JsonTest extends TestCase
 {
     public function testGetContentInDifferentFormats()
     {

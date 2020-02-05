@@ -2,10 +2,11 @@
 
 namespace Puzzle\AMQP\Messages\BodyFactories;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\TypedBodyFactories\Json;
 
-class StandardTest extends \PHPUnit_Framework_TestCase
+class StandardTest extends TestCase
 {
     /**
      * @dataProvider providerTestBuild

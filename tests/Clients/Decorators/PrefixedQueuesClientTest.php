@@ -2,6 +2,7 @@
 
 namespace Puzzle\AMQP\Clients\Decorators;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Clients\InMemory;
 use Puzzle\AMQP\Messages\Message;
@@ -20,7 +21,7 @@ class MockedClientQueue extends InMemory implements Client
     }
 }
 
-class PrefixedQueuesClientTest extends \PHPUnit_Framework_TestCase
+class PrefixedQueuesClientTest extends TestCase
 {
     /**
      * @dataProvider providerTestGetQueue

@@ -2,11 +2,12 @@
 
 namespace Puzzle\AMQP\Messages\Processors;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Messages\Message;
 use Puzzle\AMQP\Clients\InMemory;
 use Puzzle\AMQP\WritableMessage;
 
-class AddHeaderTest extends \PHPUnit_Framework_TestCase
+class AddHeaderTest extends TestCase
 {
     public function testOnPublish()
     {

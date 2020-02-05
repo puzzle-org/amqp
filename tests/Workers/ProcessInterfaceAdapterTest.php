@@ -2,13 +2,13 @@
 
 namespace Puzzle\AMQP\Workers;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Consumers\Simple;
 use Psr\Log\LoggerAwareTrait;
 use Swarrot\Broker\Message;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\OnConsumeProcessor;
-use Puzzle\AMQP\Workers\ReadableMessageModifier;
 use Puzzle\AMQP\Messages\Bodies\Text;
 use Puzzle\Pieces\EventDispatcher\Adapters\Symfony;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -36,6 +36,26 @@ class ChangeBodyProcessor implements OnConsumeProcessor
     }
 }
 
+class CallableWorker implements Worker
+{
+    use LoggerAwareTrait;
+
+    private
+        $callable;
+
+    public function __construct($callable)
+    {
+        $this->callable = $callable;
+    }
+
+    public function process(ReadableMessage $message)
+    {
+        $callable = $this->callable;
+
+        $callable();
+    }
+}
+
 class Collect implements Worker
 {
     use LoggerAwareTrait;
@@ -49,7 +69,7 @@ class Collect implements Worker
     }
 }
 
-class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
+class ProcessInterfaceAdapterTest extends TestCase
 {
     public function testProcess()
     {
@@ -70,7 +90,7 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($worker->lastProcessedMessages instanceof ReadableMessage);
         $this->assertSame('ponies.over.unicorns', $worker->lastProcessedMessages->getRoutingKey());
     }
-    
+
     public function testProcessWithCustomDependencies()
     {
         $worker = new Collect();
@@ -81,12 +101,12 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
         $workerContext = new WorkerContext($workerClosure, new Simple(), 'fake_queue');
         $bodyFactory = new Standard();
         $bodyFactory->handleContentType('application/x-custom', new \Puzzle\AMQP\Messages\TypedBodyFactories\Text());
-        
+
         $processor = new ProcessorInterfaceAdapter($workerContext);
         $processor
             ->setEventDispatcher(new Symfony(new EventDispatcher()))
             ->setMessageAdapterFactory(new MessageAdapterFactory($bodyFactory));
-        
+
         $message = new Message('body', [
             'content_type' => 'application/x-custom',
             'routing_key' => 'ponies.over.unicorns',
@@ -96,7 +116,7 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($worker->lastProcessedMessages instanceof ReadableMessage);
         $this->assertSame('ponies.over.unicorns', $worker->lastProcessedMessages->getRoutingKey());
     }
-    
+
     public function testOnConsume()
     {
         $worker = new Collect();
@@ -110,30 +130,30 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
 
         $processor = new ProcessorInterfaceAdapter($workerContext);
         $processor->appendMessageProcessor(new ChangeBodyProcessor('pony'));
-        
+
         $processor->process(new Message('horse', [
             'content_type' => ContentType::TEXT,
             'routing_key' => 'ponies.over.unicorns',
         ]), []);
-        
+
         $this->assertSame('pony', $worker->lastProcessedMessages->getBodyInOriginalFormat());
 
         $processor->process(new Message('lamb', [
             'content_type' => ContentType::TEXT,
             'routing_key' => 'ponies.over.unicorns',
         ]), []);
-        
+
         $this->assertSame('pony', $worker->lastProcessedMessages->getBodyInOriginalFormat());
-        
+
         $processor->appendMessageProcessor(new ChangeBodyProcessor('unicorn'));
 
         $processor->process(new Message('donkey', [
             'content_type' => ContentType::TEXT,
             'routing_key' => 'ponies.over.unicorns',
         ]), []);
-        
+
         $this->assertSame('pony', $worker->lastProcessedMessages->getBodyInOriginalFormat());
-        
+
         $processor->setMessageProcessors([
             new ChangeBodyProcessor('pegasus'),
             new ChangeBodyProcessor('unicorn'),
@@ -144,7 +164,66 @@ class ProcessInterfaceAdapterTest extends \PHPUnit_Framework_TestCase
             'content_type' => ContentType::TEXT,
             'routing_key' => 'ponies.over.unicorns',
         ]), []);
-        
+
         $this->assertSame('pegasus', $worker->lastProcessedMessages->getBodyInOriginalFormat());
+    }
+
+    /**
+     * @dataProvider providerTestCatchingThrowable
+     */
+    public function testCatchingThrowable(Worker $worker, $expectedException)
+    {
+        $workerContext = new WorkerContext(
+            function() use($worker) {
+                return $worker;
+            },
+            new Simple(),
+            'fake_queue'
+        );
+
+
+        $processor = new ProcessorInterfaceAdapter($workerContext);
+        $current = null;
+
+        // Workaround : PHPUnit set an error handler -> unable to catch PHP native \Error
+        // cf. http://php.net/manual/fr/function.set-error-handler.php
+        $errorHandler = set_error_handler(null);
+        try
+        {
+            $processor->process(new Message('body', [
+                'content_type' => ContentType::TEXT,
+                'routing_key' => 'ponies.over.unicorns',
+            ]), []);
+        }
+        catch(\Throwable $current)
+        {
+        }
+
+        set_error_handler($errorHandler);// Removing the workaround
+
+        $this->assertInstanceOf($expectedException, $current);
+    }
+
+    public function providerTestCatchingThrowable()
+    {
+        return [
+            'exception' => [
+                'worker' => $this->callableWorker(function() {
+                    throw new \Exception('Zboui zboui zboui');
+                }),
+                'expectedException' => \Exception::class,
+            ],
+            'error' => [
+                'worker' => $this->callableWorker(function() {
+                    throw new \Error('This is a PHP error');
+                }),
+                'expectedException' => \ErrorException::class,
+            ],
+        ];
+    }
+
+    private function callableWorker($callable): CallableWorker
+    {
+        return new CallableWorker($callable);
     }
 }

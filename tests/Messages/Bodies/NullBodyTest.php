@@ -2,7 +2,9 @@
 
 namespace Puzzle\AMQP\Messages\Bodies;
 
-class NullBodyTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class NullBodyTest extends TestCase
 {
     public function testNullBody()
     {

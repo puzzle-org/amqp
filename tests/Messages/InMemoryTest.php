@@ -2,10 +2,11 @@
 
 namespace Puzzle\AMQP\Messages;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Messages\Bodies\Text;
 
-class InMemoryTest extends \PHPUnit_Framework_TestCase
+class InMemoryTest extends TestCase
 {
     public function testGetRoutingKeyFromHeader()
     {

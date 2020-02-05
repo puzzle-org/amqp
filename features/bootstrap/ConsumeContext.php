@@ -88,7 +88,7 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
      */
     public function iHaveConsumedMessage($nbMessages)
     {
-        \PHPUnit_Framework_Assert::assertSame((int) $nbMessages, count($this->consumedMessages));
+        \PHPUnit\Framework\Assert::assertSame((int) $nbMessages, count($this->consumedMessages));
     }
     
     /**
@@ -111,8 +111,8 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
     {
         $firstMessage = $this->consumedMessages[0];
         
-        \PHPUnit_Framework_Assert::assertSame($firstMessage->getRoutingKeyFromHeader(), $routingKey);
-        \PHPUnit_Framework_Assert::assertSame($firstMessage->getContentType(), $contentType);
+        \PHPUnit\Framework\Assert::assertSame($firstMessage->getRoutingKeyFromHeader(), $routingKey);
+        \PHPUnit\Framework\Assert::assertSame($firstMessage->getContentType(), $contentType);
     }
     
     /**
@@ -130,7 +130,7 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
     {
         $firstMessage = $this->consumedMessages[0];
         
-        \PHPUnit_Framework_Assert::assertSame($firstMessage->getBodyInOriginalFormat(), $bodyContent);
+        \PHPUnit\Framework\Assert::assertSame($firstMessage->getBodyInOriginalFormat(), $bodyContent);
     }
 
     /**
@@ -162,8 +162,8 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
             }
         }
         
-        \PHPUnit_Framework_Assert::assertNotNull($found);
-        \PHPUnit_Framework_Assert::assertSame($routingKey, $found->getRoutingKeyFromHeader());
+        \PHPUnit\Framework\Assert::assertNotNull($found);
+        \PHPUnit\Framework\Assert::assertSame($routingKey, $found->getRoutingKeyFromHeader());
     }
     
     /**
@@ -190,7 +190,7 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
             }
         }
         
-        \PHPUnit_Framework_Assert::assertTrue($found);
+        \PHPUnit\Framework\Assert::assertTrue($found);
     }
 
     /**

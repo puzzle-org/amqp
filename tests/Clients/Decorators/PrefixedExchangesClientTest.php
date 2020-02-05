@@ -2,6 +2,7 @@
 
 namespace Puzzle\AMQP\Clients\Decorators;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Clients\InMemory;
 use Psr\Log\NullLogger;
 use Puzzle\AMQP\Client;
@@ -16,7 +17,7 @@ class MockedClient extends InMemory implements Client
     }
 }
 
-class PrefixedExchangesClientTest extends \PHPUnit_Framework_TestCase
+class PrefixedExchangesClientTest extends TestCase
 {
     private
         $memory;

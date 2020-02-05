@@ -2,6 +2,7 @@
 
 namespace Puzzle\AMQP\Messages\Processors;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Messages\Message;
 use Puzzle\AMQP\Messages\ContentType;
 use Symfony\Component\Debug\BufferingLogger;
@@ -11,7 +12,7 @@ use Puzzle\AMQP\Messages\Bodies\Binary;
 use Puzzle\AMQP\MessageMetadata;
 use Puzzle\AMQP\Messages\Bodies\Json;
 
-class GZipTest extends \PHPUnit_Framework_TestCase
+class GZipTest extends TestCase
 {
     use ExampleDataProvider;
     

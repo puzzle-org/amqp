@@ -2,6 +2,7 @@
 
 namespace Puzzle\AMQP\Workers;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Messages\ContentType;
 
 class FooBar
@@ -9,7 +10,7 @@ class FooBar
     use MessageAdapterFactoryAware;
 }
 
-class MessageAdapterFactoryAwareTest extends \PHPUnit_Framework_TestCase
+class MessageAdapterFactoryAwareTest extends TestCase
 {
     public function testFallbackConstructionWithStandardImplementation()
     {

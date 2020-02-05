@@ -2,6 +2,7 @@
 
 namespace Puzzle\AMQP\Workers\Providers;
 
+use PHPUnit\Framework\TestCase;
 use Pimple\Container;
 use Puzzle\AMQP\Workers\WorkerContext;
 use Puzzle\AMQP\Consumers\Simple;
@@ -9,7 +10,7 @@ use Puzzle\AMQP\Messages\Processors\NullProcessor;
 use Puzzle\AMQP\Messages\Processor;
 use Puzzle\AMQP\Workers\WorkerProvider;
 
-class PimpleTest extends \PHPUnit_Framework_TestCase
+class PimpleTest extends TestCase
 {
     private
         $container;

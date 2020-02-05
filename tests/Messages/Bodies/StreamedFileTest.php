@@ -2,11 +2,12 @@
 
 namespace Puzzle\AMQP\Messages\Bodies;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Clients\InMemory;
 use Puzzle\AMQP\Messages\Message;
 use Puzzle\AMQP\Messages\Chunks\ChunkSize;
 
-class classTest extends \PHPUnit_Framework_TestCase
+class classTest extends TestCase
 {
     public function testPublish()
     {

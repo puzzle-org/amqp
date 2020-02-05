@@ -37,13 +37,18 @@ class ProcessorInterfaceAdapter implements ProcessorInterface
         {
             $processResult = $this->workerContext->getWorker()->process($message);
         }
-        catch(\Exception $exception)
+        catch(\Throwable $exception)
         {
             $this->onWorkerProcessed();
 
+            if($exception instanceof \Error)
+            {
+                $exception = new \ErrorException($exception->getMessage(), $exception->getCode(), E_ERROR, $exception->getFile(), $exception->getLine(), $exception);
+            }
+
             throw $exception;
         }
-        
+
         $this->onWorkerProcessed();
 
         return $processResult;

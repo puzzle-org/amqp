@@ -2,10 +2,11 @@
 
 namespace Puzzle\AMQP\Messages;
 
+use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\MessageMetadata;
 use Puzzle\AMQP\Messages\Chunks\ChunkSize;
 
-class MessageTest extends \PHPUnit_Framework_TestCase
+class MessageTest extends TestCase
 {
     use \Puzzle\Assert\ArrayRelated;
 

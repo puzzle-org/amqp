@@ -71,7 +71,7 @@ class SendContext extends AbstractRabbitMQContext
     {
         $result = $this->client->publish($this->exchange, $message);
         
-        \PHPUnit_Framework_Assert::assertTrue($result);
+        \PHPUnit\Framework\Assert::assertTrue($result);
     }
     
     /**
@@ -113,14 +113,14 @@ class SendContext extends AbstractRabbitMQContext
     {
         $message = $this->theMessageInQueueContains(self::TEXT_ROUTING_KEY, false, $queueName, ContentType::BINARY);
 
-        \PHPUnit_Framework_Assert::assertArrayHasKey('headers', $message->properties);
+        \PHPUnit\Framework\Assert::assertArrayHasKey('headers', $message->properties);
         $headers = $message->properties['headers'];
 
-        \PHPUnit_Framework_Assert::assertTrue(is_array($headers));
-        \PHPUnit_Framework_Assert::assertArrayHasKey(GZip::HEADER_COMPRESSION, $headers);
-        \PHPUnit_Framework_Assert::assertArrayHasKey(GZip::HEADER_COMPRESSION_CONTENT_TYPE, $headers);
-        \PHPUnit_Framework_Assert::assertSame(Gzip::COMPRESSION_ALGORITHM, $headers[Gzip::HEADER_COMPRESSION]);
-        \PHPUnit_Framework_Assert::assertSame(ContentType::TEXT, $headers[Gzip::HEADER_COMPRESSION_CONTENT_TYPE]);
+        \PHPUnit\Framework\Assert::assertTrue(is_array($headers));
+        \PHPUnit\Framework\Assert::assertArrayHasKey(GZip::HEADER_COMPRESSION, $headers);
+        \PHPUnit\Framework\Assert::assertArrayHasKey(GZip::HEADER_COMPRESSION_CONTENT_TYPE, $headers);
+        \PHPUnit\Framework\Assert::assertSame(Gzip::COMPRESSION_ALGORITHM, $headers[Gzip::HEADER_COMPRESSION]);
+        \PHPUnit\Framework\Assert::assertSame(ContentType::TEXT, $headers[Gzip::HEADER_COMPRESSION_CONTENT_TYPE]);
     }
     
     private function theMessageInQueueContains($routingKey, $content, $queueName, $contentType)
@@ -128,12 +128,12 @@ class SendContext extends AbstractRabbitMQContext
         $messages = $this->api->getMessagesFromQueue($this->vhost(), $queueName);
         $message = $messages->first();
         
-        \PHPUnit_Framework_Assert::assertSame($routingKey, $message->routing_key);
-        \PHPUnit_Framework_Assert::assertSame($contentType, $message->properties['content_type']);
+        \PHPUnit\Framework\Assert::assertSame($routingKey, $message->routing_key);
+        \PHPUnit\Framework\Assert::assertSame($contentType, $message->properties['content_type']);
 
         if($content !== false)
         {
-            \PHPUnit_Framework_Assert::assertSame($content, $message->payload);
+            \PHPUnit\Framework\Assert::assertSame($content, $message->payload);
         }
 
         return $message;
@@ -152,7 +152,7 @@ class SendContext extends AbstractRabbitMQContext
             $nbMessages = $this->nbMessagesInQueue($queue);
         }
         
-        \PHPUnit_Framework_Assert::assertSame($expectedNbMessages, $nbMessages);
+        \PHPUnit\Framework\Assert::assertSame($expectedNbMessages, $nbMessages);
     }
     
     private function nbMessagesInQueue($queueName)
