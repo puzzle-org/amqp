@@ -6,73 +6,27 @@ use Puzzle\AMQP\Messages\Body;
 
 interface WritableMessage extends MessageMetadata
 {
-    /**
-     * @return bool
-     */
-    public function canBeDroppedSilently();
-
-    /**
-     * @return self
-     */
-    public function disallowSilentDropping();
+    public function canBeDroppedSilently(): bool;
+    public function disallowSilentDropping(): self;
 
     /**
      * @return mixed
      */
     public function getBodyInTransportFormat();
 
-    /**
-     * @return self
-     */
-    public function setBody(Body $body);
+    public function setBody(Body $body): self;
+    public function setExpiration(int $expirationInSeconds): self;
+    public function setAuthor(string $author): self;
 
-    /**
-     * @return void
-     */
-    public function setExpiration($expirationInSeconds);
+    public function addHeader(string $headerName, $value): self;
+    public function addHeaders(array $headers): self;
 
-    /**
-     * @return self
-     */
-    public function addHeader($headerName, $value);
+    public function packAttributes(?int $timestamp = null): array;
+    public function setAttribute(string $attributeName, $value): self;
+    public function changeRoutingKey(string $routingKey): void;
 
-    /**
-     * @return self
-     */
-    public function addHeaders(array $headers);
+    public function isCompressionAllowed(): bool;
+    public function allowCompression(bool $allow = true): self;
 
-    /**
-     * @return self
-     */
-    public function setAuthor($author);
-
-    /**
-     * @return void
-     */
-    public function packAttributes($timestamp = false);
-
-    /**
-     * @return self
-     */
-    public function setAttribute($attributeName, $value);
-
-    /**
-     * @return void
-     */
-    public function changeRoutingKey($routingKey);
-
-    /**
-     * @return bool
-     */
-    public function isCompressionAllowed();
-
-    /**
-     * @return self
-     */
-    public function allowCompression($allow = true);
-
-    /**
-     * @return bool
-     */
-    public function isChunked();
+    public function isChunked(): bool;
 }

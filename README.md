@@ -131,6 +131,7 @@ BC Breaks changelog
 
  - Drop support for php 5.6 & 7.0
  - Worker now catch Throwable, not only Exceptions
+ - WritableMessage::packAttributes now only accept timestamp or null (not false anymore)
 
 **3.x -> 4.x**
 
