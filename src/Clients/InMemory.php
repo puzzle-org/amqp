@@ -18,11 +18,11 @@ class InMemory implements Client
 
     public function __construct()
     {
-        $this->sentMessages = array();
+        $this->sentMessages = [];
         $this->logger = new NullLogger();
     }
 
-    public function publish($exchangeName, WritableMessage $message)
+    public function publish(string $exchangeName, WritableMessage $message): bool
     {
         $this->updateMessageAttributes($message);
         $this->saveMessage($exchangeName, $message);
@@ -30,7 +30,7 @@ class InMemory implements Client
         return true;
     }
 
-    private function updateMessageAttributes(WritableMessage $message)
+    private function updateMessageAttributes(WritableMessage $message): void
     {
         $message->setAttribute('app_id', 'memory');
         $message->addHeader('routing_key', $message->getRoutingKey());
@@ -38,32 +38,32 @@ class InMemory implements Client
         $this->onPublish($message);
     }
 
-    public function getQueue($queueName)
+    public function getQueue(string $queueName): \AMQPQueue
     {
         throw new \RuntimeException('This AMQP Client must be used only for sending purpose');
     }
 
-    public function getExchange($exchangeName)
+    public function getExchange(?string $exchangeName = null, string $type = AMQP_EX_TYPE_TOPIC): \AMQPExchange
     {
         throw new \RuntimeException('This AMQP Client must be used only for sending purpose');
     }
 
     private function saveMessage($exchangeName, WritableMessage $message)
     {
-        $this->sentMessages[] = array(
+        $this->sentMessages[] = [
             'exchange' => $exchangeName,
             'message' => $message
-        );
+        ];
     }
 
-    public function getSentMessages()
+    public function getSentMessages(): array
     {
         return $this->sentMessages;
     }
 
-    public function dropSentMessages()
+    public function dropSentMessages(): self
     {
-        $this->sentMessages = array();
+        $this->sentMessages = [];
 
         return $this;
     }

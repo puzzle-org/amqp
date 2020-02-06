@@ -17,7 +17,7 @@ class ChunkedMessageClient
         $client,
         $memory;
 
-    public function __construct(Client $client, MemoryManagementStrategy $memory = null)
+    public function __construct(Client $client, ?MemoryManagementStrategy $memory = null)
     {
         $this->changeRoutingKeyPrefix(self::DEFAULT_ROUTING_KEY_PREFIX);
 
@@ -30,7 +30,7 @@ class ChunkedMessageClient
         $this->client = $client;
     }
 
-    public function changeRoutingKeyPrefix($prefix)
+    public function changeRoutingKeyPrefix(string $prefix): void
     {
         if(is_string($prefix))
         {
@@ -40,7 +40,7 @@ class ChunkedMessageClient
         }
     }
 
-    public function publish($exchangeName, WritableMessage $chunkedMessage)
+    public function publish(string $exchangeName, WritableMessage $chunkedMessage): bool
     {
         $streamedContent = $chunkedMessage->getBodyInTransportFormat();
 
@@ -77,5 +77,7 @@ class ChunkedMessageClient
 
             $this->memory->manage($size);
         }
+
+        return true;
     }
 }

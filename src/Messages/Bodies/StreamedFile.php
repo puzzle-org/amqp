@@ -34,7 +34,7 @@ class StreamedFile implements Body
         }
     }
 
-    private function ensureFilepathIsValid($filepath)
+    private function ensureFilepathIsValid($filepath): void
     {
         if(is_file($filepath) === false || is_readable($filepath) === false)
         {
@@ -42,7 +42,7 @@ class StreamedFile implements Body
         }
     }
 
-    public function inOriginalFormat()
+    public function inOriginalFormat(): string
     {
         return file_get_contents($this->filepath);
     }
@@ -57,10 +57,7 @@ class StreamedFile implements Body
         return $this->asTransportedInChunks();
     }
 
-    /**
-     * @return \Generator
-     */
-    private function asTransportedInChunks()
+    private function asTransportedInChunks(): \Generator
     {
         $offset = 0;
         $playhead = 0;
@@ -82,12 +79,12 @@ class StreamedFile implements Body
         fclose($stream);
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         return ContentType::BINARY;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf(
             '<binary stream of %d bytes>',
@@ -95,7 +92,7 @@ class StreamedFile implements Body
         );
     }
 
-    public function isChunked()
+    public function isChunked(): bool
     {
         return $this->chunkSize instanceof ChunkSize;
     }

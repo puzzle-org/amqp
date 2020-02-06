@@ -30,7 +30,7 @@ final class ChunkSize
         }
     }
 
-    public function toBytes()
+    public function toBytes(): int
     {
         $unitsConversion = [
             "K" => 1024,

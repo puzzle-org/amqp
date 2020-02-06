@@ -2,6 +2,8 @@
 
 namespace Puzzle\AMQP;
 
+use Puzzle\AMQP\Consumers\Retry;
+
 interface ReadableMessage extends MessageMetadata
 {
     /**
@@ -13,29 +15,10 @@ interface ReadableMessage extends MessageMetadata
      * @return mixed
      */
     public function getBodyAsTransported();
+    public function getAppId(): string;
+    public function getAttributes(): array;
+    public function isLastRetry(int $retryOccurence = Retry::DEFAULT_RETRY_OCCURENCE): bool;
+    public function getRoutingKeyFromHeader(): ?string;
 
-    /**
-     * @return string
-     */
-    public function getAppId();
-
-    /**
-     * @return array
-     */
-    public function getAttributes();
-    
-    /**
-     * @return boolean
-     */
-    public function isLastRetry();
-    
-    /**
-     *  @return string
-     */
-    public function getRoutingKeyFromHeader();
-
-    /**
-     * @return \Puzzle\AMQP\WritableMessage
-     */
-    public function cloneIntoWritableMessage(WritableMessage $writable, $copyRoutingKey = false);
+    public function cloneIntoWritableMessage(WritableMessage $writable, bool $copyRoutingKey = false): WritableMessage;
 }

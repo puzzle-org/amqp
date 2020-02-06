@@ -6,11 +6,11 @@ use Puzzle\AMQP\Clients\MemoryManagementStrategy;
 
 class NullMemoryManagementStrategy implements MemoryManagementStrategy
 {
-    public function init()
+    public function init(): void
     {
     }
 
-    public function manage($sentSize)
+    public function manage(int $sentSize): void
     {
     }
 }

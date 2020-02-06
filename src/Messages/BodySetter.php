@@ -8,6 +8,7 @@ use Puzzle\AMQP\Messages\Bodies\Binary;
 use Puzzle\AMQP\Messages\Chunks\ChunkSize;
 use Puzzle\AMQP\Messages\Bodies\StreamedFile;
 use Puzzle\AMQP\Messages\Bodies\StreamedBinary;
+use Puzzle\AMQP\WritableMessage;
 
 trait BodySetter
 {
@@ -53,5 +54,5 @@ trait BodySetter
         return $this;
     }
 
-    abstract public function setBody(Body $body);
+    abstract public function setBody(Body $body): WritableMessage;
 }

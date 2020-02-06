@@ -18,13 +18,13 @@ class PrefixedExchangesClient implements Client
         $client,
         $exchangesPrefix;
     
-    public function __construct(Client $client, $exchangesPrefix)
+    public function __construct(Client $client, ?string $exchangesPrefix)
     {
         $this->client = $client;
         $this->exchangesPrefix = $exchangesPrefix;
     }
     
-    public function publish($exchangeName, WritableMessage $message)
+    public function publish(string $exchangeName, WritableMessage $message): bool
     {
         return $this->client->publish(
             $this->computeExchangeName($exchangeName),
@@ -32,7 +32,7 @@ class PrefixedExchangesClient implements Client
         );
     }
     
-    private function computeExchangeName($exchangeName)
+    private function computeExchangeName(string $exchangeName): string
     {
         $exchangeParts = [];
         
@@ -44,18 +44,18 @@ class PrefixedExchangesClient implements Client
         $exchangeParts[] = $exchangeName;
         
         return trim(implode(self::DELIMITER, $exchangeParts));
-            
     }
     
-    public function getQueue($queueName)
+    public function getQueue(string $queueName): \AMQPQueue
     {
         return $this->client->getQueue($queueName);
     }
     
-    public function getExchange($exchangeName)
+    public function getExchange(?string $exchangeName = null, string $type = AMQP_EX_TYPE_TOPIC): \AMQPExchange
     {
         return $this->client->getExchange(
-            $this->computeExchangeName($exchangeName)
+            $this->computeExchangeName($exchangeName),
+            $type
         );
     }
 

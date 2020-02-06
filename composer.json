@@ -23,7 +23,7 @@
         "puzzle/configuration" : ">=3.0",
         "puzzle/pieces" : "~2.2",
         "symfony/console": "~3.2",
-        "swarrot/swarrot": "~2.3",
+        "swarrot/swarrot": "~3.0",
         "knplabs/gaufrette": "~0.2",
         "symfony/event-dispatcher": "~3.2",
         "puzzle/uuid": "^2.0.1"
@@ -39,7 +39,7 @@
         "empi89/php-amqp-stubs": "dev-master",
         "puzzle/assert": "~1.1",
         "pimple/pimple": "~3.0",
-        "odolbeau/rabbit-mq-admin-toolkit": "~3.0",
+        "odolbeau/rabbit-mq-admin-toolkit": "~4.0",
         "behat/behat": "~3.3",
         "alchemy/rabbitmq-management-client": "dev-retrieve-messages@dev",
         "symfony/debug": "~3.2",

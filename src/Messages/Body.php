@@ -14,22 +14,13 @@ interface Body
     /**
      * In the same format than in AMQP layer
      *
-     * @return string
+     * @return ?string|\Generator
      */
     public function asTransported();
 
-    /**
-     * @return string
-     */
-    public function getContentType();
+    public function getContentType(): string;
 
-    /**
-     * @return bool
-     */
-    public function isChunked();
+    public function isChunked(): bool;
 
-    /**
-     * @return string
-     */
-    public function __toString();
+    public function __toString(): string;
 }

@@ -12,22 +12,22 @@ class NullBody implements Body
         return null;
     }
 
-    public function asTransported()
+    public function asTransported(): ?string
     {
         return null;
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         return ContentType::EMPTY_CONTENT;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return '';
     }
 
-    public function isChunked()
+    public function isChunked(): bool
     {
         return false;
     }
