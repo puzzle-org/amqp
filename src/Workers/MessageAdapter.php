@@ -6,6 +6,8 @@ use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\WritableMessage;
 use Puzzle\AMQP\Messages\Bodies\NullBody;
 use Puzzle\AMQP\Messages\Body;
+use Puzzle\Pieces\Exceptions\JsonEncodeError;
+use Puzzle\Pieces\Json;
 
 class MessageAdapter implements ReadableMessage
 {
@@ -65,13 +67,19 @@ class MessageAdapter implements ReadableMessage
         throw new \InvalidArgumentException(sprintf('Property "%s" is unknown or is not a message property', $attributeName));
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return json_encode(array(
-            'routing_key' => $this->getRoutingKey(),
-            'body' => (string) $this->body,
-            'attributes' => $this->message->getProperties(),
-        ));
+        try {
+            return Json::encode([
+                'routing_key' => $this->getRoutingKey(),
+                'body' => (string) $this->body,
+                'attributes' => $this->message->getProperties(),
+            ]);
+        }
+        catch(JsonEncodeError $e)
+        {
+            return sprintf('Can\'t json encode the message. error: "%s"', $e->getMessage());
+        }
     }
 
     private function getHeader($headerName)

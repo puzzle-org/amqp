@@ -216,4 +216,16 @@ TEXT;
             [false, 'new.routing.key'],
         ];
     }
+
+    public function testToStringInvalidUtf8()
+    {
+        $invalidUTF8Message = new Message(
+            utf8_decode('Nêv£r gonnà lét yôù d¤wn'),
+            ['content_type' => ContentType::TEXT, 'routing_key' => 'zboui']
+        );
+
+        $this->assertNotEmpty(
+            (string) (new MessageAdapterFactory())->build($invalidUTF8Message)
+        );
+    }
 }
