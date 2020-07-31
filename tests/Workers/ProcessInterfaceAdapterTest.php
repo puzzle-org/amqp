@@ -48,11 +48,11 @@ class CallableWorker implements Worker
         $this->callable = $callable;
     }
 
-    public function process(ReadableMessage $message)
+    public function process(ReadableMessage $message): bool
     {
         $callable = $this->callable;
 
-        $callable();
+        return $callable();
     }
 }
 
@@ -63,9 +63,11 @@ class Collect implements Worker
     public
         $lastProcessedMessages = null;
 
-    public function process(ReadableMessage $message)
+    public function process(ReadableMessage $message): bool
     {
         $this->lastProcessedMessages = $message;
+
+        return true;
     }
 }
 

@@ -53,7 +53,7 @@ class ListAll extends Command
         if(empty($services) || !is_array($services))
         {
             $output->writeln('<error>No worker found</error>');
-            return;
+            return 0;
         }
 
         ksort($services);
@@ -72,6 +72,8 @@ class ListAll extends Command
                 $info['queue']
             ));
         }
+
+        return 0;
     }
 
     private function getWorkerNameColumnSize(array $workers = array())

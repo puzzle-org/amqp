@@ -28,7 +28,7 @@ class WorkerContext
         $this->workerLogger = null;
     }
 
-    public function getWorker()
+    public function getWorker(): Worker
     {
         if($this->worker instanceof \Closure)
         {

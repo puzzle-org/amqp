@@ -6,6 +6,7 @@ use Swarrot\Processor\ProcessorInterface;
 use Puzzle\Pieces\EventDispatcher\NullEventDispatcher;
 use Puzzle\Pieces\EventDispatcher\EventDispatcherAware;
 use Puzzle\AMQP\Clients\Processors\MessageProcessorAware;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ProcessorInterfaceAdapter implements ProcessorInterface
 {
@@ -24,7 +25,7 @@ class ProcessorInterfaceAdapter implements ProcessorInterface
         $this->messageAdapterFactory = null;
     }
     
-    public function process(\Swarrot\Broker\Message $message, array $options)
+    public function process(\Swarrot\Broker\Message $message, array $options): bool
     {
         $message = $this->createMessageAdapter($message);
         $message = $this->onConsume($message);

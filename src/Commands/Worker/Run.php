@@ -60,10 +60,14 @@ class Run extends Command
 
             $this->eventDispatcher->dispatch('worker.run');
 
-            return $workerContext->getConsumer()->consume($processor, $this->client, $workerContext);
+            $workerContext->getConsumer()->consume($processor, $this->client, $workerContext);
+
+            return 0;
         }
 
         $output->writeln("<error>Worker $workerName not found</error>");
+
+        return 0;
     }
 
     private function createProcessor(WorkerContext $workerContext)

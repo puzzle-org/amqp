@@ -78,9 +78,10 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
         $consumer->consume($processor, $this->client, $workerContext);
     }
     
-    public function process(ReadableMessage $message)
+    public function process(ReadableMessage $message): bool
     {
         $this->consumedMessages[] = $message;
+        return true;
     }
     
     /**
