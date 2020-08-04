@@ -2,6 +2,7 @@
 
 namespace Puzzle\AMQP\Commands\Worker;
 
+use Psr\Log\LoggerAwareTrait;
 use Puzzle\AMQP\Workers\Worker;
 use Swarrot\Processor\ProcessorInterface;
 use Symfony\Component\Console\Command\Command;
@@ -19,6 +20,7 @@ use Puzzle\AMQP\Workers\MessageAdapterFactoryAware;
 class Run extends Command
 {
     use
+        LoggerAwareTrait,
         EventDispatcherAware,
         MessageAdapterFactoryAware;
 
@@ -65,6 +67,7 @@ class Run extends Command
 
         $this->eventDispatcher->dispatch('worker.run');
 
+        $consumer->setLogger($this->logger);
         $consumer->consume($processor, $this->client, $context->queueName());
 
         return 0;
