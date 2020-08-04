@@ -15,19 +15,19 @@ class Retry extends AbstractConsumer
         RETRY_EXCHANGE_NAME = 'retry',
         RETRY_ROUTING_KEY_PATTERN = '%s_retry_%%attempt%%';
 
-    private
+    private ?int
         $retries;
 
-    public function __construct($retries = null)
+    public function __construct(?int $retries = null)
     {
         parent::__construct();
 
         $this->retries = $retries;
     }
 
-    public function consume(ProcessorInterface $processor, Client $client, WorkerContext $workerContext)
+    public function consume(ProcessorInterface $processor, Client $client, string $queue): void
     {
-        parent::consume($processor, $client, $workerContext);
+        parent::consume($processor, $client, $queue);
 
         $messagePublisher = new PeclPackageMessagePublisher($client->getExchange(self::RETRY_EXCHANGE_NAME));
 
@@ -37,19 +37,19 @@ class Retry extends AbstractConsumer
             ->push('Swarrot\Processor\Retry\RetryProcessor', $messagePublisher, $this->logger)
         ;
 
-        $options = $this->getOptions($workerContext);
-
         $consumer = $this->getSwarrotConsumer($stack);
 
-        return $consumer->consume($options);
+        $consumer->consume(
+            $this->options($queue)
+        );
     }
 
-    private function getOptions(WorkerContext $workerContext)
+    private function options(string $queue): array
     {
-        $options = array(
+        $options = [
             'max_execution_time' => self::DEFAULT_MAX_EXECUTION_TIME,
-            'retry_key_pattern' => sprintf(self::RETRY_ROUTING_KEY_PATTERN, $workerContext->getQueueName()),
-        );
+            'retry_key_pattern' => sprintf(self::RETRY_ROUTING_KEY_PATTERN, $queue),
+        ];
 
         if(! empty($this->retries))
         {

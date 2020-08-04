@@ -3,6 +3,7 @@
 namespace Puzzle\AMQP\Consumers;
 
 use Puzzle\AMQP\Consumer;
+use Swarrot\Broker\MessageProvider\MessageProviderInterface;
 use Swarrot\Broker\MessageProvider\PeclPackageMessageProvider;
 use Swarrot\Consumer as SwarrotConsumer;
 use Swarrot\Processor\Stack;
@@ -16,33 +17,36 @@ abstract class AbstractConsumer implements Consumer
 {
     use LoggerAwareTrait;
 
-    protected
-        $messageProvider;
+    private Client
+        $client;
 
-    private
-        $client,
-        $processor,
-        $workerContext;
+    private ProcessorInterface
+        $processor;
+
+    private string
+        $queue;
+
+    protected MessageProviderInterface
+        $messageProvider;
 
     public function __construct()
     {
         $this->logger = new NullLogger();
     }
 
-    public function consume(ProcessorInterface $processor, Client $client, WorkerContext $workerContext)
+    public function consume(ProcessorInterface $processor, Client $client, string $queue): void
     {
         $this->processor = $processor;
         $this->client = $client;
-        $this->workerContext = $workerContext;
+        $this->queue = $queue;
         $this->setMessageProvider();
     }
 
     private function setMessageProvider()
     {
         $this->messageProvider = new PeclPackageMessageProvider(
-            $this->client->getQueue(
-                $this->workerContext->getQueueName()
-        ));
+            $this->client->getQueue($this->queue)
+        );
     }
 
     protected function getBaseStack()

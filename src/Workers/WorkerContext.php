@@ -1,94 +1,54 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Workers;
 
-use Psr\Log\LoggerAwareTrait;
-use Puzzle\AMQP\Consumer;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
-
-class WorkerContext
+final class WorkerContext
 {
-    use LoggerAwareTrait;
-
-    private
+    private string
+        $name,
         $queueName,
-        $description,
-        $consumer,
-        $workerLogger,
-        $worker;
+        $description;
 
-    public function __construct(\Closure $worker, Consumer $consumer, $queueName)
+    private ?string
+        $consumerServiceId;
+
+    public function __construct(string $name, string $queueName, string $description, ?string $consumerServiceId = null)
     {
-        $this->worker = $worker;
-        $this->consumer = $consumer;
+        if(empty($name))
+        {
+            throw new \LogicException("Empty worker name");
+        }
+
+        if(empty($queueName))
+        {
+            throw new \LogicException("Empty queue name");
+        }
+
+        $this->name = $name;
         $this->queueName = $queueName;
-        $this->description = null;
-        $this->logger = new NullLogger();
-        $this->workerLogger = null;
-    }
-
-    public function getWorker(): Worker
-    {
-        if($this->worker instanceof \Closure)
-        {
-            $closure = $this->worker;
-            $this->worker = $closure();
-            $this->worker->setLogger($this->getLoggerForWorker());
-        }
-
-        return $this->worker;
-    }
-
-    private function getLoggerForWorker()
-    {
-        if($this->workerLogger instanceof LoggerInterface)
-        {
-            return $this->workerLogger;
-        }
-
-        return $this->logger;
-    }
-
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-        $this->consumer->setLogger($logger);
-
-        return $this;
-    }
-
-    public function setWorkerLogger(LoggerInterface $logger)
-    {
-        $this->workerLogger = $logger;
-
-        return $this;
-    }
-
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    public function getConsumer()
-    {
-        return $this->consumer;
-    }
-
-    public function setDescription($description)
-    {
         $this->description = $description;
-
-        return $this;
+        $this->consumerServiceId = $consumerServiceId;
     }
 
-    public function getDescription()
+    public function name(): string
+    {
+        return $this->name;
+    }
+
+    public function queueName(): string
+    {
+        return $this->queueName;
+    }
+
+    public function description(): string
     {
         return $this->description;
     }
 
-    public function getQueueName()
+    public function consumerServiceId(): ?string
     {
-        return $this->queueName;
+        return $this->consumerServiceId;
     }
 }

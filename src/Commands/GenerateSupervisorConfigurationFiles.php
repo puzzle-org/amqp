@@ -25,11 +25,11 @@ class GenerateSupervisorConfigurationFiles extends Command
         $workerProvider,
         $commandGenerator;
 
-    public function __construct(WorkerProvider $workerProvider, $appId)
+    public function __construct(WorkerProvider $provider, $appId)
     {
         parent::__construct();
 
-        $this->workerProvider = $workerProvider;
+        $this->workerProvider = $provider;
         $this->commandGenerator = new CommandGenerator();
         $this->appId = (string) $appId;
     }

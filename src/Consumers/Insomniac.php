@@ -8,24 +8,17 @@ use Puzzle\AMQP\Workers\WorkerContext;
 
 class Insomniac extends AbstractConsumer
 {
-    public function consume(ProcessorInterface $processor, Client $client, WorkerContext $workerContext)
+    public function consume(ProcessorInterface $processor, Client $client, string $queue): void
     {
-        parent::consume($processor, $client, $workerContext);
+        parent::consume($processor, $client, $queue);
 
         $stack = $this->getBaseStack()
             ->push('Swarrot\Processor\Insomniac\InsomniacProcessor', $this->logger)
             ->push('Swarrot\Processor\Ack\AckProcessor', $this->messageProvider, $this->logger)
         ;
         
-        $options = $this->getOptions();
-
         $consumer = $this->getSwarrotConsumer($stack);
 
-        return $consumer->consume($options);
-    }
-
-    private function getOptions()
-    {
-        return array();
+        $consumer->consume([]);
     }
 }
