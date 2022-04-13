@@ -48,6 +48,7 @@ abstract class AbstractConsumer implements Consumer
     protected function getBaseStack()
     {
         $stack = (new Stack\Builder())
+            ->push('Puzzle\AMQP\Processors\FatalErrorNack', $this->messageProvider)
             ->push('Swarrot\Processor\SignalHandler\SignalHandlerProcessor', $this->logger)
             ->push('Swarrot\Processor\ExceptionCatcher\ExceptionCatcherProcessor', $this->logger)
         ;
