@@ -5,7 +5,7 @@ namespace Puzzle\AMQP\Workers;
 use Psr\Log\LoggerAwareInterface;
 use Puzzle\AMQP\ReadableMessage;
 
-interface Worker extends LoggerAwareInterface
+interface Worker
 {
     public function process(ReadableMessage $message): bool;
 }
