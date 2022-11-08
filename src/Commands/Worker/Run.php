@@ -70,7 +70,7 @@ class Run extends Command
         $consumer->setLogger($this->logger);
         $consumer->consume($processor, $this->client, $context->queueName());
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function createProcessor(Worker $worker): ProcessorInterface
