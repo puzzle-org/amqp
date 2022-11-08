@@ -3,6 +3,7 @@
 namespace Puzzle\AMQP\Commands\Worker;
 
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Puzzle\AMQP\Workers\Worker;
 use Swarrot\Processor\ProcessorInterface;
 use Symfony\Component\Console\Command\Command;
@@ -38,7 +39,7 @@ class Run extends Command
         $this->client = $client;
         $this->provider = $provider;
         $this->outputInterfaceAware = $outputInterfaceAware;
-        
+
         $this->eventDispatcher = new NullEventDispatcher();
         $this->messageAdapterFactory = null;
     }
@@ -67,7 +68,10 @@ class Run extends Command
 
         $this->eventDispatcher->dispatch('worker.run');
 
-        $consumer->setLogger($this->logger);
+        if($this->logger instanceof LoggerInterface)
+        {
+            $consumer->setLogger($this->logger);
+        }
         $consumer->consume($processor, $this->client, $context->queueName());
 
         return Command::SUCCESS;
@@ -76,7 +80,7 @@ class Run extends Command
     private function createProcessor(Worker $worker): ProcessorInterface
     {
         $processor = new ProcessorInterfaceAdapter($worker);
-        
+
         $processor
             ->setEventDispatcher($this->eventDispatcher)
             ->setMessageAdapterFactory($this->messageAdapterFactory)
