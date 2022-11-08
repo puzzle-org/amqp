@@ -14,27 +14,27 @@ final class ProcessorInterfaceAdapter implements ProcessorInterface
         EventDispatcherAware,
         MessageAdapterFactoryAware,
         MessageProcessorAware;
-    
+
     private Worker
         $worker;
-    
+
     public function __construct(Worker $worker)
     {
         $this->worker = $worker;
         $this->eventDispatcher = new NullEventDispatcher();
         $this->messageAdapterFactory = null;
     }
-    
+
     public function process(\Swarrot\Broker\Message $message, array $options): bool
     {
         $message = $this->createMessageAdapter($message);
         $message = $this->onConsume($message);
-        
+
         $this->onWorkerProcess();
 
         try
         {
-            $processResult = $this->worker->process($message);
+            $this->worker->process($message);
         }
         catch(\Throwable $t)
         {
@@ -57,14 +57,14 @@ final class ProcessorInterfaceAdapter implements ProcessorInterface
 
         $this->onWorkerProcessed();
 
-        return $processResult;
+        return true;
     }
 
     private function onWorkerProcess()
     {
         $this->eventDispatcher->dispatch('worker.process');
     }
-    
+
     private function onWorkerProcessed()
     {
         $this->eventDispatcher->dispatch('worker.processed');
