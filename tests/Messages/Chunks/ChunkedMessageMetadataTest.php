@@ -7,7 +7,12 @@ use Puzzle\ValueObjects\Uuid;
 
 class ChunkedMessageMetadataTest extends TestCase
 {
-    public function testBuildFromHeaders()
+    public function testConstruct(): void
+    {
+
+    }
+
+    public function testBuildFromHeaders(): void
     {
         $uuid = 'ea62eb94-8be6-4034-9499-9cfc18340eb7';
         $content = str_repeat("a", 1024);
@@ -27,11 +32,10 @@ class ChunkedMessageMetadataTest extends TestCase
         $this->assertSame(sha1($content), $metadata->checksum());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testWithInvalidHeaders()
+    public function testWithInvalidHeaders(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         ChunkedMessageMetadata::buildFromHeaders([]);
     }
 }

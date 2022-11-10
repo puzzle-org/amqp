@@ -21,11 +21,10 @@ class ChunkMetadataTest extends TestCase
         $this->assertSame(2, $metadata->playhead());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testWithInvalidHeaders()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         ChunkMetadata::buildFromHeaders([]);
     }
 }

@@ -26,7 +26,7 @@ class SupervisorConfigurationGeneratorTest extends TestCase
 
         foreach($filesystem->keys() as $filename)
         {
-            $this->assertTrue(in_array($filename, $expectedFilenames), sprintf('The file %s cannot be found in %s', $filename, implode($expectedFilenames, ',')));
+            $this->assertTrue(in_array($filename, $expectedFilenames), sprintf('The file %s cannot be found in %s', $filename, implode(',', $expectedFilenames)));
 
             $key = array_search($filename, $expectedFilenames);
             $this->assertEquals($expectedTemplates[$key], $filesystem->get($filename)->getContent());

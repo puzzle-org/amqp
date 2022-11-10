@@ -12,9 +12,9 @@ final class ChunkedMessageMetadata
         $nbChunks,
         $checksum;
 
-    public function __construct(Uuid $uuid, $size, $nbChunks, $checksum)
+    public function __construct(string|Uuid $uuid, $size, $nbChunks, $checksum)
     {
-        $this->uuid = $uuid;
+        $this->uuid = $uuid instanceof Uuid ? $uuid:new Uuid($uuid);
         $this->size = $size;
         $this->nbChunks = $nbChunks;
         $this->checksum = $checksum;
