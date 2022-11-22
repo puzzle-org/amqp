@@ -42,11 +42,10 @@ class TextTest extends TestCase
         ];
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testToStringOnNonStringConvertible()
     {
+        $this->expectException(\LogicException::class);
+
         $body = new Text(['burger', 'pizza']);
 
         (string) $body;
@@ -97,6 +96,6 @@ class TextTest extends TestCase
     {
         $body = new Text("Cannot wait until the Serge Hanuque's talks !");
         
-        $this->assertInternalType('string', $body->footprint());
+        $this->assertIsString($body->footprint());
     }
 }

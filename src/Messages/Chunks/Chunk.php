@@ -26,7 +26,7 @@ final class Chunk
         return $this->metadata->size();
     }
 
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return [
             'chunk' => $this->metadata->toHeaders(),

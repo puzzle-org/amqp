@@ -13,7 +13,7 @@ class ReadableMessageModifierTest extends TestCase
     private
         $originalMessage;
     
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->originalMessage= InMemory::build('my.key', null, [
             'X-PlusY' => 42,

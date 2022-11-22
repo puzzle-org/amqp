@@ -22,7 +22,7 @@ class PrefixedExchangesClientTest extends TestCase
     private
         $memory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->memory = new InMemory();
     }
@@ -65,11 +65,10 @@ class PrefixedExchangesClientTest extends TestCase
         ];
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testGetQueue()
     {
+        $this->expectException(\RuntimeException::class);
+
         $client = new PrefixedExchangesClient($this->memory, 'rainbow');
         $client->getQueue('tail');
     }

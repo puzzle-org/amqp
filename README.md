@@ -1,5 +1,7 @@
-Puzzle AMQP  ![PHP >= 7.1](https://img.shields.io/badge/php-%3E%3D%207.1-blue.svg)
+Puzzle AMQP  ![PHP >= 8.0](https://img.shields.io/badge/php-%3E%3D%208.0-blue.svg)
 ===========
+
+PHP 7.1 users, please use < 6.x versions.
 
 PHP 5.6 users, please use < 5.x versions.
 
@@ -10,7 +12,7 @@ QA
 
 Service | Result
 --- | ---
-**Travis CI** (PHP 7.1 .. 7.2) | [![Build Status](https://travis-ci.org/puzzle-org/amqp.svg?branch=master)](https://travis-ci.org/puzzle-org/amqp)
+**Travis CI** (PHP 8.0 .. 8.1) | [![Build Status](https://travis-ci.org/puzzle-org/amqp.svg?branch=master)](https://travis-ci.org/puzzle-org/amqp)
 **Scrutinizer** | [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/puzzle-org/amqp/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/puzzle-org/amqp/?branch=master)
 **Code coverage** | [![codecov](https://codecov.io/gh/puzzle-org/amqp/branch/master/graph/badge.svg)](https://codecov.io/gh/puzzle-org/amqp)
 **Packagist** | [![Latest Stable Version](https://poser.pugx.org/puzzle/amqp/v/stable.png)](https://packagist.org/packages/puzzle/amqp) [![Total Downloads](https://poser.pugx.org/puzzle/amqp/downloads.svg)](https://packagist.org/packages/puzzle/amqp)

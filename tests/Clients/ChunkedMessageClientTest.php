@@ -14,7 +14,7 @@ class ChunkedMessageClientTest extends TestCase
         $inMemory,
         $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->inMemory = new InMemory();
         $this->client = new ChunkedMessageClient($this->inMemory);

@@ -6,21 +6,23 @@ use Puzzle\ValueObjects\Uuid;
 
 final class ChunkedMessageMetadata
 {
+    private Uuid
+        $uuid;
+
     private
-        $uuid,
         $size,
         $nbChunks,
         $checksum;
 
-    public function __construct(Uuid $uuid, $size, $nbChunks, $checksum)
+    public function __construct(string|Uuid $uuid, $size, $nbChunks, $checksum)
     {
-        $this->uuid = $uuid;
+        $this->uuid = $uuid instanceof Uuid ? $uuid : new Uuid($uuid);
         $this->size = $size;
         $this->nbChunks = $nbChunks;
         $this->checksum = $checksum;
     }
 
-    public static function buildFromHeaders(array $headers)
+    public static function buildFromHeaders(array $headers): self
     {
         $requiredKeys = ['uuid', 'size', 'nbChunks', 'checksum'];
 
@@ -35,7 +37,7 @@ final class ChunkedMessageMetadata
         return new self(new Uuid($headers['uuid']), $headers['size'], $headers['nbChunks'], $headers['checksum']);
     }
 
-    public function uuid()
+    public function uuid(): Uuid
     {
         return $this->uuid;
     }
@@ -55,7 +57,7 @@ final class ChunkedMessageMetadata
         return $this->checksum;
     }
 
-    public function toHeaders()
+    public function toHeaders(): array
     {
         return [
             'uuid' => $this->uuid->value(),
