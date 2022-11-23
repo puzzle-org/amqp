@@ -11,7 +11,9 @@ RUN apt-get update && \
                        libtool \
                        zlib1g-dev \
                        unzip \
-                       cmake && \
+                       cmake \
+                       libssl-dev \
+                       librabbitmq-dev && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/*
 
