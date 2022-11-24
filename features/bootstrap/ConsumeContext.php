@@ -5,7 +5,6 @@ namespace Puzzle\AMQP\Contexts;
 use Puzzle\AMQP\Messages\Message;
 use Puzzle\AMQP\Consumers\Insomniac;
 use Puzzle\AMQP\Workers\Worker;
-use Puzzle\AMQP\Workers\WorkerContext;
 use Puzzle\AMQP\ReadableMessage;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
@@ -18,7 +17,7 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
 {
     use LoggerAwareTrait;
     
-    private
+    private array
         $consumedMessages;
     
     public function __construct($path)
@@ -64,18 +63,12 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
     public function iConsumeAllTheMessagesInTheQueue($queue)
     {
         $this->consumedMessages = [];
-        $workerContext = new WorkerContext(
-            function() {
-                return $this;
-            },
-            $consumer = new Insomniac(),
-            $queue
-        );
-        
-        $processor = new ProcessorInterfaceAdapter($workerContext);
+
+        $consumer = new Insomniac();
+        $processor = new ProcessorInterfaceAdapter($this);
         $processor->appendMessageProcessor(new GZip());
 
-        $consumer->consume($processor, $this->client, $workerContext);
+        $consumer->consume($processor, $this->client, $queue);
     }
     
     public function process(ReadableMessage $message): void
