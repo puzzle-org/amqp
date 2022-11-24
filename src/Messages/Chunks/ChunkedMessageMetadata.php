@@ -2,21 +2,20 @@
 
 namespace Puzzle\AMQP\Messages\Chunks;
 
-use Puzzle\ValueObjects\Uuid;
-
 final class ChunkedMessageMetadata
 {
-    private Uuid
+    private string
         $uuid;
-
-    private
-        $size,
-        $nbChunks,
+    private int
+        $size;
+    private int
+        $nbChunks;
+    private string
         $checksum;
 
-    public function __construct(string|Uuid $uuid, $size, $nbChunks, $checksum)
+    public function __construct(string $uuid, int $size, int $nbChunks, string $checksum)
     {
-        $this->uuid = $uuid instanceof Uuid ? $uuid : new Uuid($uuid);
+        $this->uuid = $uuid;
         $this->size = $size;
         $this->nbChunks = $nbChunks;
         $this->checksum = $checksum;
@@ -34,25 +33,25 @@ final class ChunkedMessageMetadata
             }
         }
 
-        return new self(new Uuid($headers['uuid']), $headers['size'], $headers['nbChunks'], $headers['checksum']);
+        return new self($headers['uuid'], (int) $headers['size'], (int) $headers['nbChunks'], $headers['checksum']);
     }
 
-    public function uuid(): Uuid
+    public function uuid(): string
     {
         return $this->uuid;
     }
 
-    public function size()
+    public function size(): int
     {
         return $this->size;
     }
 
-    public function nbChunks()
+    public function nbChunks(): int
     {
         return $this->nbChunks;
     }
 
-    public function checksum()
+    public function checksum(): string
     {
         return $this->checksum;
     }
@@ -60,7 +59,7 @@ final class ChunkedMessageMetadata
     public function toHeaders(): array
     {
         return [
-            'uuid' => $this->uuid->value(),
+            'uuid' => $this->uuid,
             'size' => $this->size,
             'checksum' => $this->checksum,
             'nbChunks' => $this->nbChunks,

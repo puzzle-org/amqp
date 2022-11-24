@@ -3,7 +3,6 @@
 namespace Puzzle\AMQP\Messages\Chunks;
 
 use PHPUnit\Framework\TestCase;
-use Puzzle\ValueObjects\Uuid;
 
 class ChunkedMessageMetadataTest extends TestCase
 {
@@ -16,7 +15,7 @@ class ChunkedMessageMetadataTest extends TestCase
             sha1(str_repeat("a", 1024))
         );
 
-        self::assertSame($uuid, $metadata->uuid()->value());
+        self::assertSame($uuid, $metadata->uuid());
     }
 
     public function testBuildFromHeaders(): void
@@ -33,7 +32,7 @@ class ChunkedMessageMetadataTest extends TestCase
 
         $metadata = ChunkedMessageMetadata::buildFromHeaders($headers);
 
-        $this->assertTrue((new Uuid($uuid))->equals($metadata->uuid()));
+        $this->assertSame($uuid, $metadata->uuid());
         $this->assertSame(1024, $metadata->size());
         $this->assertSame(4, $metadata->nbChunks());
         $this->assertSame(sha1($content), $metadata->checksum());
