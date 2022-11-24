@@ -33,20 +33,12 @@
         "knplabs/gaufrette": "~0.2",
         "puzzle/uuid": "dev-clb-sf5@dev"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/niktux/RabbitMQ-Management-API-Client"
-        }
-    ],
     "require-dev" : {
         "phpunit/phpunit" : "~9.0",
-        "empi89/php-amqp-stubs": "dev-master",
         "puzzle/assert": "~1.1",
         "pimple/pimple": "~3.0",
         "odolbeau/rabbit-mq-admin-toolkit": "^5.0.1",
         "behat/behat": "~3.3",
-        "alchemy/rabbitmq-management-client": "dev-retrieve-messages@dev",
         "symfony/debug": "~3.2",
         "doctrine/collections": "<=1.4.0"
     },

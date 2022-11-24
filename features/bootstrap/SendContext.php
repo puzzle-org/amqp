@@ -14,7 +14,8 @@ class SendContext extends AbstractRabbitMQContext
      */
     public function theQueueIsEmpty($queue)
     {
-        $this->api->purgeQueue($this->vhost(), $queue);
+        $this->client->getQueue($queue)->purge();
+
         $this->assertMessagesInQueue($queue, 0);
     }
     
@@ -69,7 +70,7 @@ class SendContext extends AbstractRabbitMQContext
 
     private function iSendMessage(Message $message)
     {
-        $result = $this->client->publish($this->exchange, $message);
+        $result = $this->client->publish(self::EXCHANGE, $message);
         
         \PHPUnit\Framework\Assert::assertTrue($result);
     }
@@ -113,8 +114,7 @@ class SendContext extends AbstractRabbitMQContext
     {
         $message = $this->theMessageInQueueContains(self::TEXT_ROUTING_KEY, false, $queueName, ContentType::BINARY);
 
-        \PHPUnit\Framework\Assert::assertArrayHasKey('headers', $message->properties);
-        $headers = $message->properties['headers'];
+        $headers = $message->getHeaders();
 
         \PHPUnit\Framework\Assert::assertTrue(is_array($headers));
         \PHPUnit\Framework\Assert::assertArrayHasKey(GZip::HEADER_COMPRESSION, $headers);
@@ -125,15 +125,14 @@ class SendContext extends AbstractRabbitMQContext
     
     private function theMessageInQueueContains($routingKey, $content, $queueName, $contentType)
     {
-        $messages = $this->api->getMessagesFromQueue($this->vhost(), $queueName);
-        $message = $messages->first();
-        
-        \PHPUnit\Framework\Assert::assertSame($routingKey, $message->routing_key);
-        \PHPUnit\Framework\Assert::assertSame($contentType, $message->properties['content_type']);
+        $message = $this->client->getQueue($queueName)->get();
+
+        \PHPUnit\Framework\Assert::assertSame($routingKey, $message->getRoutingKey());
+        \PHPUnit\Framework\Assert::assertSame($contentType, $message->getContentType());
 
         if($content !== false)
         {
-            \PHPUnit\Framework\Assert::assertSame($content, $message->payload);
+            \PHPUnit\Framework\Assert::assertSame($content, $message->getBody());
         }
 
         return $message;
@@ -155,10 +154,12 @@ class SendContext extends AbstractRabbitMQContext
         \PHPUnit\Framework\Assert::assertSame($expectedNbMessages, $nbMessages);
     }
     
-    private function nbMessagesInQueue($queueName)
+    private function nbMessagesInQueue(string $queueName): int
     {
-        $queue = $this->api->getQueue($this->vhost(), $queueName);
-        
-        return (int) $queue->messages;
+        $queue = $this->client->getQueue($queueName);
+
+        $queue->setFlags(AMQP_DURABLE);
+
+        return $queue->declareQueue();
     }
 }

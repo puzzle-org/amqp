@@ -38,7 +38,7 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
         $message = new Message(self::TEXT_ROUTING_KEY);
         $message->setText($bodyContent);
         
-        $this->client->publish($this->exchange, $message);
+        $this->client->publish(self::EXCHANGE, $message);
     }
 
     /**
@@ -47,14 +47,14 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
     public function theQueueContainsTheJsonMessage($bodyContent, $queue)
     {
         // FIXME Use RabbitMQCTL instead
-        
+
         $message = new Message(self::JSON_ROUTING_KEY);
         
         $body = new Json();
         $body->changeContentWithJson($bodyContent);
         $message->setBody($body);
         
-        $this->client->publish($this->exchange, $message);
+        $this->client->publish(self::EXCHANGE, $message);
     }
     
     /**
@@ -195,7 +195,7 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
         $message->setText($bodyContent);
         $message->allowCompression();
 
-        $this->client->publish($this->exchange, $message);
+        $this->client->publish(self::EXCHANGE, $message);
     }
 
     /**
