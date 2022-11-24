@@ -7,5 +7,5 @@ use Puzzle\AMQP\ReadableMessage;
 
 interface Worker
 {
-    public function process(ReadableMessage $message):void;
+    public function process(ReadableMessage $message): void;
 }
