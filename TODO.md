@@ -1,1 +1,0 @@
-- [] `Fatal error: Class 'Symfony\Component\EventDispatcher\Event' not found in /usr/src/puzzle-amqp/vendor/guzzlehttp/guzzle/src/Guzzle/Common/Event.php on line 10` 
