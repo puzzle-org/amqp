@@ -25,7 +25,7 @@
     },
     "require" : {
         "php": "8.*",
-        "puzzle/configuration" : ">=4.0",
+        "puzzle/configuration" : "4.0.*",
         "puzzle/pieces" : "dev-clb-sf5",
         "symfony/console": "^5.4|^6.0",
         "symfony/event-dispatcher": "~5.4|^6.0",
