@@ -5,7 +5,7 @@ namespace Puzzle\AMQP\Events;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
-class WorkerProcess extends Event
+final class WorkerProcess extends Event
 {
     public const NAME = "worker.process";
 }
