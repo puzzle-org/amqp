@@ -7,7 +7,7 @@ use Puzzle\AMQP\Messages\Chunks\Chunk;
 use Puzzle\AMQP\Messages\Chunks\ChunkedMessageMetadata;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\Chunks\ChunkSize;
-use Ramsey\Uuid\Uuid;
+use Puzzle\AMQP\ValueObjects\Uuid;
 
 class StreamedFile implements Body
 {
@@ -30,7 +30,7 @@ class StreamedFile implements Body
             $size = filesize($filepath);
             $nbChunks = (int) ceil($size / $chunkSize->toBytes());
 
-            $this->metadata = new ChunkedMessageMetadata((string) Uuid::uuid4(), $size, $nbChunks, sha1_file($filepath));
+            $this->metadata = new ChunkedMessageMetadata(new Uuid(), $size, $nbChunks, sha1_file($filepath));
         }
     }
 

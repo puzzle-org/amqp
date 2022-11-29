@@ -5,7 +5,7 @@ namespace Puzzle\AMQP\Messages\Bodies;
 use Puzzle\AMQP\Messages\Chunks\Chunk;
 use Puzzle\AMQP\Messages\Chunks\ChunkSize;
 use Puzzle\AMQP\Messages\Chunks\ChunkedMessageMetadata;
-use Ramsey\Uuid\Uuid;
+use Puzzle\AMQP\ValueObjects\Uuid;
 
 class StreamedBinary extends Binary
 {
@@ -22,7 +22,7 @@ class StreamedBinary extends Binary
         $size = strlen($content);
         $nbChunks = (int) ceil($size / $chunkSize->toBytes());
 
-        $this->metadata = new ChunkedMessageMetadata((string) Uuid::uuid4(), $size, $nbChunks, sha1($content));
+        $this->metadata = new ChunkedMessageMetadata(new Uuid(), $size, $nbChunks, sha1($content));
     }
 
     public function asTransported()

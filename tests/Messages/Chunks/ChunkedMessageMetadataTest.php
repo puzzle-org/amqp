@@ -3,10 +3,11 @@
 namespace Puzzle\AMQP\Messages\Chunks;
 
 use PHPUnit\Framework\TestCase;
+use Puzzle\AMQP\ValueObjects\Uuid;
 
 class ChunkedMessageMetadataTest extends TestCase
 {
-    public function testConstruct(): void
+    public function testConstructWithString(): void
     {
         $metadata = new ChunkedMessageMetadata(
             $uuid = '75f84ada-5df2-46bc-92a2-a6babb7d34e3',
@@ -16,6 +17,18 @@ class ChunkedMessageMetadataTest extends TestCase
         );
 
         self::assertSame($uuid, $metadata->uuid());
+    }
+
+    public function testConstructWithUuid(): void
+    {
+        $metadata = new ChunkedMessageMetadata(
+            $uuid = new Uuid(),
+            1024,
+            4,
+            sha1(str_repeat("a", 1024))
+        );
+
+        self::assertSame($uuid->value(), $metadata->uuid());
     }
 
     public function testBuildFromHeaders(): void
