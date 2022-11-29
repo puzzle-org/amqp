@@ -26,10 +26,10 @@ class Run extends Command
         EventDispatcherAware,
         MessageAdapterFactoryAware;
 
-    private
-        $client,
+    private Client
+        $client;
+    private OutputInterfaceAware
         $outputInterfaceAware;
-
     private WorkerProvider
         $provider;
 
@@ -60,9 +60,19 @@ class Run extends Command
 
         $output->writeln("Launching <info>$workerName</info>");
 
-        $processor = $this->createProcessor(
-            $this->provider->workerFor($workerName)
-        );
+        try
+        {
+            $worker = $this->provider->workerFor($workerName);
+        }
+        catch(\Exception $e)
+        {
+            $output->writeln("<error>Can't retrieve Worker \"$workerName\"</error>");
+            $output->writeln(sprintf('Error: <error>"%s"</error>', $e->getMessage()));
+
+            return Command::FAILURE;
+        }
+
+        $processor = $this->createProcessor($worker);
 
         $consumer = $this->provider->consumerFor($workerName);
         $context = $this->provider->contextFor($workerName);
