@@ -6,7 +6,6 @@ use Gaufrette\Filesystem;
 use Gaufrette\Adapter\InMemory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class SupervisorConfigurationGeneratorTest extends TestCase
 {
