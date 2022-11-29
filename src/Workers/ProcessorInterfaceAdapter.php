@@ -7,6 +7,8 @@ use Puzzle\Pieces\EventDispatcher\NullEventDispatcher;
 use Puzzle\Pieces\EventDispatcher\EventDispatcherAware;
 use Puzzle\AMQP\Clients\Processors\MessageProcessorAware;
 use Symfony\Contracts\EventDispatcher\Event;
+use Puzzle\AMQP\Events\WorkerProcessed;
+use Puzzle\AMQP\Events\WorkerProcess;
 
 final class ProcessorInterfaceAdapter implements ProcessorInterface
 {
@@ -62,11 +64,11 @@ final class ProcessorInterfaceAdapter implements ProcessorInterface
 
     private function onWorkerProcess()
     {
-        $this->eventDispatcher->dispatch('worker.process');
+        $this->eventDispatcher->dispatch(WorkerProcess::NAME);
     }
 
     private function onWorkerProcessed()
     {
-        $this->eventDispatcher->dispatch('worker.processed');
+        $this->eventDispatcher->dispatch(WorkerProcessed::NAME);
     }
 }

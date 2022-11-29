@@ -17,6 +17,7 @@ use Puzzle\Pieces\OutputInterfaceAware;
 use Puzzle\Pieces\EventDispatcher\EventDispatcherAware;
 use Puzzle\Pieces\EventDispatcher\NullEventDispatcher;
 use Puzzle\AMQP\Workers\MessageAdapterFactoryAware;
+use Puzzle\AMQP\Events\WorkerRun;
 
 class Run extends Command
 {
@@ -32,7 +33,7 @@ class Run extends Command
     private WorkerProvider
         $provider;
 
-    public function __construct(Client $client,WorkerProvider $provider, OutputInterfaceAware $outputInterfaceAware)
+    public function __construct(Client $client, WorkerProvider $provider, OutputInterfaceAware $outputInterfaceAware)
     {
         parent::__construct();
 
@@ -66,7 +67,7 @@ class Run extends Command
         $consumer = $this->provider->consumerFor($workerName);
         $context = $this->provider->contextFor($workerName);
 
-        $this->eventDispatcher->dispatch('worker.run');
+        $this->eventDispatcher->dispatch(WorkerRun::NAME);
 
         if($this->logger instanceof LoggerInterface)
         {
