@@ -1,8 +1,6 @@
 Puzzle AMQP  ![PHP >= 8.0](https://img.shields.io/badge/php-%3E%3D%208.0-blue.svg)
 ===========
-PHP 7.x users, please use < 6.x versions.
-
-PHP 5.6 & 7.0 users, please use < 5.x versions.
+PHP 5.6 & 7.x users, please use < 5.x versions.
 
 QA
 --
@@ -119,15 +117,11 @@ class ExampleWorker implements Worker
 
 BC Breaks changelog
 -------------------
-**5.x -> 6.x**
-
-- Drop support for php 7.x
-- Consumer / Worker / WorkerContext changes  
-
 **4.x -> 5.x**
 
- - Drop support for php 5.6 & 7.0
+ - Drop support for php 5.6 & 7.x
  - Worker now catch Throwable, not only Exceptions
+- Consumer / Worker / WorkerContext signature change
 
 **3.x -> 4.x**
 
