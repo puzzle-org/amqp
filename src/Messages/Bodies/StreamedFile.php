@@ -5,9 +5,9 @@ namespace Puzzle\AMQP\Messages\Bodies;
 use Puzzle\AMQP\Messages\Body;
 use Puzzle\AMQP\Messages\Chunks\Chunk;
 use Puzzle\AMQP\Messages\Chunks\ChunkedMessageMetadata;
-use Puzzle\ValueObjects\Uuid;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\Chunks\ChunkSize;
+use Puzzle\AMQP\ValueObjects\Uuid;
 
 class StreamedFile implements Body
 {

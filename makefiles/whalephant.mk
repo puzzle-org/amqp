@@ -6,7 +6,7 @@ docker/images/phpunit/Dockerfile: whalephant
                -v ${HOST_SOURCE_PATH}:${CONTAINER_SOURCE_PATH} \
                -w ${CONTAINER_SOURCE_PATH} \
                -u ${USER_ID}:${GROUP_ID} \
-               php:7.1-cli \
+               php:8.1-cli \
                ./whalephant generate docker/images/phpunit
 
 clean-whalephant: 

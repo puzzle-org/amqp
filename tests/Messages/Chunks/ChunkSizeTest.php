@@ -28,10 +28,11 @@ class ChunkSizeTest extends TestCase
 
     /**
      * @dataProvider providerTestInvalidSize
-     * @expectedException \InvalidArgumentException
      */
     public function testInvalidSize($size)
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         new ChunkSize($size);
     }
 

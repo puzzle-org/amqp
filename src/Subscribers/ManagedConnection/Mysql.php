@@ -5,6 +5,8 @@ namespace Puzzle\AMQP\Subscribers\ManagedConnection;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Doctrine\DBAL\Connection;
+use Puzzle\AMQP\Events\WorkerProcessed;
+use Puzzle\AMQP\Events\WorkerRun;
 
 class Mysql implements EventSubscriberInterface
 {
@@ -19,8 +21,8 @@ class Mysql implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            'worker.run' => array('onWorkerRun'),
-            'worker.processed' => array('onWorkerProcessed'),
+            WorkerRun::NAME => array('onWorkerRun'),
+            WorkerProcessed::NAME => array('onWorkerProcessed'),
         );
     }
 

@@ -9,7 +9,6 @@ use Puzzle\AMQP\Client;
 use Puzzle\Pieces\OutputInterfaceAware;
 use Puzzle\Pieces\EventDispatcher\EventDispatcherAware;
 use Puzzle\Pieces\EventDispatcher\NullEventDispatcher;
-use Puzzle\Pieces\EventDispatcher\EventDispatcher;
 
 class WorkerCommands
 {

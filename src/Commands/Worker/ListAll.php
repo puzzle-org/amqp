@@ -11,49 +11,32 @@ use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
 class ListAll extends Command
 {
-    private
-        $workerProvider;
+    private WorkerProvider
+        $provider;
 
-    public function __construct(WorkerProvider $workerProvider)
+    public function __construct(WorkerProvider $provider)
     {
         parent::__construct();
 
-        $this->workerProvider = $workerProvider;
+        $this->provider = $provider;
     }
 
     protected function configure()
     {
         $this->setName('list')
-             ->addArgument(
-                  'workerNamePattern',
-                  InputArgument::OPTIONAL,
-                  'Regex pattern of the worker name',
-                  null
-             )
             ->setDescription('List AMQP workers');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $workerNamePattern = $input->getArgument('workerNamePattern');
+        $output->writeln('<comment>List of all workers</comment>');
 
-        if(!empty($workerNamePattern))
-        {
-            $comment = sprintf('List of worker with following pattern: %s', $workerNamePattern);
-            $services = $this->workerProvider->listWithRegexFilter($workerNamePattern);
-        }
-        else
-        {
-            $comment = 'List of all workers';
-            $services = $this->workerProvider->listAll();
-        }
+        $services = $this->provider->listAll();
 
-        $output->writeln(sprintf('<comment>%s</comment>', $comment));
-
-        if(empty($services) || !is_array($services))
+        if(empty($services))
         {
             $output->writeln('<error>No worker found</error>');
-            return;
+            return 0;
         }
 
         ksort($services);
@@ -63,15 +46,16 @@ class ListAll extends Command
         $style = new OutputFormatterStyle('cyan', null, array());
         $output->getFormatter()->setStyle('queue', $style);
 
-        foreach($services as $name => $info)
+        foreach($services as $name => $description)
         {
             $output->writeln(sprintf(
-                "<info> %s</info>%s\n\t<queue>--> %s</queue>\n",
+                "<info> %s</info>%s",
                 str_pad($name, $workerNameMaxLength, ' '),
-                $info['description'],
-                $info['queue']
+                $description,
             ));
         }
+
+        return 0;
     }
 
     private function getWorkerNameColumnSize(array $workers = array())

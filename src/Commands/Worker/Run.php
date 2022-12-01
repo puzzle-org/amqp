@@ -2,6 +2,10 @@
 
 namespace Puzzle\AMQP\Commands\Worker;
 
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
+use Puzzle\AMQP\Workers\Worker;
+use Swarrot\Processor\ProcessorInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -9,31 +13,34 @@ use Symfony\Component\Console\Input\InputArgument;
 use Puzzle\AMQP\Workers\ProcessorInterfaceAdapter;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Workers\WorkerProvider;
-use Puzzle\AMQP\Workers\WorkerContext;
 use Puzzle\Pieces\OutputInterfaceAware;
 use Puzzle\Pieces\EventDispatcher\EventDispatcherAware;
 use Puzzle\Pieces\EventDispatcher\NullEventDispatcher;
 use Puzzle\AMQP\Workers\MessageAdapterFactoryAware;
+use Puzzle\AMQP\Events\WorkerRun;
 
 class Run extends Command
 {
     use
+        LoggerAwareTrait,
         EventDispatcherAware,
         MessageAdapterFactoryAware;
 
-    private
-        $client,
-        $workerProvider,
+    private Client
+        $client;
+    private OutputInterfaceAware
         $outputInterfaceAware;
+    private WorkerProvider
+        $provider;
 
-    public function __construct(Client $client, WorkerProvider $workerProvider, OutputInterfaceAware $outputInterfaceAware)
+    public function __construct(Client $client, WorkerProvider $provider, OutputInterfaceAware $outputInterfaceAware)
     {
         parent::__construct();
 
         $this->client = $client;
-        $this->workerProvider = $workerProvider;
+        $this->provider = $provider;
         $this->outputInterfaceAware = $outputInterfaceAware;
-        
+
         $this->eventDispatcher = new NullEventDispatcher();
         $this->messageAdapterFactory = null;
     }
@@ -50,31 +57,46 @@ class Run extends Command
         $this->outputInterfaceAware->register($output);
 
         $workerName = $input->getArgument('task');
-        $workerContext = $this->workerProvider->getWorker($workerName);
 
-        if($workerContext instanceof WorkerContext)
+        $output->writeln("Launching <info>$workerName</info>");
+
+        try
         {
-            $output->writeln("Launching <info>$workerName</info>");
+            $worker = $this->provider->workerFor($workerName);
+        }
+        catch(\Exception $e)
+        {
+            $output->writeln("<error>Can't retrieve Worker \"$workerName\"</error>");
+            $output->writeln(sprintf('Error: <error>"%s"</error>', $e->getMessage()));
 
-            $processor = $this->createProcessor($workerContext);
-
-            $this->eventDispatcher->dispatch('worker.run');
-
-            return $workerContext->getConsumer()->consume($processor, $this->client, $workerContext);
+            return Command::FAILURE;
         }
 
-        $output->writeln("<error>Worker $workerName not found</error>");
+        $processor = $this->createProcessor($worker);
+
+        $consumer = $this->provider->consumerFor($workerName);
+        $context = $this->provider->contextFor($workerName);
+
+        $this->eventDispatcher->dispatch(WorkerRun::NAME);
+
+        if($this->logger instanceof LoggerInterface)
+        {
+            $consumer->setLogger($this->logger);
+        }
+        $consumer->consume($processor, $this->client, $context->queueName());
+
+        return Command::SUCCESS;
     }
 
-    private function createProcessor(WorkerContext $workerContext)
+    private function createProcessor(Worker $worker): ProcessorInterface
     {
-        $processor = new ProcessorInterfaceAdapter($workerContext);
-        
+        $processor = new ProcessorInterfaceAdapter($worker);
+
         $processor
             ->setEventDispatcher($this->eventDispatcher)
             ->setMessageAdapterFactory($this->messageAdapterFactory)
             ->setMessageProcessors(
-                $this->workerProvider->getMessageProcessors()
+                $this->provider->messageProcessors()
             );
 
         return $processor;

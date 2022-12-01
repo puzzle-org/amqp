@@ -2,10 +2,10 @@
 
 namespace Puzzle\AMQP\Messages\Bodies;
 
-use Puzzle\ValueObjects\Uuid;
 use Puzzle\AMQP\Messages\Chunks\Chunk;
 use Puzzle\AMQP\Messages\Chunks\ChunkSize;
 use Puzzle\AMQP\Messages\Chunks\ChunkedMessageMetadata;
+use Puzzle\AMQP\ValueObjects\Uuid;
 
 class StreamedBinary extends Binary
 {

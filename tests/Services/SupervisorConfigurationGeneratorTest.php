@@ -26,7 +26,7 @@ class SupervisorConfigurationGeneratorTest extends TestCase
 
         foreach($filesystem->keys() as $filename)
         {
-            $this->assertTrue(in_array($filename, $expectedFilenames), sprintf('The file %s cannot be found in %s', $filename, implode($expectedFilenames, ',')));
+            $this->assertTrue(in_array($filename, $expectedFilenames), sprintf('The file %s cannot be found in %s', $filename, implode(',', $expectedFilenames)));
 
             $key = array_search($filename, $expectedFilenames);
             $this->assertEquals($expectedTemplates[$key], $filesystem->get($filename)->getContent());
@@ -152,13 +152,13 @@ class SupervisorConfigurationGeneratorTest extends TestCase
         $autorestart = $autorestart === true ? 'true' : 'false';
 
         return <<<TXT
-[program:$appId--$worker]
-command=/usr/bin/env php worker run $worker
-directory=/var/www/app
-user=www-data
-autostart=$autostart
-autorestart=$autorestart
-TXT;
+            [program:$appId--$worker]
+            command=/usr/bin/env php worker run $worker
+            directory=/var/www/app
+            user=www-data
+            autostart=$autostart
+            autorestart=$autorestart
+            TXT;
     }
 
     private function generateWorkers(array $workers)

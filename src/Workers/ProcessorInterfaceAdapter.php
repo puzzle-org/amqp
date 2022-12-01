@@ -6,61 +6,69 @@ use Swarrot\Processor\ProcessorInterface;
 use Puzzle\Pieces\EventDispatcher\NullEventDispatcher;
 use Puzzle\Pieces\EventDispatcher\EventDispatcherAware;
 use Puzzle\AMQP\Clients\Processors\MessageProcessorAware;
+use Symfony\Contracts\EventDispatcher\Event;
+use Puzzle\AMQP\Events\WorkerProcessed;
+use Puzzle\AMQP\Events\WorkerProcess;
 
-class ProcessorInterfaceAdapter implements ProcessorInterface
+final class ProcessorInterfaceAdapter implements ProcessorInterface
 {
     use
         EventDispatcherAware,
         MessageAdapterFactoryAware,
         MessageProcessorAware;
-    
-    private
-        $workerContext;
-    
-    public function __construct(WorkerContext $workerContext)
+
+    private Worker
+        $worker;
+
+    public function __construct(Worker $worker)
     {
-        $this->workerContext = $workerContext;
+        $this->worker = $worker;
         $this->eventDispatcher = new NullEventDispatcher();
         $this->messageAdapterFactory = null;
     }
-    
-    public function process(\Swarrot\Broker\Message $message, array $options)
+
+    public function process(\Swarrot\Broker\Message $message, array $options): bool
     {
         $message = $this->createMessageAdapter($message);
         $message = $this->onConsume($message);
-        
-        $this->workerContext->getLogger()->debug((string) $message);
-        
+
         $this->onWorkerProcess();
 
         try
         {
-            $processResult = $this->workerContext->getWorker()->process($message);
+            $this->worker->process($message);
         }
-        catch(\Throwable $exception)
+        catch(\Throwable $t)
         {
             $this->onWorkerProcessed();
 
-            if($exception instanceof \Error)
+            if($t instanceof \Error)
             {
-                $exception = new \ErrorException($exception->getMessage(), $exception->getCode(), E_ERROR, $exception->getFile(), $exception->getLine(), $exception);
+                $t = new \ErrorException(
+                    $t->getMessage(),
+                    $t->getCode(),
+                    E_ERROR,
+                    $t->getFile(),
+                    $t->getLine(),
+                    $t
+                );
             }
 
-            throw $exception;
+            throw $t;
         }
 
         $this->onWorkerProcessed();
 
-        return $processResult;
+        return true;
     }
 
     private function onWorkerProcess()
     {
-        $this->eventDispatcher->dispatch('worker.process');
+        $this->eventDispatcher->dispatch(WorkerProcess::NAME);
     }
-    
+
     private function onWorkerProcessed()
     {
-        $this->eventDispatcher->dispatch('worker.processed');
+        $this->eventDispatcher->dispatch(WorkerProcessed::NAME);
     }
 }

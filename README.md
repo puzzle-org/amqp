@@ -1,20 +1,16 @@
-Puzzle AMQP  ![PHP >= 7.1](https://img.shields.io/badge/php-%3E%3D%207.1-blue.svg)
+Puzzle AMQP  ![PHP >= 8.0](https://img.shields.io/badge/php-%3E%3D%208.0-blue.svg)
 ===========
-
-PHP 5.6 users, please use < 5.x versions.
+PHP 5.6 & 7.x users, please use < 5.x versions.
 
 QA
 --
 
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/d18675cd-9850-4115-af23-b1afa8a859bc/big.png)](https://insight.sensiolabs.com/projects/d18675cd-9850-4115-af23-b1afa8a859bc)
-
-Service | Result
---- | ---
-**Travis CI** (PHP 7.1 .. 7.2) | [![Build Status](https://travis-ci.org/puzzle-org/amqp.svg?branch=master)](https://travis-ci.org/puzzle-org/amqp)
-**Scrutinizer** | [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/puzzle-org/amqp/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/puzzle-org/amqp/?branch=master)
-**Code coverage** | [![codecov](https://codecov.io/gh/puzzle-org/amqp/branch/master/graph/badge.svg)](https://codecov.io/gh/puzzle-org/amqp)
-**Packagist** | [![Latest Stable Version](https://poser.pugx.org/puzzle/amqp/v/stable.png)](https://packagist.org/packages/puzzle/amqp) [![Total Downloads](https://poser.pugx.org/puzzle/amqp/downloads.svg)](https://packagist.org/packages/puzzle/amqp)
-
+| Service                         | Result |
+|---------------------------------| --- |
+|  **Travis CI** (PHP 8.0 .. 8.1) | [![Build Status](https://travis-ci.org/puzzle-org/amqp.svg?branch=master)](https://travis-ci.org/puzzle-org/amqp) |
+|  **Scrutinizer**                | [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/puzzle-org/amqp/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/puzzle-org/amqp/?branch=master) |
+|  **Code coverage**              | [![codecov](https://codecov.io/gh/puzzle-org/amqp/branch/master/graph/badge.svg)](https://codecov.io/gh/puzzle-org/amqp) |
+|  **Packagist**                  | [![Latest Stable Version](https://poser.pugx.org/puzzle/amqp/v/stable.png)](https://packagist.org/packages/puzzle/amqp) [![Total Downloads](https://poser.pugx.org/puzzle/amqp/downloads.svg)](https://packagist.org/packages/puzzle/amqp) |
 
 Configuration
 -------------
@@ -23,6 +19,7 @@ Configuration
 # amqp.yml
 broker:
     host: myRabbit
+    port: 5672
     login: guest
     password: guest
     vhost: /
@@ -73,7 +70,6 @@ $client->publish('myExchange', $message);
 use Puzzle\AMQP\Consumers;
 use Puzzle\AMQP\Clients;
 use Puzzle\AMQP\Workers\ProcessorInterfaceAdapter;
-use Puzzle\AMQP\Workers\WorkerContext;
 use Puzzle\Configuration\Memory;
 
 $configuration = new Memory(array(
@@ -86,17 +82,12 @@ $configuration = new Memory(array(
 
 $consumer = new Consumers\Simple();
 
-$workerContext = new WorkerContext(function() {
-        return new ExampleWorker();
-    },
-    $consumer,
-    'queue.name'
-);
+$worker = new ExampleWorker();
 
 $consumer->consume(
-    new ProcessorInterfaceAdapter($workerContext),
+    new ProcessorInterfaceAdapter($worker),
     new Clients\Pecl($configuration),
-    $workerContext
+    'queue.name'
 );
 ```
 ### Worker example :
@@ -117,7 +108,7 @@ class ExampleWorker implements Worker
         $this->logger = new NullLogger();
     }
 
-    public function process(ReadableMessage $message)
+    public function process(ReadableMessage $message): void
     {
         // your code here
     }
@@ -126,11 +117,11 @@ class ExampleWorker implements Worker
 
 BC Breaks changelog
 -------------------
-
 **4.x -> 5.x**
 
- - Drop support for php 5.6 & 7.0
+ - Drop support for php 5.6 & 7.x
  - Worker now catch Throwable, not only Exceptions
+- Consumer / Worker / WorkerContext signature change
 
 **3.x -> 4.x**
 

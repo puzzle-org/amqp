@@ -8,11 +8,11 @@ use Puzzle\AMQP\Workers\WorkerContext;
 
 class InstantRetry extends AbstractConsumer
 {
-    private
+    private ?int
         $retries,
         $delay;
 
-    public function __construct($retries = null, $delayInSeconds = null)
+    public function __construct(?int $retries = null, ?int $delayInSeconds = null)
     {
         parent::__construct();
 
@@ -20,9 +20,9 @@ class InstantRetry extends AbstractConsumer
         $this->delay = $delayInSeconds;
     }
 
-    public function consume(ProcessorInterface $processor, Client $client, WorkerContext $workerContext)
+    public function consume(ProcessorInterface $processor, Client $client, string $queue): void
     {
-        parent::consume($processor, $client, $workerContext);
+        parent::consume($processor, $client, $queue);
 
         $stack = $this->getBaseStack()
             ->push('Swarrot\Processor\MaxExecutionTime\MaxExecutionTimeProcessor', $this->logger)
@@ -30,18 +30,16 @@ class InstantRetry extends AbstractConsumer
             ->push('Swarrot\Processor\InstantRetry\InstantRetryProcessor', $this->logger)
         ;
 
-        $options = $this->getOptions();
-
         $consumer = $this->getSwarrotConsumer($stack);
 
-        return $consumer->consume($options);
+        $consumer->consume($this->options());
     }
 
-    private function getOptions()
+    private function options(): array
     {
-        $options = array(
+        $options = [
             'max_execution_time' => self::DEFAULT_MAX_EXECUTION_TIME,
-        );
+        ];
 
         if(!empty($this->retries))
         {

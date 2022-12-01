@@ -140,11 +140,10 @@ class MessageTest extends TestCase
         $this->assertSame("15000", $message->getAttribute('expiration'));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testUnknownAttribute()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $message = new Message('burger.over.ponies');
         $message->getAttribute("Does not exist");
     }
