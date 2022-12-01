@@ -20,8 +20,8 @@
     },
     "require" : {
         "php": ">=8.0",
-        "puzzle/configuration" : "4.0.*",
-        "puzzle/pieces" : "dev-clb-sf5",
+        "puzzle/configuration" : "~4.0",
+        "puzzle/pieces" : "~3.0",
         "symfony/console": "^5.4|^6.0",
         "symfony/event-dispatcher": "~5.4|^6.0",
         "swarrot/swarrot": "^4.0",
