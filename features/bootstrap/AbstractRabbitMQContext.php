@@ -2,14 +2,14 @@
 
 namespace Puzzle\AMQP\Contexts;
 
+use AvtoDev\RabbitMqApiClient\Client;
+use AvtoDev\RabbitMqApiClient\ConnectionSettings;
 use Behat\Behat\Context\Context;
 use Puzzle\Configuration\Yaml;
 use Gaufrette\Filesystem;
 use Gaufrette\Adapter\Local;
-use RabbitMQ\Management\APIClient;
 use Puzzle\AMQP\Clients\Pecl;
 use Puzzle\AMQP\Messages\Processors\GZip;
-use Puzzle\Configuration;
 
 abstract class AbstractRabbitMQContext implements Context
 {
@@ -22,6 +22,10 @@ abstract class AbstractRabbitMQContext implements Context
     
     protected Pecl
         $client;
+    protected Client
+        $avtoDevClient;
+    protected string
+        $vhost;
 
     public function __construct($path)
     {
@@ -29,5 +33,13 @@ abstract class AbstractRabbitMQContext implements Context
 
         $this->client = new Pecl($configuration);
         $this->client->appendMessageProcessor(new GZip());
+
+        $rabbitConf = $configuration->readRequired('amqp/broker');
+        $this->avtoDevClient = new Client(new ConnectionSettings(
+            $rabbitConf['host'] . ':15672',
+            $rabbitConf['login'],
+            $rabbitConf['password'],
+        ));
+        $this->vhost = $rabbitConf['vhost'];
     }
 }

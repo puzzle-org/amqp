@@ -156,10 +156,6 @@ class SendContext extends AbstractRabbitMQContext
     
     private function nbMessagesInQueue(string $queueName): int
     {
-        $queue = $this->client->getQueue($queueName);
-
-        $queue->setFlags(AMQP_DURABLE);
-
-        return $queue->declareQueue();
+        return $this->avtoDevClient->queueInfo($queueName, $this->vhost)->getMessagesCount();
     }
 }
