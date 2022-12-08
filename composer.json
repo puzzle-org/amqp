@@ -36,12 +36,16 @@
         "behat/behat": "~3.3",
         "symfony/debug": "~3.2",
         "doctrine/collections": "<=1.4.0",
-        "avto-dev/rabbitmq-api-client": "^2.0"
+        "groall/rabbitmq-http-api-client-php": "^0.2.3"
     },
     "repositories": [
         {
             "type": "vcs",
             "url": "https://github.com/naoned/rabbit-mq-admin-toolkit"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/naoned/rabbitmq-http-api-client-php "
         }
     ],
     "suggest": {
