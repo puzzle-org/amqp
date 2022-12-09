@@ -27,6 +27,16 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
         $this->logger = new NullLogger();
         $this->consumedMessages = [];
     }
+
+    /**
+     * @Given The queue :queue contains only the text message :bodyContent
+     */
+    public function theQueueContainsOnlyTheTextMessage($bodyContent, $queue)
+    {
+        $this->httpClient->purgeQueue($this->vhost, $queue);
+
+        $this->theQueueContainsTheTextMessage($bodyContent, $queue);
+    }
     
     /**
      * @Given The queue :queue contains the text message :bodyContent
@@ -184,6 +194,16 @@ class ConsumeContext extends AbstractRabbitMQContext implements Worker
         }
         
         \PHPUnit\Framework\Assert::assertTrue($found);
+    }
+
+    /**
+     * @Given The queue :queue contains only the compressed text message :bodyContent
+     */
+    public function theQueueContainsOnlyTheCompressedTextMessage($bodyContent, $queue)
+    {
+        $this->httpClient->purgeQueue($this->vhost, $queue);
+
+        $this->theQueueContainsTheCompressedTextMessage($bodyContent, $queue);
     }
 
     /**
