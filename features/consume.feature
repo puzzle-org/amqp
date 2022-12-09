@@ -1,8 +1,7 @@
 Feature: Consuming AMQP messages
 
 Scenario: Consuming a text message
-    Given The queue 'test_1' is empty
-    And The queue 'test_1' contains the text message "Puzzle is great"
+    Given The queue 'test_1' contains only the text message "Puzzle is great"
     When I consume all the messages in the queue 'test_1'
     Then I have consumed 1 message
     And the message is a text one 
@@ -28,8 +27,7 @@ Scenario: Consuming many messages
     And one of the messages contains the json '{"lastName":"Poteau", "firstName":"Alexis"}'
 
 Scenario: Consuming a compressed text message
-    Given The queue 'test_zip' is empty
-    And The queue 'test_zip' contains the compressed text message "Puzzle is great"
+    Given The queue 'test_zip' contains only the compressed text message "Puzzle is great"
     When I consume all the messages in the queue 'test_zip'
     Then I have consumed 1 message
     And the message is an uncompressed text one
