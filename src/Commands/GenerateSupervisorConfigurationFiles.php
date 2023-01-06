@@ -54,6 +54,8 @@ class GenerateSupervisorConfigurationFiles extends Command
 
         $this->endTimer();
         $this->outputExtraInformation($output);
+
+        return Command::SUCCESS;
     }
 
     private function process(InputInterface $input, OutputInterface $output)
