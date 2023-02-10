@@ -4,7 +4,7 @@ namespace Puzzle\AMQP\Workers;
 
 use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\WritableMessage;
-use Puzzle\AMQP\Messages\Bodies\NullBody;
+use Puzzle\AMQP\Messages\Bodies\EmptyBody;
 use Puzzle\AMQP\Messages\Body;
 use Puzzle\Pieces\Exceptions\JsonEncodeError;
 use Puzzle\Pieces\Json;
@@ -18,7 +18,7 @@ class MessageAdapter implements ReadableMessage
     public function __construct(\Swarrot\Broker\Message $message)
     {
         $this->message = $message;
-        $this->body = new NullBody();
+        $this->body = new EmptyBody();
     }
     
     public function setBody(Body $body)

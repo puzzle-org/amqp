@@ -8,10 +8,10 @@ class NullBodyTest extends TestCase
 {
     public function testNullBody()
     {
-        $body = new NullBody();
+        $body = new EmptyBody();
         
-        $this->assertNull($body->inOriginalFormat());
-        $this->assertNull($body->asTransported());
+        $this->assertSame('', $body->inOriginalFormat());
+        $this->assertSame('', $body->asTransported());
         $this->assertEmpty((string) $body);
     }
 }

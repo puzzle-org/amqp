@@ -40,7 +40,7 @@ class StandardTest extends TestCase
             [
                 'unknown/type',
                 'Deunope or Trinope ?',
-                null,
+                '',
             ],
         ];
     }

@@ -4,7 +4,7 @@ namespace Puzzle\AMQP\Messages;
 
 use Psr\Log\InvalidArgumentException;
 use Puzzle\AMQP\WritableMessage;
-use Puzzle\AMQP\Messages\Bodies\NullBody;
+use Puzzle\AMQP\Messages\Bodies\EmptyBody;
 use Puzzle\Pieces\ConvertibleToString;
 
 class Message implements WritableMessage, ConvertibleToString
@@ -24,7 +24,7 @@ class Message implements WritableMessage, ConvertibleToString
 
     public function __construct($routingKey = '')
     {
-        $this->body = new NullBody();
+        $this->body = new EmptyBody();
 
         $this->canBeDroppedSilently = true;
         $this->allowCompression = false;

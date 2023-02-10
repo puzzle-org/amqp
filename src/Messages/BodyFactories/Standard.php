@@ -7,7 +7,7 @@ use Psr\Log\NullLogger;
 use Puzzle\AMQP\Messages\TypedBodyFactories;
 use Puzzle\AMQP\Messages\BodyFactory;
 use Puzzle\AMQP\Messages\ContentType;
-use Puzzle\AMQP\Messages\Bodies\NullBody;
+use Puzzle\AMQP\Messages\Bodies\EmptyBody;
 use Puzzle\AMQP\Messages\TypedBodyFactory;
 
 class Standard implements BodyFactory
@@ -48,6 +48,6 @@ class Standard implements BodyFactory
         
         $this->logger->warning(__CLASS__ . ": unknown content-type, use empty body");
         
-        return new NullBody();
+        return new EmptyBody();
     }
 }

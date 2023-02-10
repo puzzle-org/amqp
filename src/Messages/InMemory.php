@@ -2,7 +2,7 @@
 
 namespace Puzzle\AMQP\Messages;
 
-use Puzzle\AMQP\Messages\Bodies\NullBody;
+use Puzzle\AMQP\Messages\Bodies\EmptyBody;
 use Puzzle\AMQP\Workers\MessageAdapterFactory;
 
 class InMemory
@@ -14,7 +14,7 @@ class InMemory
     {
         if(! $body instanceof Body)
         {
-            $body = new NullBody();
+            $body = new EmptyBody();
         }
 
         $attributes = array_merge([
