@@ -5,16 +5,16 @@ namespace Puzzle\AMQP\Messages\Bodies;
 use Puzzle\AMQP\Messages\Body;
 use Puzzle\AMQP\Messages\ContentType;
 
-class NullBody implements Body
+class EmptyBody implements Body
 {
     public function inOriginalFormat()
     {
-        return null;
+        return '';
     }
 
     public function asTransported()
     {
-        return null;
+        return '';
     }
 
     public function getContentType()
