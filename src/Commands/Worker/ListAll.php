@@ -27,7 +27,7 @@ class ListAll extends Command
             ->setDescription('List AMQP workers');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('<comment>List of all workers</comment>');
 

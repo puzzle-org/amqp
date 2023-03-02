@@ -52,7 +52,7 @@ class Run extends Command
             ->addArgument('task', InputArgument::REQUIRED, 'worker name to run');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->outputInterfaceAware->register($output);
 
