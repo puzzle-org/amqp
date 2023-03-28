@@ -38,7 +38,7 @@ down:
 #------------------------------------------------------------------------------
 # RabbitMQ configuration
 #------------------------------------------------------------------------------
-rabbitmqctl = docker exec --tty -i puzzle-amqp-rabbitmq rabbitmqctl $1
+rabbitmqctl = $(DOCKER_EXEC) puzzle-amqp-rabbitmq rabbitmqctl $1
 
 configure:
 	$(call rabbitmqctl, add_vhost ${RMQ_VHOST})
@@ -53,7 +53,7 @@ reconfigure: clean-configuration configure
 #------------------------------------------------------------------------------
 # Behat test suite
 #------------------------------------------------------------------------------
-cli_exec = docker run -it --rm \
+cli_exec = $(DOCKER_RUN) --rm \
 	                 -v ${HOST_SOURCE_PATH}:${CONTAINER_SOURCE_PATH} \
 	                 -w ${CONTAINER_SOURCE_PATH} \
 	                 --network 'container:puzzle-amqp-rabbitmq' \
