@@ -17,6 +17,7 @@ endif
 #------------------------------------------------------------------------------
 
 include makefiles/composer.mk
+include makefiles/executables.mk
 include makefiles/whalephant.mk
 include makefiles/phpunit.mk
 include makefiles/karma.mk
