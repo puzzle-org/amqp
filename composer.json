@@ -45,7 +45,7 @@
         },
         {
             "type": "vcs",
-            "url": "https://github.com/naoned/rabbitmq-http-api-client-php "
+            "url": "https://github.com/naoned/rabbitmq-http-api-client-php"
         }
     ],
     "suggest": {
