@@ -19,7 +19,7 @@ CONTAINER_SOURCE_PATH=/usr/src/puzzle-amqp
 init: composer-install up wait configure
 
 wait:
-	sleep 5
+	sleep 10
 
 #------------------------------------------------------------------------------
 # Containers management
