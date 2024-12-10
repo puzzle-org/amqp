@@ -45,10 +45,10 @@ class ChunkedMessageMetadataTest extends TestCase
 
         $metadata = ChunkedMessageMetadata::buildFromHeaders($headers);
 
-        $this->assertSame($uuid, $metadata->uuid());
-        $this->assertSame(1024, $metadata->size());
-        $this->assertSame(4, $metadata->nbChunks());
-        $this->assertSame(sha1($content), $metadata->checksum());
+        self::assertSame($uuid, $metadata->uuid());
+        self::assertSame(1024, $metadata->size());
+        self::assertSame(4, $metadata->nbChunks());
+        self::assertSame(sha1($content), $metadata->checksum());
     }
 
     public function testWithInvalidHeaders(): void

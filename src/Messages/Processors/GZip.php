@@ -27,10 +27,11 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
     
     private
         $compressionLevel,
-        $encodingMode,
+        $encodingMode;
+    private BodyFactory
         $bodyFactory;
     
-    public function __construct(BodyFactory $bodyFactory = null)
+    public function __construct(?BodyFactory $bodyFactory = null)
     {
         $this->compressionLevel = -1;
         $this->encodingMode = FORCE_GZIP;

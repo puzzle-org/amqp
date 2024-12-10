@@ -9,7 +9,7 @@ use Puzzle\AMQP\Messages\ContentType;
 
 class BinaryTest extends TestCase
 {
-    public function testContentType()
+    public function testContentType(): void
     {
         $client = new InMemory();
         
@@ -21,19 +21,19 @@ class BinaryTest extends TestCase
         $sentMessages = $client->getSentMessages();
         $sentMessage = array_shift($sentMessages)['message'];
         
-        $this->assertSame(
+        self::assertSame(
             ContentType::BINARY,
             $sentMessage->getAttribute('content_type')
         );
         
-        $this->assertNotEmpty((string) $sentMessage);
+        self::assertNotEmpty((string) $sentMessage);
     }
     
-    public function testGetContentInDifferentFormats()
+    public function testGetContentInDifferentFormats(): void
     {
         $content = decbin(42516982);
         $body = new Binary($content);
         
-        $this->assertSame($content, $body->inOriginalFormat());
+        self::assertSame($content, $body->inOriginalFormat());
     }
 }

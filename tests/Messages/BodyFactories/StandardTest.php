@@ -2,24 +2,23 @@
 
 namespace Puzzle\AMQP\Messages\BodyFactories;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\TypedBodyFactories\Json;
 
 class StandardTest extends TestCase
 {
-    /**
-     * @dataProvider providerTestBuild
-     */
-    public function testBuild($contentType, $contentAsTransported, $expected)
+    #[DataProvider('providerTestBuild')]
+    public function testBuild($contentType, $contentAsTransported, $expected): void
     {
         $factory = new Standard();
         $body = $factory->build($contentType, $contentAsTransported);
         
-        $this->assertSame($expected, $body->inOriginalFormat());
+        self::assertSame($expected, $body->inOriginalFormat());
     }
-    
-    public function providerTestBuild()
+
+    public static function providerTestBuild(): array
     {
         return [
             [
@@ -45,14 +44,14 @@ class StandardTest extends TestCase
         ];
     }
     
-    public function testHandleContentType()
+    public function testHandleContentType(): void
     {
         $factory = new Standard();
         $factory->handleContentType('application/config', new Json());
         
         $body = $factory->build('application/config', '{"pony": "Shetland"}');
         
-        $this->assertTrue($body instanceof \Puzzle\AMQP\Messages\Bodies\Json);
-        $this->assertSame(['pony' => 'Shetland'], $body->inOriginalFormat());
+        self::assertInstanceOf(\Puzzle\AMQP\Messages\Bodies\Json::class, $body);
+        self::assertSame(['pony' => 'Shetland'], $body->inOriginalFormat());
     }
 }

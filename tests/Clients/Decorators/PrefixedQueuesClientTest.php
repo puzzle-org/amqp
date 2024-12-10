@@ -2,6 +2,7 @@
 
 namespace Puzzle\AMQP\Clients\Decorators;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Clients\InMemory;
@@ -23,17 +24,15 @@ class MockedClientQueue extends InMemory implements Client
 
 class PrefixedQueuesClientTest extends TestCase
 {
-    /**
-     * @dataProvider providerTestGetQueue
-     */
-    public function testGetQueue($prefix, $queueName, $expected)
+    #[DataProvider('providerTestGetQueue')]
+    public function testGetQueue($prefix, $queueName, $expected): void
     {
         $client = new PrefixedQueuesClient(new MockedClientQueue(), $prefix);
 
-        $this->assertSame($expected, $client->getQueue($queueName));
+        self::assertSame($expected, $client->getQueue($queueName));
     }
 
-    public function providerTestGetQueue()
+    public static function providerTestGetQueue(): array
     {
         return [
             'nominal case' => [
@@ -54,14 +53,14 @@ class PrefixedQueuesClientTest extends TestCase
         ];
     }
 
-    public function testGetExchange()
+    public function testGetExchange(): void
     {
         $client = new PrefixedQueuesClient(new MockedClientQueue(), 'burger');
 
-        $this->assertSame('poney', $client->getExchange('poney'));
+        self::assertSame('poney', $client->getExchange('poney'));
     }
 
-    public function testPublish()
+    public function testPublish(): void
     {
         $mockedClient = new MockedClientQueue();
         $client = new PrefixedQueuesClient($mockedClient, 'pony');
@@ -70,23 +69,23 @@ class PrefixedQueuesClientTest extends TestCase
         $client->publish('burger', $message);
 
         $sentMessages = $mockedClient->getSentMessages();
-        $this->assertCount(1, $sentMessages);
+        self::assertCount(1, $sentMessages);
 
         $firstMessage = array_shift($sentMessages);
 
-        $this->assertSame($message, $firstMessage['message']);
+        self::assertSame($message, $firstMessage['message']);
     }
 
-    public function testGetAppendProcessor()
+    public function testGetAppendProcessor(): void
     {
         $client = new PrefixedQueuesClient(new MockedClientQueue(), 'rainbow');
         $client->appendMessageProcessor(new NullProcessor());
-        $this->assertTrue(
+        self::assertTrue(
             $client->publish('exchange', new Message('null'))
         );
     }
 
-    public function testSetMessageProcessors()
+    public function testSetMessageProcessors(): void
     {
         $client = new PrefixedQueuesClient(new MockedClient(), 'rainbow');
         $client->setMessageProcessors([
@@ -94,7 +93,7 @@ class PrefixedQueuesClientTest extends TestCase
             new NullProcessor(),
             new NullProcessor(),
         ]);
-        $this->assertTrue(
+        self::assertTrue(
             $client->publish('exchange', new Message('null'))
         );
     }

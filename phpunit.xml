@@ -1,29 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         backupGlobals="false"
          colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         failOnDeprecation="true"
          processIsolation="false"
          stopOnFailure="false"
          bootstrap="vendor/autoload.php"
 >
+  <testsuites>
+    <testsuite name="Puzzle-configuration Test Suite">
+      <directory>./tests/</directory>
+    </testsuite>
+  </testsuites>
 
-<testsuites>
-  <testsuite name="Test Suite">
-    <directory>./tests/</directory>
-  </testsuite>
-</testsuites>
-
-<coverage includeUncoveredFiles="true">
-  <exclude>
-    <directory suffix=".php">vendor</directory>
-  </exclude>
-  <include>
-    <directory suffix=".php">src</directory>
-  </include>
-</coverage>
+  <source>
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </source>
 
 </phpunit>

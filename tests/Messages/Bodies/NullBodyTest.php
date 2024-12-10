@@ -6,12 +6,12 @@ use PHPUnit\Framework\TestCase;
 
 class NullBodyTest extends TestCase
 {
-    public function testNullBody()
+    public function testNullBody(): void
     {
         $body = new EmptyBody();
         
-        $this->assertSame('', $body->inOriginalFormat());
-        $this->assertSame('', $body->asTransported());
-        $this->assertEmpty((string) $body);
+        self::assertSame('', $body->inOriginalFormat());
+        self::assertSame('', $body->asTransported());
+        self::assertEmpty((string) $body);
     }
 }

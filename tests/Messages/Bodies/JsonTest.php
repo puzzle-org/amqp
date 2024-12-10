@@ -2,11 +2,12 @@
 
 namespace Puzzle\AMQP\Messages\Bodies;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class JsonTest extends TestCase
 {
-    public function testGetContentInDifferentFormats()
+    public function testGetContentInDifferentFormats(): void
     {
         $content = array(
             'planche' => 'gourdin',
@@ -17,35 +18,33 @@ class JsonTest extends TestCase
 
         $body = new Json($content);
 
-        $this->assertSame($content, json_decode($body->asTransported(), true), 'Body must be encoded in json');
+        self::assertSame($content, json_decode($body->asTransported(), true), 'Body must be encoded in json');
         
         $body->changeContent('yolo');
-        $this->assertSame(['yolo'], json_decode($body->asTransported(), true), 'Body must be encoded in json');
-        $this->assertSame(['yolo'], $body->inOriginalFormat());
+        self::assertSame(['yolo'], json_decode($body->asTransported(), true), 'Body must be encoded in json');
+        self::assertSame(['yolo'], $body->inOriginalFormat());
     }
 
-    public function testSetBodyWithJson()
+    public function testSetBodyWithJson(): void
     {
         $content = json_encode(['burger' => 'big pony']);
 
         $body = new Json();
         $body->changeContentWithJson($content);
 
-        $this->assertSame($content, $body->asTransported(), 'Body must not be encoded twice');
+        self::assertSame($content, $body->asTransported(), 'Body must not be encoded twice');
     }
     
-    /**
-     * @dataProvider providerTestJsonEncodeException
-     */
-    public function testJsonEncodeException($content)
+    #[DataProvider('providerTestJsonEncodeException')]
+    public function testJsonEncodeException($content): void
     {
         $this->expectException(\Puzzle\Pieces\Exceptions\JsonEncodeError::class);
 
         $body = new Json($content);
         $body->asTransported();
     }
-    
-    public function providerTestJsonEncodeException()
+
+    public static function providerTestJsonEncodeException(): array
     {
         $recursionData = array();
         $recursionData[] = & $recursionData;
@@ -56,29 +55,27 @@ class JsonTest extends TestCase
              *  Fatal error: Maximum function nesting level of '256' reached, aborting! in phpunit/phpunit/src/Framework/TestCase.php on line 2442
             */
             // 'JSON_ERROR_RECURSION' => [
-            //     'data' => $recursionData,
+            //     'content' => $recursionData,
             // ],
             'JSON_ERROR_INF_OR_NAN NAN' => [
-                'data' => NAN,
+                'content' => NAN,
             ],
             'JSON_ERROR_INF_OR_NAN INF' => [
-                'data' => INF,
+                'content' => INF,
             ],
         ];
     }
     
-    /**
-     * @dataProvider providerTestJsonDecodeException
-     */
-    public function testJsonDecodeException($json)
+    #[DataProvider('providerTestJsonDecodeException')]
+    public function testJsonDecodeException($json): void
     {
         $this->expectException(\Puzzle\Pieces\Exceptions\JsonDecodeError::class);
 
         $body = new Json();
         $body->changeContentWithJson($json);
     }
-    
-    public function providerTestJsonDecodeException()
+
+    public static function providerTestJsonDecodeException(): array
     {
         return [
                 'JSON_ERROR_STATE_MISMATCH' => [

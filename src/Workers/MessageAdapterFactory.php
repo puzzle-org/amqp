@@ -7,10 +7,10 @@ use Puzzle\AMQP\Messages\BodyFactories\Standard;
 
 class MessageAdapterFactory
 {
-    private
+    private BodyFactory
         $bodyFactory;
 
-    public function __construct(BodyFactory $bodyFactory = null)
+    public function __construct(?BodyFactory $bodyFactory = null)
     {
         if(! $bodyFactory instanceof BodyFactory)
         {

@@ -9,7 +9,7 @@ use Puzzle\AMQP\WritableMessage;
 
 class AddHeaderTest extends TestCase
 {
-    public function testOnPublish()
+    public function testOnPublish(): void
     {
         $message = new Message('my.key');
         $message
@@ -26,7 +26,7 @@ class AddHeaderTest extends TestCase
         $client->appendMessageProcessor($processor);
         $client->publish('ex', $message);
         
-        $this->assertSomeHeaders([
+        self::assertSomeHeaders([
             'pow' => 'wow',
             'vendor' => 'Soda Stevia',
             'author' => 'Lucien Pétochard',
@@ -36,7 +36,7 @@ class AddHeaderTest extends TestCase
         ], $message);
     }
     
-    public function testAppendOrder()
+    public function testAppendOrder(): void
     {
         $message = new Message('my.key');
         
@@ -53,7 +53,7 @@ class AddHeaderTest extends TestCase
         ]));
         $client->publish('ex', $message);
         
-        $this->assertSomeHeaders([
+        self::assertSomeHeaders([
             'routing_key' => 'my.key',
             'Kimberley' => 'Tartines',
             'Eat' => 'me',
@@ -63,17 +63,17 @@ class AddHeaderTest extends TestCase
     }
    
     
-    private function assertSomeHeaders($expectedHeaders, WritableMessage $message)
+    private static function assertSomeHeaders($expectedHeaders, WritableMessage $message): void
     {
         foreach($expectedHeaders as $header => $value)
         {
-            $this->assertHeaderIsPresent($header, $value, $message->getHeaders());
+            self::assertHeaderIsPresent($header, $value, $message->getHeaders());
         }
     }
         
-    private function assertHeaderIsPresent($headerName, $value, array $headerList)
+    private static function assertHeaderIsPresent($headerName, $value, array $headerList): void
     {
-        $this->assertArrayHasKey($headerName, $headerList);
-        $this->assertSame($value, $headerList[$headerName]);
+        self::assertArrayHasKey($headerName, $headerList);
+        self::assertSame($value, $headerList[$headerName]);
     }
 }

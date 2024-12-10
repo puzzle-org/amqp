@@ -2,6 +2,7 @@
 
 namespace Puzzle\AMQP\Clients\Decorators;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Clients\InMemory;
 use Psr\Log\NullLogger;
@@ -27,10 +28,8 @@ class PrefixedExchangesClientTest extends TestCase
         $this->memory = new InMemory();
     }
 
-    /**
-     * @dataProvider providerTestPublish
-     */
-    public function testPublish($prefix, $expectedExchange)
+    #[DataProvider('providerTestPublish')]
+    public function testPublish($prefix, $expectedExchange): void
     {
         $client = new PrefixedExchangesClient($this->memory, $prefix);
         $client->setLogger(new NullLogger());
@@ -39,15 +38,15 @@ class PrefixedExchangesClientTest extends TestCase
         $client->publish('unicorn', $message);
 
         $sentMessages = $this->memory->getSentMessages();
-        $this->assertCount(1, $sentMessages);
+        self::assertCount(1, $sentMessages);
 
         $firstMessage = array_shift($sentMessages);
 
-        $this->assertSame($message, $firstMessage['message']);
-        $this->assertSame($expectedExchange, $firstMessage['exchange']);
+        self::assertSame($message, $firstMessage['message']);
+        self::assertSame($expectedExchange, $firstMessage['exchange']);
     }
 
-    public function providerTestPublish()
+    public static function providerTestPublish(): array
     {
         return [
             'nominal' =>
@@ -65,7 +64,7 @@ class PrefixedExchangesClientTest extends TestCase
         ];
     }
 
-    public function testGetQueue()
+    public function testGetQueue(): void
     {
         $this->expectException(\RuntimeException::class);
 
@@ -73,22 +72,22 @@ class PrefixedExchangesClientTest extends TestCase
         $client->getQueue('tail');
     }
 
-    public function testGetExchange()
+    public function testGetExchange(): void
     {
         $client = new PrefixedExchangesClient(new MockedClient(), 'rainbow');
-        $this->assertSame('rainbow.pizza', $client->getExchange('pizza'));
+        self::assertSame('rainbow.pizza', $client->getExchange('pizza'));
     }
 
-    public function testGetAppendProcessor()
+    public function testGetAppendProcessor(): void
     {
         $client = new PrefixedExchangesClient(new MockedClient(), 'rainbow');
         $client->appendMessageProcessor(new NullProcessor());
-        $this->assertTrue(
+        self::assertTrue(
             $client->publish('exchange', new Message('null'))
         );
     }
 
-    public function testSetMessageProcessors()
+    public function testSetMessageProcessors(): void
     {
         $client = new PrefixedExchangesClient(new MockedClient(), 'rainbow');
         $client->setMessageProcessors([
@@ -96,7 +95,7 @@ class PrefixedExchangesClientTest extends TestCase
             new NullProcessor(),
             new NullProcessor(),
         ]);
-        $this->assertTrue(
+        self::assertTrue(
             $client->publish('exchange', new Message('null'))
         );
     }
