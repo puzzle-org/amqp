@@ -10,7 +10,7 @@ class InMemory
     /**
      * @return \Puzzle\AMQP\ReadableMessage
      */
-    public static function build($routingKey, Body $body = null, array $additionalHeaders = [], array $additionalAttributes = [])
+    public static function build($routingKey, ?Body $body = null, array $additionalHeaders = [], array $additionalAttributes = [])
     {
         if(! $body instanceof Body)
         {

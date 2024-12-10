@@ -16,7 +16,7 @@ class StreamedFile implements Body
         $chunkSize,
         $metadata;
 
-    public function __construct($filepath, ChunkSize $chunkSize = null)
+    public function __construct($filepath, ?ChunkSize $chunkSize = null)
     {
         $this->ensureFilepathIsValid($filepath);
 

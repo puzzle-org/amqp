@@ -7,7 +7,7 @@ trait MessageAdapterFactoryAware
     private
         $messageAdapterFactory;
     
-    public function setMessageAdapterFactory(MessageAdapterFactory $factory = null)
+    public function setMessageAdapterFactory(?MessageAdapterFactory $factory = null)
     {
         $this->messageAdapterFactory = $factory;
         

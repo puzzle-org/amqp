@@ -17,7 +17,7 @@ class ChunkedMessageClient
         $client,
         $memory;
 
-    public function __construct(Client $client, MemoryManagementStrategy $memory = null)
+    public function __construct(Client $client, ?MemoryManagementStrategy $memory = null)
     {
         $this->changeRoutingKeyPrefix(self::DEFAULT_ROUTING_KEY_PREFIX);
 
