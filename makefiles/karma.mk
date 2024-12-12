@@ -2,7 +2,7 @@
 # Karma
 #------------------------------------------------------------------------------
 config: karma ## Run karma for behat tests
-	@docker run -it --rm --name whalephant \
+	@$(DOCKER_RUN) --rm --name whalephant \
                -v ${HOST_SOURCE_PATH}:${CONTAINER_SOURCE_PATH} \
                -w ${CONTAINER_SOURCE_PATH} \
                -u ${USER_ID}:${GROUP_ID} \
