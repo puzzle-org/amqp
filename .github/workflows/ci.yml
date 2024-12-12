@@ -24,7 +24,7 @@ jobs:
           php-version: ${{ matrix.php-versions }}
 
       - name: Disable php-amqp
-        run: phpdismod amqp
+        run: sudo phpdismod amqp
 
       - name: Install dependencies
         run: composer install
