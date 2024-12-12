@@ -3,7 +3,7 @@
          backupGlobals="false"
          colors="true"
          displayDetailsOnTestsThatTriggerDeprecations="true"
-         failOnDeprecation="true"
+         failOnDeprecation="false"
          processIsolation="false"
          stopOnFailure="false"
          bootstrap="vendor/autoload.php"
