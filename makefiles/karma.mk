@@ -2,7 +2,12 @@
 # Karma
 #------------------------------------------------------------------------------
 config: karma ## Run karma for behat tests
-	./karma hydrate -e behat
+	@docker run -it --rm --name whalephant \
+               -v ${HOST_SOURCE_PATH}:${CONTAINER_SOURCE_PATH} \
+               -w ${CONTAINER_SOURCE_PATH} \
+               -u ${USER_ID}:${GROUP_ID} \
+               php:8.3-cli \
+               ./karma hydrate -e behat
 
 karma:
 	$(eval LATEST_VERSION := $(shell curl -L -s -H 'Accept: application/json' https://github.com/niktux/karma/releases/latest | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/'))

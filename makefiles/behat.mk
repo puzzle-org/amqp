@@ -25,15 +25,15 @@ wait:
 # Containers management
 #------------------------------------------------------------------------------
 up: config
-	docker-compose -f docker/docker-compose.yml up -d
+	docker compose -f docker/docker-compose.yml up -d
 
 build: config
-	docker-compose -f docker/docker-compose.yml build
+	docker compose -f docker/docker-compose.yml build
 
 rebuild: build up
 
 down:
-	docker-compose -f docker/docker-compose.yml down --volumes
+	docker compose -f docker/docker-compose.yml down --volumes
 
 #------------------------------------------------------------------------------
 # RabbitMQ configuration

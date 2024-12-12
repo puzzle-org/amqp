@@ -3,6 +3,7 @@
 namespace Puzzle\AMQP\Contexts;
 
 use Behat\Behat\Context\Context;
+use Puzzle\Configuration\FS\Adapters\GaufretteAdapter;
 use Puzzle\Configuration\Yaml;
 use Gaufrette\Filesystem;
 use Gaufrette\Adapter\Local;
@@ -27,7 +28,7 @@ abstract class AbstractRabbitMQContext implements Context
 
     public function __construct($path)
     {
-        $configuration = new Yaml(new Filesystem(new Local($path)));
+        $configuration = new Yaml(new GaufretteAdapter(new Filesystem(new Local($path))));
 
         $this->client = new Pecl($configuration);
         $this->client->appendMessageProcessor(new GZip());
