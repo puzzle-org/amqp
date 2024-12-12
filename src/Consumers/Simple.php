@@ -5,6 +5,8 @@ namespace Puzzle\AMQP\Consumers;
 use Swarrot\Processor\ProcessorInterface;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Workers\WorkerContext;
+use Swarrot\Processor\MaxExecutionTime\MaxExecutionTimeProcessor;
+use Swarrot\Processor\Ack\AckProcessor;
 
 class Simple extends AbstractConsumer
 {
@@ -13,8 +15,8 @@ class Simple extends AbstractConsumer
         parent::consume($processor, $client, $queue);
 
         $stack = $this->getBaseStack()
-            ->push('Swarrot\Processor\MaxExecutionTime\MaxExecutionTimeProcessor', $this->logger)
-            ->push('Swarrot\Processor\Ack\AckProcessor', $this->messageProvider, $this->logger)
+            ->push(MaxExecutionTimeProcessor::class, $this->logger)
+            ->push(AckProcessor::class, $this->messageProvider, $this->logger)
         ;
 
         $consumer = $this->getSwarrotConsumer($stack);

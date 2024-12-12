@@ -4,17 +4,17 @@ namespace Puzzle\AMQP\Workers;
 
 trait MessageAdapterFactoryAware
 {
-    private
+    private ?MessageAdapterFactory
         $messageAdapterFactory;
     
-    public function setMessageAdapterFactory(?MessageAdapterFactory $factory = null)
+    public function setMessageAdapterFactory(?MessageAdapterFactory $factory = null): static
     {
         $this->messageAdapterFactory = $factory;
         
         return $this;
     }
     
-    public function createMessageAdapter(\Swarrot\Broker\Message $message)
+    public function createMessageAdapter(\Swarrot\Broker\Message $message): MessageAdapter
     {
         $factory = $this->messageAdapterFactory;
         

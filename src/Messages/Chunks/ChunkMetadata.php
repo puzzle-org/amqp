@@ -4,19 +4,19 @@ namespace Puzzle\AMQP\Messages\Chunks;
 
 final class ChunkMetadata
 {
-    private
+    private int
         $playhead,
         $offset,
         $size;
 
-    public function __construct($playhead, $offset, $size)
+    public function __construct(int $playhead, int $offset, int $size)
     {
         $this->playhead = $playhead;
         $this->offset = $offset;
         $this->size = $size;
     }
 
-    public static function buildFromHeaders(array $headers)
+    public static function buildFromHeaders(array $headers): self
     {
         $requiredKeys = ['playhead', 'offset', 'size'];
 
@@ -31,22 +31,22 @@ final class ChunkMetadata
         return new self($headers['playhead'], $headers['offset'], $headers['size']);
     }
 
-    public function playhead()
+    public function playhead(): int
     {
         return $this->playhead;
     }
 
-    public function offset()
+    public function offset(): int
     {
         return $this->offset;
     }
 
-    public function size()
+    public function size(): int
     {
         return $this->size;
     }
 
-    public function toHeaders()
+    public function toHeaders(): array
     {
         return [
             'offset' => $this->offset,

@@ -6,12 +6,11 @@ use Puzzle\Pieces\PathManipulation;
 
 class CommandGenerator
 {
-    const WORKER_ENTRYPOINT_FILENAME = 'worker';
+    const string WORKER_ENTRYPOINT_FILENAME = 'worker';
 
-    use
-        PathManipulation;
+    use PathManipulation;
 
-    public function generate($worker)
+    public function generate(string $worker): string
     {
         $pattern = '/usr/bin/env php worker run %s';
 

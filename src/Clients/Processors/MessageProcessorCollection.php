@@ -2,7 +2,6 @@
 
 namespace Puzzle\AMQP\Clients\Processors;
 
-use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Messages\Processor;
 use Puzzle\AMQP\WritableMessage;
 use Puzzle\AMQP\Messages\OnPublishProcessor;

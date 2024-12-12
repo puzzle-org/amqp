@@ -4,8 +4,5 @@ namespace Puzzle\AMQP\Messages;
 
 interface BodyFactory
 {
-    /**
-     * @return Body
-     */
-    public function build($contentType, $contentAsTransported);
+    public function build($contentType, $contentAsTransported): Body;
 }

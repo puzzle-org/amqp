@@ -21,7 +21,7 @@ class ListAll extends Command
         $this->provider = $provider;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('list')
             ->setDescription('List AMQP workers');

@@ -7,7 +7,7 @@ use Puzzle\AMQP\Messages\TypedBodyFactory;
 
 class Binary implements TypedBodyFactory
 {
-    public function build($contentAsTransported)
+    public function build($contentAsTransported): Bodies\Binary
     {
         return new Bodies\Binary($contentAsTransported);
     }

@@ -8,7 +8,7 @@ use Puzzle\AMQP\Messages\Footprintable;
 
 class Json implements Body, Footprintable
 {
-    private
+    private mixed
         $jsonAsArray;
 
     public function __construct($content = [])
@@ -16,27 +16,27 @@ class Json implements Body, Footprintable
         $this->changeContent($content);
     }
 
-    public function inOriginalFormat()
+    public function inOriginalFormat(): mixed
     {
         return $this->jsonAsArray;
     }
 
-    public function asTransported()
+    public function asTransported(): string
     {
         return \Puzzle\Pieces\Json::encode($this->jsonAsArray);
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         return ContentType::JSON;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->asTransported();
     }
 
-    public function footprint()
+    public function footprint(): string
     {
         return sha1($this->asTransported());
     }
@@ -51,12 +51,12 @@ class Json implements Body, Footprintable
         $this->jsonAsArray = $content;
     }
 
-    public function changeContentWithJson($json)
+    public function changeContentWithJson($json): void
     {
         $this->jsonAsArray = \Puzzle\Pieces\Json::decode($json, true);
     }
 
-    public function isChunked()
+    public function isChunked(): false
     {
         return false;
     }

@@ -7,30 +7,30 @@ use Puzzle\AMQP\Messages\ContentType;
 
 class Binary implements Body
 {
-    private
+    private mixed
         $content;
 
-    public function __construct($content)
+    public function __construct(mixed $content)
     {
         $this->changeContent($content);
     }
 
-    public function inOriginalFormat()
+    public function inOriginalFormat(): mixed
     {
         return $this->content;
     }
 
-    public function asTransported()
+    public function asTransported(): string|\Generator
     {
         return $this->content;
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         return ContentType::BINARY;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf(
             '<binary stream of %d bytes>',
@@ -38,12 +38,12 @@ class Binary implements Body
         );
     }
 
-    public function changeContent($content)
+    public function changeContent(mixed$content): void
     {
         $this->content = $content;
     }
 
-    public function isChunked()
+    public function isChunked(): bool
     {
         return false;
     }

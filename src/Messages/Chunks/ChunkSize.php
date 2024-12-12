@@ -4,8 +4,9 @@ namespace Puzzle\AMQP\Messages\Chunks;
 
 final class ChunkSize
 {
-    private
-        $size,
+    private int
+        $size;
+    private ?string
         $unit;
 
     public function __construct($size)
@@ -30,11 +31,11 @@ final class ChunkSize
         }
     }
 
-    public function toBytes()
+    public function toBytes(): int
     {
         $unitsConversion = [
             "K" => 1024,
-            "M" => pow(1024, 2),
+            "M" => 1024 ** 2,
         ];
 
         if(empty($this->unit))

@@ -7,5 +7,5 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class WorkerProcessed extends Event
 {
-    public const NAME = "worker.processed";
+    public const string NAME = "worker.processed";
 }

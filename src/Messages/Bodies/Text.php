@@ -12,40 +12,40 @@ class Text implements Body, Footprintable
     use
         StringManipulation;
 
-    private
+    private string
         $content;
 
-    public function __construct($text = '')
+    public function __construct(mixed $text = '')
     {
         $this->changeText($text);
     }
 
-    public function inOriginalFormat()
+    public function inOriginalFormat(): string
     {
         return $this->content;
     }
 
-    public function asTransported()
+    public function asTransported(): string
     {
         return $this->content;
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         return ContentType::TEXT;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->asTransported();
     }
 
-    public function footprint()
+    public function footprint(): string
     {
         return sha1($this->asTransported());
     }
 
-    public function changeText($text)
+    public function changeText(mixed $text): void
     {
         if(! $this->isConvertibleToString($text))
         {
@@ -55,7 +55,7 @@ class Text implements Body, Footprintable
         $this->content = (string) $text;
     }
 
-    public function append(...$text)
+    public function append(...$text): void
     {
         foreach($text as $part)
         {
@@ -63,7 +63,7 @@ class Text implements Body, Footprintable
         }
     }
 
-    public function isChunked()
+    public function isChunked(): false
     {
         return false;
     }

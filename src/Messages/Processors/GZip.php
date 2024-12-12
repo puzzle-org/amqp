@@ -2,6 +2,7 @@
 
 namespace Puzzle\AMQP\Messages\Processors;
 
+use Puzzle\AMQP\Workers\MessageAdapter;
 use Puzzle\AMQP\WritableMessage;
 use Puzzle\AMQP\Messages\Bodies\Binary;
 use Psr\Log\LoggerAwareTrait;
@@ -20,12 +21,12 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
         LoggerAwareTrait,
         StringManipulation;
     
-    const
+    const string
         HEADER_COMPRESSION = 'compression',
         HEADER_COMPRESSION_CONTENT_TYPE = 'compression_content-type',
         COMPRESSION_ALGORITHM = 'gzip';
     
-    private
+    private int
         $compressionLevel,
         $encodingMode;
     private BodyFactory
@@ -44,10 +45,7 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
         $this->bodyFactory = $bodyFactory;
     }
         
-    /**
-     * @return self
-     */
-    public function setCompressionLevel($compressionLevel = -1)
+    public function setCompressionLevel($compressionLevel = -1): static
     {
         if(! $this->isCompressionLevelValid($compressionLevel))
         {
@@ -64,12 +62,12 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
         return $this;
     }
     
-    private function isCompressionLevelValid($level)
+    private function isCompressionLevelValid($level): bool
     {
         return is_numeric($level) && $level >= -1 && $level <= 9;
     }
     
-    private function logWarning($message)
+    private function logWarning($message): void
     {
         $this->logger->warning(sprintf(
             "[%s] : %s",
@@ -78,7 +76,7 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
         ));
     }
     
-    public function setEncodingMode($mode)
+    public function setEncodingMode($mode): static
     {
         if(! is_scalar($mode) || ! in_array($mode, [FORCE_GZIP, FORCE_DEFLATE]))
         {
@@ -95,7 +93,7 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
         return $this;
     }
     
-    public function onPublish(WritableMessage $message)
+    public function onPublish(WritableMessage $message): void
     {
         if($message->isCompressionAllowed() === false)
         {
@@ -107,7 +105,7 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
         $this->updateCompressedMessage($message, $compressedContent);
     }
     
-    private function updateCompressedMessage(WritableMessage $message, $compressedContent)
+    private function updateCompressedMessage(WritableMessage $message, $compressedContent): void
     {
         $message->addHeaders([
             self::HEADER_COMPRESSION => self::COMPRESSION_ALGORITHM,
@@ -117,7 +115,7 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
         $message->setBody(new Binary($compressedContent));
     }
     
-    public function onConsume(ReadableMessage $message)
+    public function onConsume(ReadableMessage $message): ReadableMessage
     {
         if($this->isCompressed($message))
         {
@@ -130,7 +128,7 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
         return $message;
     }
     
-    private function isCompressed(ReadableMessage $message)
+    private function isCompressed(ReadableMessage $message): bool
     {
         $headers = $message->getHeaders();
         
@@ -143,7 +141,7 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
         return false;
     }
     
-    private function updateUncompressedMessage(ReadableMessage $message, $uncompressedContent)
+    private function updateUncompressedMessage(ReadableMessage $message, mixed $uncompressedContent): ReadableMessage
     {
         $builder = new ReadableMessageModifier($message);
         

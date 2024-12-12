@@ -20,21 +20,23 @@ class GenerateSupervisorConfigurationFiles extends Command
         ExtraInformation,
         PathManipulation;
 
-    private
-        $appId,
-        $workerProvider,
+    private string
+        $appId;
+    private WorkerProvider
+        $workerProvider;
+    private CommandGenerator
         $commandGenerator;
 
-    public function __construct(WorkerProvider $provider, $appId)
+    public function __construct(WorkerProvider $provider, string $appId)
     {
         parent::__construct();
 
+        $this->appId = $appId;
         $this->workerProvider = $provider;
         $this->commandGenerator = new CommandGenerator();
-        $this->appId = (string) $appId;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('generate:supervisord:configuration')
@@ -58,7 +60,7 @@ class GenerateSupervisorConfigurationFiles extends Command
         return Command::SUCCESS;
     }
 
-    private function process(InputInterface $input, OutputInterface $output)
+    private function process(InputInterface $input, OutputInterface $output): void
     {
         $this->checkRequirements($input);
         $destination = $this->retrieveDestination($input, $output);
@@ -73,7 +75,7 @@ class GenerateSupervisorConfigurationFiles extends Command
         $supervisorConfigurationGenerator->generate($workers, $autostart, $autorestart, $this->appId, $destination, $output);
     }
 
-    private function retrieveboolean($name, InputInterface $input)
+    private function retrieveboolean(string $name, InputInterface $input): bool
     {
         $value = $input->getOption($name);
 
@@ -85,7 +87,7 @@ class GenerateSupervisorConfigurationFiles extends Command
         return $value === 'true';
     }
 
-    private function checkRequirements(InputInterface $input)
+    private function checkRequirements(InputInterface $input): void
     {
         $destination = $input->getOption('destination');
         if(empty($destination))
@@ -94,7 +96,7 @@ class GenerateSupervisorConfigurationFiles extends Command
         }
     }
 
-    private function retrieveDestination(InputInterface $input, OutputInterface $output)
+    private function retrieveDestination(InputInterface $input, OutputInterface $output): string
     {
         $destination = $this->enforceEndingSlash($input->getOption('destination'));
 

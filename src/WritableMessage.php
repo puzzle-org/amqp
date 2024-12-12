@@ -6,73 +6,31 @@ use Puzzle\AMQP\Messages\Body;
 
 interface WritableMessage extends MessageMetadata
 {
-    /**
-     * @return bool
-     */
-    public function canBeDroppedSilently();
+    public function canBeDroppedSilently(): bool;
 
-    /**
-     * @return self
-     */
-    public function disallowSilentDropping();
+    public function disallowSilentDropping(): static;
 
-    /**
-     * @return mixed
-     */
-    public function getBodyInTransportFormat();
+    public function getBodyInTransportFormat(): mixed;
 
-    /**
-     * @return self
-     */
-    public function setBody(Body $body);
+    public function setBody(Body $body): static;
 
-    /**
-     * @return void
-     */
-    public function setExpiration($expirationInSeconds);
+    public function setExpiration(int $expirationInSeconds): static;
 
-    /**
-     * @return self
-     */
-    public function addHeader($headerName, $value);
+    public function addHeader(string $headerName, mixed $value): static;
 
-    /**
-     * @return self
-     */
-    public function addHeaders(array $headers);
+    public function addHeaders(array $headers): static;
 
-    /**
-     * @return self
-     */
-    public function setAuthor($author);
+    public function setAuthor(string $author): static;
 
-    /**
-     * @return void
-     */
-    public function packAttributes($timestamp = false);
+    public function packAttributes(int|bool $timestamp = false): array;
 
-    /**
-     * @return self
-     */
-    public function setAttribute($attributeName, $value);
+    public function setAttribute(string $attributeName, mixed $value): static;
 
-    /**
-     * @return void
-     */
-    public function changeRoutingKey($routingKey);
+    public function changeRoutingKey(string $routingKey): void;
 
-    /**
-     * @return bool
-     */
-    public function isCompressionAllowed();
+    public function isCompressionAllowed(): bool;
 
-    /**
-     * @return self
-     */
-    public function allowCompression($allow = true);
+    public function allowCompression(bool $allow = true): static;
 
-    /**
-     * @return bool
-     */
-    public function isChunked();
+    public function isChunked(): bool;
 }

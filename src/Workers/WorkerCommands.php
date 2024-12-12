@@ -16,10 +16,13 @@ class WorkerCommands
         EventDispatcherAware,
         MessageAdapterFactoryAware;
 
-    private
-        $console,
-        $client,
-        $workerProvider,
+    private Application
+        $console;
+    private Client
+        $client;
+    private WorkerProvider
+        $workerProvider;
+    private OutputInterfaceAware
         $outputInterfaceAware;
 
     public function __construct(Application $console, Client $client, WorkerProvider $workerProvider, OutputInterfaceAware $outputInterfaceAware)
@@ -33,7 +36,7 @@ class WorkerCommands
         $this->eventDispatcher = new NullEventDispatcher();
     }
 
-    public function register()
+    public function register(): void
     {
         $run = new Run(
             $this->client,

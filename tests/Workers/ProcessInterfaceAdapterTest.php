@@ -26,7 +26,7 @@ class ChangeBodyProcessor implements OnConsumeProcessor
         $this->text = $text;
     }
     
-    public function onConsume(ReadableMessage $message)
+    public function onConsume(ReadableMessage $message): ReadableMessage
     {
         $builder = new ReadableMessageModifier($message);
         $builder->changeBody(new Text($this->text));

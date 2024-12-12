@@ -6,11 +6,15 @@ use Swarrot\Processor\ProcessorInterface;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Workers\WorkerContext;
 use Swarrot\Broker\MessagePublisher\PeclPackageMessagePublisher;
+use Swarrot\Processor\MaxExecutionTime\MaxExecutionTimeProcessor;
+use Swarrot\Processor\Ack\AckProcessor;
+use Swarrot\Processor\Retry\RetryProcessor;
 
 class Retry extends AbstractConsumer
 {
-    const
-        DEFAULT_RETRY_OCCURENCE = 3,
+    const int
+        DEFAULT_RETRY_OCCURENCE = 3;
+    const string
         DEFAULT_RETRY_HEADER = 'swarrot_retry_attempts',
         RETRY_EXCHANGE_NAME = 'retry',
         RETRY_ROUTING_KEY_PATTERN = '%s_retry_%%attempt%%';
@@ -32,9 +36,9 @@ class Retry extends AbstractConsumer
         $messagePublisher = new PeclPackageMessagePublisher($client->getExchange(self::RETRY_EXCHANGE_NAME));
 
         $stack = $this->getBaseStack()
-            ->push('Swarrot\Processor\MaxExecutionTime\MaxExecutionTimeProcessor', $this->logger)
-            ->push('Swarrot\Processor\Ack\AckProcessor', $this->messageProvider, $this->logger)
-            ->push('Swarrot\Processor\Retry\RetryProcessor', $messagePublisher, $this->logger)
+            ->push(MaxExecutionTimeProcessor::class, $this->logger)
+            ->push(AckProcessor::class, $this->messageProvider, $this->logger)
+            ->push(RetryProcessor::class, $messagePublisher, $this->logger)
         ;
 
         $consumer = $this->getSwarrotConsumer($stack);

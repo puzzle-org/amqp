@@ -7,7 +7,7 @@ use Puzzle\AMQP\Messages\TypedBodyFactory;
 
 class Json implements TypedBodyFactory
 {
-    public function build($contentAsTransported)
+    public function build($contentAsTransported): Bodies\Json
     {
         $body = new Bodies\Json();
         $body->changeContentWithJson($contentAsTransported);

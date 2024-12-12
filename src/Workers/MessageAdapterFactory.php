@@ -20,10 +20,7 @@ class MessageAdapterFactory
         $this->bodyFactory = $bodyFactory;
     }
     
-    /**
-     * @return \Puzzle\AMQP\Workers\MessageAdapter
-     */
-    public function build(\Swarrot\Broker\Message $message)
+    public function build(\Swarrot\Broker\Message $message): MessageAdapter
     {
         $adapter = new MessageAdapter($message);
         

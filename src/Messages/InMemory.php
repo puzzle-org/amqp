@@ -3,14 +3,12 @@
 namespace Puzzle\AMQP\Messages;
 
 use Puzzle\AMQP\Messages\Bodies\EmptyBody;
+use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Workers\MessageAdapterFactory;
 
 class InMemory
 {
-    /**
-     * @return \Puzzle\AMQP\ReadableMessage
-     */
-    public static function build($routingKey, ?Body $body = null, array $additionalHeaders = [], array $additionalAttributes = [])
+    public static function build($routingKey, ?Body $body = null, array $additionalHeaders = [], array $additionalAttributes = []): ReadableMessage
     {
         if(! $body instanceof Body)
         {

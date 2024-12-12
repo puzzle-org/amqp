@@ -8,7 +8,7 @@ use Puzzle\AMQP\Consumer;
 
 interface WorkerProvider
 {
-    public const
+    public const string
         MESSAGE_PROCESSORS_SERVICE_KEY = 'amqp.messageProcessors';
 
     public function contextFor(string $workerName): WorkerContext;

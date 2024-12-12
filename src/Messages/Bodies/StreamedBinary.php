@@ -9,8 +9,9 @@ use Puzzle\AMQP\ValueObjects\Uuid;
 
 class StreamedBinary extends Binary
 {
-    private
-        $chunkSize,
+    private ChunkSize
+        $chunkSize;
+    private ChunkedMessageMetadata
         $metadata;
 
     public function __construct($content, ChunkSize $chunkSize)
@@ -25,7 +26,7 @@ class StreamedBinary extends Binary
         $this->metadata = new ChunkedMessageMetadata(new Uuid(), $size, $nbChunks, sha1($content));
     }
 
-    public function asTransported()
+    public function asTransported(): \Generator
     {
         $wholeContent = parent::asTransported();
         $length = strlen($wholeContent);
@@ -45,7 +46,7 @@ class StreamedBinary extends Binary
         }
     }
 
-    public function isChunked()
+    public function isChunked(): true
     {
         return true;
     }

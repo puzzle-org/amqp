@@ -7,9 +7,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SupervisorConfigurationGenerator
 {
-    private
-        $overwrite,
-        $filesystem,
+    private bool
+        $overwrite;
+    private Filesystem
+        $filesystem;
+    private CommandGenerator
         $commandGenerator;
 
     public function __construct(Filesystem $filesystem, CommandGenerator $commandGenerator)
@@ -19,7 +21,7 @@ class SupervisorConfigurationGenerator
         $this->overwrite = true;
     }
 
-    public function generate(array $workers, $autostart, $autorestart, $appId, $destination, OutputInterface $output)
+    public function generate(array $workers, bool $autostart, bool $autorestart, string $appId, string $destination, OutputInterface $output): void
     {
         foreach($workers as $worker => $data)
         {
@@ -27,7 +29,7 @@ class SupervisorConfigurationGenerator
         }
     }
 
-    private function generateSupervisorConfigurationFile($worker, $autostart, $autorestart, $appId, $destination, OutputInterface $output)
+    private function generateSupervisorConfigurationFile(string $worker, bool $autostart, bool $autorestart, string $appId, string $destination, OutputInterface $output): void
     {
         $configuration = $this->generateSupervisorConfiguration($worker, $autostart, $autorestart, $appId);
         $filename = $this->buildFilename($appId, $worker);
@@ -43,29 +45,29 @@ class SupervisorConfigurationGenerator
         $output->writeln($message);
     }
 
-    private function buildFilename($appId, $workerName)
+    private function buildFilename(string $appId, string $workerName): string
     {
         return sprintf('%s--%s.conf', $appId, $workerName);
     }
 
-    private function generateSupervisorConfiguration($worker, $autostart, $autorestart, $appId)
+    private function generateSupervisorConfiguration(string $worker, bool $autostart, bool $autorestart, string $appId): string
     {
         $program = sprintf('%s--%s', $appId, $worker);
         $command = $this->commandGenerator->generate($worker);
-        $autostart = $this->booleanToString($autostart);
-        $autorestart = $this->booleanToString($autorestart);
+        $autostartAsString = $this->booleanToString($autostart);
+        $autorestartAsString = $this->booleanToString($autorestart);
 
         return <<<TXT
 [program:$program]
 command=$command
 directory=/var/www/app
 user=www-data
-autostart=$autostart
-autorestart=$autorestart
+autostart=$autostartAsString
+autorestart=$autorestartAsString
 TXT;
     }
 
-    private function booleanToString($value)
+    private function booleanToString(bool $value): string
     {
         return $value === true ? 'true' : 'false';
     }

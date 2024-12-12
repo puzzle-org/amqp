@@ -5,31 +5,18 @@ namespace Puzzle\AMQP\Messages;
 interface Body
 {
     /**
-     * In the same format than before message sending (before encoding in AMQP layer)
-     *
-     * @return mixed
+     * In the same format as before message sending (before encoding in AMQP layer)
      */
-    public function inOriginalFormat();
+    public function inOriginalFormat(): mixed;
 
     /**
-     * In the same format than in AMQP layer
-     *
-     * @return string
+     * In the same format as in AMQP layer
      */
-    public function asTransported();
+    public function asTransported(): string|\Generator;
 
-    /**
-     * @return string
-     */
-    public function getContentType();
+    public function getContentType(): string;
 
-    /**
-     * @return bool
-     */
-    public function isChunked();
+    public function isChunked(): bool;
 
-    /**
-     * @return string
-     */
-    public function __toString();
+    public function __toString(): string;
 }

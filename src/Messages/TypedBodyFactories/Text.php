@@ -7,7 +7,7 @@ use Puzzle\AMQP\Messages\TypedBodyFactory;
 
 class Text implements TypedBodyFactory
 {
-    public function build($contentAsTransported)
+    public function build($contentAsTransported): Bodies\Text
     {
         return new Bodies\Text($contentAsTransported);
     }

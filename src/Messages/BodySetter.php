@@ -32,7 +32,7 @@ trait BodySetter
         return $this;
     }
 
-    public function setStreamedFile($filepath, ?ChunkSize $size = null)
+    public function setStreamedFile(string $filepath, ?ChunkSize $size = null)
     {
         $this->setBody(new StreamedFile($filepath, $size));
 
@@ -46,7 +46,7 @@ trait BodySetter
         return $this;
     }
 
-    public function setStreamedBinary($content, ChunkSize $size)
+    public function setStreamedBinary(mixed $content, ChunkSize $size)
     {
         $this->setBody(new StreamedBinary($content, $size));
 
