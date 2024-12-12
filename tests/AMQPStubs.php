@@ -1,47 +1,50 @@
 <?php
-
-class AMQPQueue
+if(! class_exists(\AMQPQueue::class))
 {
-    private ?string
-        $name;
 
-    public function __construct(?AMQPChannel $channel = null)
+    class AMQPQueue
     {
-        $this->name = null;
+        private ?string
+            $name;
+
+        public function __construct(?AMQPChannel $channel = null)
+        {
+            $this->name = null;
+        }
+
+        public function setName(string $name): void
+        {
+            $this->name = $name;
+        }
+
+        public function getName(): ?string
+        {
+            return $this->name;
+        }
     }
 
-    public function setName(string $name): void
+    class AMQPExchange
     {
-        $this->name = $name;
+        private ?string
+            $name;
+
+        public function __construct(?AMQPChannel $channel = null)
+        {
+            $this->name = null;
+        }
+
+        public function setName(string $name): void
+        {
+            $this->name = $name;
+        }
+
+        public function getName(): ?string
+        {
+            return $this->name;
+        }
     }
 
-    public function getName(): ?string
+    class AMQPChannel
     {
-        return $this->name;
     }
-}
-
-class AMQPExchange
-{
-    private ?string
-        $name;
-
-    public function __construct(?AMQPChannel $channel = null)
-    {
-        $this->name = null;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-}
-
-class AMQPChannel
-{
 }
