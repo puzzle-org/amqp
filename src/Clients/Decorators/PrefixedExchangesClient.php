@@ -9,22 +9,23 @@ use Puzzle\AMQP\Messages\Processor;
 
 class PrefixedExchangesClient implements Client
 {
-    const
+    const string
         DELIMITER = '.';
     
     use LoggerAwareTrait;
     
-    private
-        $client,
+    private Client
+        $client;
+    private ?string
         $exchangesPrefix;
     
-    public function __construct(Client $client, $exchangesPrefix)
+    public function __construct(Client $client, ?string $exchangesPrefix)
     {
         $this->client = $client;
         $this->exchangesPrefix = $exchangesPrefix;
     }
     
-    public function publish($exchangeName, WritableMessage $message)
+    public function publish(string $exchangeName, WritableMessage $message): bool
     {
         return $this->client->publish(
             $this->computeExchangeName($exchangeName),
@@ -32,7 +33,7 @@ class PrefixedExchangesClient implements Client
         );
     }
     
-    private function computeExchangeName($exchangeName)
+    private function computeExchangeName(string $exchangeName): string
     {
         $exchangeParts = [];
         
@@ -47,24 +48,24 @@ class PrefixedExchangesClient implements Client
             
     }
     
-    public function getQueue($queueName)
+    public function getQueue(string $queueName): \AMQPQueue
     {
         return $this->client->getQueue($queueName);
     }
     
-    public function getExchange($exchangeName)
+    public function getExchange(?string $exchangeName): \AMQPExchange
     {
         return $this->client->getExchange(
             $this->computeExchangeName($exchangeName)
         );
     }
 
-    public function appendMessageProcessor(Processor $processor)
+    public function appendMessageProcessor(Processor $processor): Client
     {
         return $this->client->appendMessageProcessor($processor);
     }
 
-    public function setMessageProcessors(array $processors)
+    public function setMessageProcessors(array $processors): Client
     {
         return $this->client->setMessageProcessors($processors);
     }

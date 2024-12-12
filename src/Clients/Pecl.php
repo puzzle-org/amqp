@@ -2,6 +2,8 @@
 
 namespace Puzzle\AMQP\Clients;
 
+use Puzzle\AMQP\Clients\Processors\MessageProcessorCollection;
+use Puzzle\AMQP\Messages\Processor;
 use Puzzle\Configuration;
 use Puzzle\PrefixedConfiguration;
 
@@ -9,23 +11,25 @@ use Puzzle\AMQP\Client;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Puzzle\AMQP\WritableMessage;
-use Puzzle\AMQP\Clients\Processors\MessageProcessorAware;
 use Puzzle\AMQP\Clients\MemoryManagementStrategies\NullMemoryManagementStrategy;
 
 class Pecl implements Client
 {
-    use
-        LoggerAwareTrait,
-        MessageProcessorAware;
+    use LoggerAwareTrait;
 
-    const
+    const int
         DEFAULT_PORT = 5672;
 
-    private
-        $applicationId,
-        $configuration,
-        $channel,
+    private string
+        $applicationId;
+    private Configuration
+        $configuration;
+    private ?\AMQPChannel
+        $channel;
+    private MemoryManagementStrategy
         $memoryManagementStrategy;
+    private MessageProcessorCollection
+        $messageProcessors;
 
     public function __construct(Configuration $configuration)
     {
@@ -33,17 +37,32 @@ class Pecl implements Client
         $this->configuration = $configuration;
         $this->channel = null;
         $this->memoryManagementStrategy = new NullMemoryManagementStrategy();
+        $this->messageProcessors = new MessageProcessorCollection();
         $this->logger = new NullLogger();
     }
 
-    public function setMemoryManagementStrategy(MemoryManagementStrategy $strategy)
+    public function setMessageProcessors(array $processors): static
+    {
+        $this->messageProcessors->setMessageProcessors($processors);
+
+        return $this;
+    }
+
+    public function appendMessageProcessor(Processor $processor): static
+    {
+        $this->messageProcessors->appendMessageProcessor($processor);
+
+        return $this;
+    }
+
+    public function setMemoryManagementStrategy(MemoryManagementStrategy $strategy): static
     {
         $this->memoryManagementStrategy = $strategy;
 
         return $this;
     }
 
-    private function ensureIsConnected()
+    private function ensureIsConnected(): void
     {
         if(! $this->channel instanceof \AMQPChannel)
         {
@@ -69,7 +88,7 @@ class Pecl implements Client
         }
     }
 
-    public function publish($exchangeName, WritableMessage $message)
+    public function publish(string $exchangeName, WritableMessage $message): bool
     {
         if($message->isChunked())
         {
@@ -92,7 +111,7 @@ class Pecl implements Client
         return $this->sendMessage($ex, $message);
     }
 
-    private function logMessage($exchangeName, WritableMessage $message)
+    private function logMessage(string $exchangeName, WritableMessage $message): void
     {
         $log = json_encode(array(
             'exchange' => $exchangeName,
@@ -102,7 +121,7 @@ class Pecl implements Client
         $this->logger->error($log, ['This message was involved by an error (it was sent ... or not. Please check other logs)']);
     }
 
-    private function sendMessage(\AMQPExchange $ex, WritableMessage $message)
+    private function sendMessage(\AMQPExchange $ex, WritableMessage $message): bool
     {
         try
         {
@@ -125,7 +144,7 @@ class Pecl implements Client
         return true;
     }
 
-    private function computeMessageFlag(WritableMessage $message)
+    private function computeMessageFlag(WritableMessage $message): int
     {
         $flag = AMQP_NOPARAM;
         $disallowSilentDropping = $this->configuration->read('amqp/global/disallowSilentDropping', false);
@@ -138,7 +157,7 @@ class Pecl implements Client
         return $flag;
     }
 
-    public function getExchange($exchangeName = null, $type = AMQP_EX_TYPE_TOPIC)
+    public function getExchange(?string $exchangeName = null, $type = AMQP_EX_TYPE_TOPIC): \AMQPExchange
     {
         $this->ensureIsConnected();
 
@@ -155,15 +174,15 @@ class Pecl implements Client
         return $ex;
     }
 
-    private function updateMessageAttributes(WritableMessage $message)
+    private function updateMessageAttributes(WritableMessage $message): void
     {
         $message->setAttribute('app_id', $this->applicationId);
         $message->addHeader('routing_key', $message->getRoutingKey());
 
-        $this->onPublish($message);
+        $this->messageProcessors->onPublish($message);
     }
 
-    public function getQueue($queueName)
+    public function getQueue(string $queueName): \AMQPQueue
     {
         $this->ensureIsConnected();
 

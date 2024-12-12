@@ -2,27 +2,45 @@
 
 namespace Puzzle\AMQP\Clients;
 
+use Psr\Log\LoggerAwareTrait;
 use Puzzle\AMQP\Client;
+use Puzzle\AMQP\Clients\Processors\MessageProcessorCollection;
+use Puzzle\AMQP\Messages\Processor;
 use Puzzle\AMQP\WritableMessage;
 use Psr\Log\NullLogger;
-use Puzzle\AMQP\Clients\Processors\MessageProcessorAware;
 
 class InMemory implements Client
 {
-    use
-        \Psr\Log\LoggerAwareTrait,
-        MessageProcessorAware;
+    use LoggerAwareTrait;
 
-    private
+    private array
         $sentMessages;
+    private MessageProcessorCollection
+        $messageProcessors;
 
     public function __construct()
     {
-        $this->sentMessages = array();
+        $this->sentMessages = [];
+        $this->messageProcessors = new MessageProcessorCollection();
+
         $this->logger = new NullLogger();
     }
 
-    public function publish($exchangeName, WritableMessage $message)
+    public function setMessageProcessors(array $processors): static
+    {
+        $this->messageProcessors->setMessageProcessors($processors);
+
+        return $this;
+    }
+
+    public function appendMessageProcessor(Processor $processor): static
+    {
+        $this->messageProcessors->appendMessageProcessor($processor);
+
+        return $this;
+    }
+
+    public function publish(string $exchangeName, WritableMessage $message): bool
     {
         $this->updateMessageAttributes($message);
         $this->saveMessage($exchangeName, $message);
@@ -30,25 +48,25 @@ class InMemory implements Client
         return true;
     }
 
-    private function updateMessageAttributes(WritableMessage $message)
+    private function updateMessageAttributes(WritableMessage $message): void
     {
         $message->setAttribute('app_id', 'memory');
         $message->addHeader('routing_key', $message->getRoutingKey());
         
-        $this->onPublish($message);
+        $this->messageProcessors->onPublish($message);
     }
 
-    public function getQueue($queueName)
+    public function getQueue(string $queueName): \AMQPQueue
     {
         throw new \RuntimeException('This AMQP Client must be used only for sending purpose');
     }
 
-    public function getExchange($exchangeName)
+    public function getExchange(?string $exchangeName): \AMQPExchange
     {
         throw new \RuntimeException('This AMQP Client must be used only for sending purpose');
     }
 
-    private function saveMessage($exchangeName, WritableMessage $message)
+    private function saveMessage($exchangeName, WritableMessage $message): void
     {
         $this->sentMessages[] = array(
             'exchange' => $exchangeName,
@@ -56,12 +74,12 @@ class InMemory implements Client
         );
     }
 
-    public function getSentMessages()
+    public function getSentMessages(): array
     {
         return $this->sentMessages;
     }
 
-    public function dropSentMessages()
+    public function dropSentMessages(): static
     {
         $this->sentMessages = array();
 

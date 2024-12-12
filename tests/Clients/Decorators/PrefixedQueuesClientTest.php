@@ -2,6 +2,7 @@
 
 namespace Puzzle\AMQP\Clients\Decorators;
 
+use AMQPQueue;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Client;
@@ -9,16 +10,24 @@ use Puzzle\AMQP\Clients\InMemory;
 use Puzzle\AMQP\Messages\Message;
 use Puzzle\AMQP\Messages\Processors\NullProcessor;
 
+require_once __DIR__ . '/../../AMQPStubs.php';
+
 class MockedClientQueue extends InMemory implements Client
 {
-    public function getQueue($queueName)
+    public function getQueue(string $queueName): \AMQPQueue
     {
-        return $queueName;
+        $queue = new AMQPQueue();
+        $queue->setName($queueName);
+
+        return $queue;
     }
 
-    public function getExchange($exchangeName)
+    public function getExchange(?string $exchangeName): \AMQPExchange
     {
-        return $exchangeName;
+        $exchange = new \AMQPExchange();
+        $exchange->setName($exchangeName);
+
+        return $exchange;
     }
 }
 
@@ -29,7 +38,7 @@ class PrefixedQueuesClientTest extends TestCase
     {
         $client = new PrefixedQueuesClient(new MockedClientQueue(), $prefix);
 
-        self::assertSame($expected, $client->getQueue($queueName));
+        self::assertSame($expected, $client->getQueue($queueName)->getName());
     }
 
     public static function providerTestGetQueue(): array
@@ -57,7 +66,7 @@ class PrefixedQueuesClientTest extends TestCase
     {
         $client = new PrefixedQueuesClient(new MockedClientQueue(), 'burger');
 
-        self::assertSame('poney', $client->getExchange('poney'));
+        self::assertSame('poney', $client->getExchange('poney')->getName());
     }
 
     public function testPublish(): void

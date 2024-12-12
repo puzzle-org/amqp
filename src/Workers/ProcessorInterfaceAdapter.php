@@ -2,11 +2,12 @@
 
 namespace Puzzle\AMQP\Workers;
 
+use Puzzle\AMQP\Client;
+use Puzzle\AMQP\Clients\Processors\MessageProcessorCollection;
+use Puzzle\AMQP\Messages\Processor;
 use Swarrot\Processor\ProcessorInterface;
 use Puzzle\Pieces\EventDispatcher\NullEventDispatcher;
 use Puzzle\Pieces\EventDispatcher\EventDispatcherAware;
-use Puzzle\AMQP\Clients\Processors\MessageProcessorAware;
-use Symfony\Contracts\EventDispatcher\Event;
 use Puzzle\AMQP\Events\WorkerProcessed;
 use Puzzle\AMQP\Events\WorkerProcess;
 
@@ -14,23 +15,39 @@ final class ProcessorInterfaceAdapter implements ProcessorInterface
 {
     use
         EventDispatcherAware,
-        MessageAdapterFactoryAware,
-        MessageProcessorAware;
+        MessageAdapterFactoryAware;
 
     private Worker
         $worker;
+    private MessageProcessorCollection
+        $messageProcessors;
 
     public function __construct(Worker $worker)
     {
         $this->worker = $worker;
         $this->eventDispatcher = new NullEventDispatcher();
         $this->messageAdapterFactory = null;
+        $this->messageProcessors = new MessageProcessorCollection();
+    }
+
+    public function setMessageProcessors(array $processors): static
+    {
+        $this->messageProcessors->setMessageProcessors($processors);
+
+        return $this;
+    }
+
+    public function appendMessageProcessor(Processor $processor): static
+    {
+        $this->messageProcessors->appendMessageProcessor($processor);
+
+        return $this;
     }
 
     public function process(\Swarrot\Broker\Message $message, array $options): bool
     {
         $message = $this->createMessageAdapter($message);
-        $message = $this->onConsume($message);
+        $message = $this->messageProcessors->onConsume($message);
 
         $this->onWorkerProcess();
 
@@ -62,12 +79,12 @@ final class ProcessorInterfaceAdapter implements ProcessorInterface
         return true;
     }
 
-    private function onWorkerProcess()
+    private function onWorkerProcess(): void
     {
         $this->eventDispatcher->dispatch(WorkerProcess::NAME);
     }
 
-    private function onWorkerProcessed()
+    private function onWorkerProcessed(): void
     {
         $this->eventDispatcher->dispatch(WorkerProcessed::NAME);
     }

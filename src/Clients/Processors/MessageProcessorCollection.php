@@ -2,18 +2,19 @@
 
 namespace Puzzle\AMQP\Clients\Processors;
 
+use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Messages\Processor;
 use Puzzle\AMQP\WritableMessage;
 use Puzzle\AMQP\Messages\OnPublishProcessor;
 use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Messages\OnConsumeProcessor;
 
-trait MessageProcessorAware
+class MessageProcessorCollection
 {
-    private
+    private array
         $messageProcessors = [];
     
-    public function setMessageProcessors(array $processors)
+    public function setMessageProcessors(array $processors): void
     {
         $this->messageProcessors = [];
 
@@ -24,18 +25,14 @@ trait MessageProcessorAware
                 $this->appendMessageProcessor($processor);
             }
         }
-
-        return $this;
     }
 
-    public function appendMessageProcessor(Processor $processor)
+    public function appendMessageProcessor(Processor $processor): void
     {
         $this->messageProcessors[] = $processor;
-        
-        return $this;
     }
     
-    private function onPublish(WritableMessage $message)
+    public function onPublish(WritableMessage $message): void
     {
         foreach($this->messageProcessors as $messageProcessor)
         {
@@ -46,7 +43,7 @@ trait MessageProcessorAware
         }
     }
 
-    private function onConsume(ReadableMessage $message)
+    public function onConsume(ReadableMessage $message): ReadableMessage
     {
         foreach(array_reverse($this->messageProcessors) as $messageProcessor)
         {
