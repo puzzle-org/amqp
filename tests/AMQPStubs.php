@@ -1,7 +1,7 @@
 <?php
+
 if(! class_exists(\AMQPQueue::class))
 {
-
     class AMQPQueue
     {
         private ?string
@@ -22,7 +22,10 @@ if(! class_exists(\AMQPQueue::class))
             return $this->name;
         }
     }
+}
 
+if(! class_exists(\AMQPExchange::class))
+{
     class AMQPExchange
     {
         private ?string
@@ -43,7 +46,10 @@ if(! class_exists(\AMQPQueue::class))
             return $this->name;
         }
     }
+}
 
+if(! class_exists(\AMQPChannel::class))
+{
     class AMQPChannel
     {
     }
