@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Bodies;
 
 use Puzzle\AMQP\Messages\Body;
@@ -9,8 +11,7 @@ use Puzzle\Pieces\StringManipulation;
 
 class Text implements Body, Footprintable
 {
-    use
-        StringManipulation;
+    use StringManipulation;
 
     private string
         $content;

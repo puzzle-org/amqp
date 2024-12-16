@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Bodies;
 
 use Puzzle\AMQP\Messages\Body;
@@ -11,7 +13,7 @@ class Json implements Body, Footprintable
     private mixed
         $jsonAsArray;
 
-    public function __construct($content = [])
+    public function __construct(mixed $content = [])
     {
         $this->changeContent($content);
     }
@@ -41,17 +43,17 @@ class Json implements Body, Footprintable
         return sha1($this->asTransported());
     }
 
-    public function changeContent($content)
+    public function changeContent(mixed $content): void
     {
         if(! is_array($content))
         {
-            $content = array($content);
+            $content = [$content];
         }
 
         $this->jsonAsArray = $content;
     }
 
-    public function changeContentWithJson($json): void
+    public function changeContentWithJson(string $json): void
     {
         $this->jsonAsArray = \Puzzle\Pieces\Json::decode($json, true);
     }

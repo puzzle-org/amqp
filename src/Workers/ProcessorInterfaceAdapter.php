@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Workers;
 
-use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Clients\Processors\MessageProcessorCollection;
 use Puzzle\AMQP\Messages\Processor;
 use Swarrot\Processor\ProcessorInterface;

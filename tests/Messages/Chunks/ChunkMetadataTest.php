@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Chunks;
 
 use PHPUnit\Framework\TestCase;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages;
 
 use Puzzle\AMQP\Messages\Bodies\EmptyBody;
@@ -19,7 +21,7 @@ class InMemory
             'content_type' => $body->getContentType(),
             'routing_key' => $routingKey,
             'content_encoding' => 'utf8',
-            'message_id' => uniqid(true),
+            'message_id' => uniqid('', true),
         ], $additionalAttributes);
 
         $attributes['headers'] = array_merge([

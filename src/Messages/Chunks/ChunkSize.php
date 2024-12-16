@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Chunks;
 
 final class ChunkSize
@@ -13,7 +15,7 @@ final class ChunkSize
     {
         $exception = new \InvalidArgumentException("Given chunk size is not valid");
 
-        if(preg_match("~^(\d+)(K|M)?$~", $size, $matches) !== 1)
+        if(preg_match("~^(\d+)(K|M)?$~", (string) $size, $matches) !== 1)
         {
             throw $exception;
         }

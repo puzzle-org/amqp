@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages;
 
 use Puzzle\AMQP\Messages\Bodies\Text;
@@ -11,7 +13,7 @@ use Puzzle\AMQP\Messages\Bodies\StreamedBinary;
 
 trait BodySetter
 {
-    public function setText($text)
+    public function setText(mixed $text)
     {
         $this->setBody(new Text($text));
 
@@ -25,7 +27,7 @@ trait BodySetter
         return $this;
     }
 
-    public function setBinary($content)
+    public function setBinary(mixed $content)
     {
         $this->setBody(new Binary($content));
 

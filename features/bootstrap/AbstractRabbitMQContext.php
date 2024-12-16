@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Contexts;
 
 use Behat\Behat\Context\Context;
@@ -12,7 +14,7 @@ use Puzzle\AMQP\Messages\Processors\GZip;
 
 abstract class AbstractRabbitMQContext implements Context
 {
-    protected const
+    protected const string
         TEXT_ROUTING_KEY = 'normal.text.key',
         XML_ROUTING_KEY = 'normal.xml.key',
         JSON_ROUTING_KEY = 'normal.json.key',

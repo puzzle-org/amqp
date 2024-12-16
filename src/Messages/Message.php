@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages;
 
 use Psr\Log\InvalidArgumentException;
@@ -76,7 +78,7 @@ class Message implements WritableMessage, ConvertibleToString
             return $this->body->footprint();
         }
 
-        return uniqid(true);
+        return uniqid('', true);
     }
 
     public function canBeDroppedSilently(): bool

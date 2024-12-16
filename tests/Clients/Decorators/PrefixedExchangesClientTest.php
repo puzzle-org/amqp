@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Clients\Decorators;
 
-use AMQPExchange;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Clients\InMemory;

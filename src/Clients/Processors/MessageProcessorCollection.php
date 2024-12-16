@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Clients\Processors;
 
 use Puzzle\AMQP\Messages\Processor;

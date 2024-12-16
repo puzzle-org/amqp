@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\TypedBodyFactories;
 
 use Puzzle\AMQP\Messages\Bodies;

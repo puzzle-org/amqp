@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Processors;
 
-use Puzzle\AMQP\Workers\MessageAdapter;
 use Puzzle\AMQP\WritableMessage;
 use Puzzle\AMQP\Messages\Bodies\Binary;
 use Psr\Log\LoggerAwareTrait;
