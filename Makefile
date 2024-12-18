@@ -6,6 +6,8 @@ GROUP_ID=$(shell id -g)
 export USER_ID
 export GROUP_ID
 
+ENV_INTERACTIVE?=true
+
 # Spread cli arguments for composer & phpunit
 ifneq (,$(filter $(firstword $(MAKECMDGOALS)),composer phpunit))
     CLI_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
