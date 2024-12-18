@@ -22,10 +22,18 @@ phpunit-coverage: vendor/bin/phpunit create-phpunit-image ## Run unit tests with
 
 vendor/bin/phpunit: composer-install
 
+#------------------------------------------------------------------------------
+
 create-phpunit-image: docker/images/phpunit/Dockerfile
 	docker build -q -t ${IMAGE_NAME} docker/images/phpunit/
 
+#------------------------------------------------------------------------------
+
+.PHONY: clean-phpunit
+clean-phpunit: clean-phpunit-image
+
 clean-phpunit-image:
+	-rm docker/images/phpunit/Dockerfile
 	docker rmi ${IMAGE_NAME}
 
 .PHONY: phpunit phpunit-dox phpunit-coverage create-phpunit-image clean-phpunit-image

@@ -33,6 +33,6 @@ include makefiles/behat.mk
 help:
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-clean-all: down clean clean-karma clean-whalephant clean-phpunit-dockerfile clean-phpunit-image ## Clean all generated artefacts
+clean-all: down clean-karma clean-whalephant clean-phpunit-dockerfile clean-phpunit-image ## Clean all generated artefacts
 
 .PHONY: help clean-all
