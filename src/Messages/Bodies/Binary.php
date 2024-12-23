@@ -40,7 +40,7 @@ class Binary implements Body
         );
     }
 
-    public function changeContent(mixed$content): void
+    public function changeContent(mixed $content): void
     {
         $this->content = $content;
     }
