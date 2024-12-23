@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Commands\Worker;
 
 use Psr\Log\LoggerAwareTrait;
@@ -45,7 +47,7 @@ class Run extends Command
         $this->messageAdapterFactory = null;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('run')
             ->setDescription('Launch AMQP worker')

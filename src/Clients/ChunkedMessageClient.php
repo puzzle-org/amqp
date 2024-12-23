@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Clients;
 
 use Puzzle\AMQP\Client;
@@ -9,15 +11,17 @@ use Puzzle\AMQP\Messages\Message;
 
 class ChunkedMessageClient
 {
-    const
+    const string
         DEFAULT_ROUTING_KEY_PREFIX = 'part';
 
-    private
-        $prefix,
-        $client,
+    private string
+        $prefix;
+    private Client
+        $client;
+    private ?MemoryManagementStrategy
         $memory;
 
-    public function __construct(Client $client, MemoryManagementStrategy $memory = null)
+    public function __construct(Client $client, ?MemoryManagementStrategy $memory = null)
     {
         $this->changeRoutingKeyPrefix(self::DEFAULT_ROUTING_KEY_PREFIX);
 
@@ -30,17 +34,14 @@ class ChunkedMessageClient
         $this->client = $client;
     }
 
-    public function changeRoutingKeyPrefix($prefix)
+    public function changeRoutingKeyPrefix(string $prefix): void
     {
-        if(is_string($prefix))
-        {
-            $prefix = rtrim($prefix, '.');
+        $prefix = rtrim($prefix, '.');
 
-            $this->prefix = $prefix . ".";
-        }
+        $this->prefix = $prefix . ".";
     }
 
-    public function publish($exchangeName, WritableMessage $chunkedMessage)
+    public function publish(string $exchangeName, WritableMessage $chunkedMessage)
     {
         $streamedContent = $chunkedMessage->getBodyInTransportFormat();
 
@@ -53,7 +54,7 @@ class ChunkedMessageClient
 
         $allowCompression = $chunkedMessage->isCompressionAllowed();
 
-        foreach($streamedContent as $index => $chunk)
+        foreach($streamedContent as $chunk)
         {
             $message = new Message($this->prefix . $chunkedMessage->getRoutingKey());
             $message->setBinary($chunk->getContent());
@@ -72,8 +73,7 @@ class ChunkedMessageClient
 
             $size = $chunk->size();
 
-            unset($message);
-            unset($chunk);
+            unset($message, $chunk);
 
             $this->memory->manage($size);
         }

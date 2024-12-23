@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Clients;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\Messages\Chunks\ChunkSize;
 use Puzzle\AMQP\Messages\Message;
@@ -21,20 +24,18 @@ class ChunkedMessageClientTest extends TestCase
         $this->client->changeRoutingKeyPrefix('partial');
     }
 
-    /**
-     * @dataProvider providerTestPublish
-     */
-    public function testPublish($expectedRK, $expectedSize, $body)
+    #[DataProvider('providerTestPublish')]
+    public function testPublish($expectedRK, $expectedSize, $body): void
     {
         $message = new Message('media.test');
         $message->setBody($body);
 
         $this->client->publish('puzzle', $message);
         $this->assertCountSentMessages($expectedSize);
-        $this->assertSame($expectedRK, $this->retrieveFirstMessage()->getRoutingKey());
+        self::assertSame($expectedRK, $this->retrieveFirstMessage()->getRoutingKey());
     }
 
-    public function providerTestPublish()
+    public static function providerTestPublish(): array
     {
         $a100KoString = str_repeat("a", 100 * 1024);
 
@@ -45,9 +46,9 @@ class ChunkedMessageClientTest extends TestCase
         ];
     }
 
-    private function assertCountSentMessages($expected)
+    private function assertCountSentMessages($expected): void
     {
-        $this->assertCount($expected, $this->inMemory->getSentMessages());
+        self::assertCount($expected, $this->inMemory->getSentMessages());
     }
 
     private function retrieveFirstMessage()

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Chunks;
 
 use PHPUnit\Framework\TestCase;
 
 class ChunkMetadataTest extends TestCase
 {
-    public function testBuildFromHeaders()
+    public function testBuildFromHeaders(): void
     {
         $headers = [
             'playhead' => 2,
@@ -16,12 +18,12 @@ class ChunkMetadataTest extends TestCase
 
         $metadata = ChunkMetadata::buildFromHeaders($headers);
 
-        $this->assertSame(10, $metadata->offset());
-        $this->assertSame(20, $metadata->size());
-        $this->assertSame(2, $metadata->playhead());
+        self::assertSame(10, $metadata->offset());
+        self::assertSame(20, $metadata->size());
+        self::assertSame(2, $metadata->playhead());
     }
 
-    public function testWithInvalidHeaders()
+    public function testWithInvalidHeaders(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 

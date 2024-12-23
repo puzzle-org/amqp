@@ -1,22 +1,23 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Bodies;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class TextTest extends TestCase
 {
-    /**
-     * @dataProvider providerTestToString
-     */
-    public function testToString($expected, $content)
+    #[DataProvider('providerTestToString')]
+    public function testToString($expected, $content): void
     {
         $body = new Text($content);
 
-        $this->assertSame($expected, (string) $body);
+        self::assertSame($expected, (string) $body);
     }
 
-    public function providerTestToString()
+    public static function providerTestToString(): array
     {
         return [
             'null' => [
@@ -42,7 +43,7 @@ class TextTest extends TestCase
         ];
     }
 
-    public function testToStringOnNonStringConvertible()
+    public function testToStringOnNonStringConvertible(): void
     {
         $this->expectException(\LogicException::class);
 
@@ -51,18 +52,16 @@ class TextTest extends TestCase
         (string) $body;
     }
 
-    /**
-     * @dataProvider providerTestFormat
-     */
-    public function testGetContentInDifferentFormats($content, $expected)
+    #[DataProvider('providerTestFormat')]
+    public function testGetContentInDifferentFormats($content, $expected): void
     {
         $body = new Text($content);
     
-        $this->assertSame($expected, $body->asTransported());
-        $this->assertSame($expected, $body->inOriginalFormat());
+        self::assertSame($expected, $body->asTransported());
+        self::assertSame($expected, $body->inOriginalFormat());
     }
-    
-    public function providerTestFormat()
+
+    public static function providerTestFormat(): array
     {
         return [
             ["line 1\nline 2\nline 3", "line 1\nline 2\nline 3"],
@@ -70,21 +69,19 @@ class TextTest extends TestCase
         ];
     }
     
-    /**
-     * @dataProvider providerTestAppend
-     */
-    public function testAppend($content, $expected)
+    #[DataProvider('providerTestAppend')]
+    public function testAppend($content, $expected): void
     {
         $body = new Text($content);
         $body->append('Two');
         $body->append('Three', 'Four');
         $body->append('Five');
         
-        $this->assertSame($expected, $body->asTransported());
-        $this->assertSame($expected, $body->inOriginalFormat());
+        self::assertSame($expected, $body->asTransported());
+        self::assertSame($expected, $body->inOriginalFormat());
     }
-    
-    public function providerTestAppend()
+
+    public static function providerTestAppend(): array
     {
         return [
             ["Zero\nOne", "Zero\nOneTwoThreeFourFive"],
@@ -92,10 +89,10 @@ class TextTest extends TestCase
         ];
     }
     
-    public function testFootprint()
+    public function testFootprint(): void
     {
         $body = new Text("Cannot wait until the Serge Hanuque's talks !");
         
-        $this->assertIsString($body->footprint());
+        self::assertIsString($body->footprint());
     }
 }

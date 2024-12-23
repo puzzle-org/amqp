@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Consumers;
 
 use Puzzle\AMQP\Consumer;
 use Swarrot\Broker\MessageProvider\MessageProviderInterface;
 use Swarrot\Broker\MessageProvider\PeclPackageMessageProvider;
 use Swarrot\Consumer as SwarrotConsumer;
+use Swarrot\Processor\SignalHandler\SignalHandlerProcessor;
 use Swarrot\Processor\Stack;
 use Swarrot\Processor\ProcessorInterface;
 use Psr\Log\NullLogger;
 use Psr\Log\LoggerAwareTrait;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Workers\WorkerContext;
+use Swarrot\Processor\ExceptionCatcher\ExceptionCatcherProcessor;
 
 abstract class AbstractConsumer implements Consumer
 {
@@ -19,13 +23,10 @@ abstract class AbstractConsumer implements Consumer
 
     private Client
         $client;
-
     private ProcessorInterface
         $processor;
-
     private string
         $queue;
-
     protected MessageProviderInterface
         $messageProvider;
 
@@ -42,24 +43,22 @@ abstract class AbstractConsumer implements Consumer
         $this->setMessageProvider();
     }
 
-    private function setMessageProvider()
+    private function setMessageProvider(): void
     {
         $this->messageProvider = new PeclPackageMessageProvider(
             $this->client->getQueue($this->queue)
         );
     }
 
-    protected function getBaseStack()
+    protected function getBaseStack(): Stack\Builder
     {
-        $stack = (new Stack\Builder())
-            ->push('Swarrot\Processor\SignalHandler\SignalHandlerProcessor', $this->logger)
-            ->push('Swarrot\Processor\ExceptionCatcher\ExceptionCatcherProcessor', $this->logger)
+        return (new Stack\Builder())
+            ->push(SignalHandlerProcessor::class, $this->logger)
+            ->push(ExceptionCatcherProcessor::class, $this->logger)
         ;
-
-        return $stack;
     }
 
-    protected function getSwarrotConsumer(Stack\Builder $stack)
+    protected function getSwarrotConsumer(Stack\Builder $stack): SwarrotConsumer
     {
         return new SwarrotConsumer(
             $this->messageProvider,

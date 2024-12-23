@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP;
 
 use Swarrot\Processor\ProcessorInterface;
@@ -8,7 +10,7 @@ use Puzzle\AMQP\Workers\WorkerContext;
 
 interface Consumer extends LoggerAwareInterface
 {
-    public const
+    public const int
         DEFAULT_MAX_EXECUTION_TIME = 3600; // in seconds
 
     public function consume(ProcessorInterface $processor, Client $client, string $queue): void;

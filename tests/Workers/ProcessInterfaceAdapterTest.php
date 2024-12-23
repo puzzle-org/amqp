@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Workers;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Puzzle\AMQP\ReadableMessage;
 use Psr\Log\LoggerAwareTrait;
@@ -25,7 +28,7 @@ class ChangeBodyProcessor implements OnConsumeProcessor
         $this->text = $text;
     }
     
-    public function onConsume(ReadableMessage $message)
+    public function onConsume(ReadableMessage $message): ReadableMessage
     {
         $builder = new ReadableMessageModifier($message);
         $builder->changeBody(new Text($this->text));
@@ -69,7 +72,7 @@ class Collect implements Worker
 
 class ProcessInterfaceAdapterTest extends TestCase
 {
-    public function testProcess()
+    public function testProcess(): void
     {
         $worker = new Collect();
 
@@ -84,7 +87,7 @@ class ProcessInterfaceAdapterTest extends TestCase
         self::assertSame('ponies.over.unicorns', $worker->lastProcessedMessages->getRoutingKey());
     }
 
-    public function testProcessWithCustomDependencies()
+    public function testProcessWithCustomDependencies(): void
     {
         $worker = new Collect();
 
@@ -106,7 +109,7 @@ class ProcessInterfaceAdapterTest extends TestCase
         self::assertSame('ponies.over.unicorns', $worker->lastProcessedMessages->getRoutingKey());
     }
 
-    public function testOnConsume()
+    public function testOnConsume(): void
     {
         $worker = new Collect();
 
@@ -150,10 +153,8 @@ class ProcessInterfaceAdapterTest extends TestCase
         self::assertSame('pegasus', $worker->lastProcessedMessages->getBodyInOriginalFormat());
     }
 
-    /**
-     * @dataProvider providerTestCatchingThrowable
-     */
-    public function testCatchingThrowable(Worker $worker, $expectedException)
+    #[DataProvider('providerTestCatchingThrowable')]
+    public function testCatchingThrowable(Worker $worker, $expectedException): void
     {
         $processor = new ProcessorInterfaceAdapter($worker);
         $current = null;
@@ -177,17 +178,17 @@ class ProcessInterfaceAdapterTest extends TestCase
         self::assertInstanceOf($expectedException, $current);
     }
 
-    public function providerTestCatchingThrowable()
+    public static function providerTestCatchingThrowable(): array
     {
         return [
             'exception' => [
-                'worker' => $this->callableWorker(function() {
+                'worker' => self::callableWorker(static function() {
                     throw new \Exception('Zboui zboui zboui');
                 }),
                 'expectedException' => \Exception::class,
             ],
             'error' => [
-                'worker' => $this->callableWorker(function() {
+                'worker' => self::callableWorker(static function() {
                     throw new \Error('This is a PHP error');
                 }),
                 'expectedException' => \ErrorException::class,
@@ -195,7 +196,7 @@ class ProcessInterfaceAdapterTest extends TestCase
         ];
     }
 
-    private function callableWorker($callable): CallableWorker
+    private static function callableWorker($callable): CallableWorker
     {
         return new CallableWorker($callable);
     }

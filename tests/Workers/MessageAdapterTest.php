@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Workers;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Swarrot\Broker\Message;
 use Puzzle\AMQP\Messages\ContentType;
@@ -15,7 +18,7 @@ class MessageAdapterTest extends TestCase
 {
     use ArrayRelated;
 
-    public function testText()
+    public function testText(): void
     {
         $body = <<<TEXT
 Et interdum acciderat, ut siquid in penetrali secreto nullo citerioris vitae ministro praesente paterfamilias uxori
@@ -32,18 +35,18 @@ TEXT;
         $swarrotMessage = new Message($body, $properties);
         $message = (new MessageAdapterFactory())->build($swarrotMessage);
 
-        $this->assertSame($body, $message->getBodyInOriginalFormat(), 'Decoded body must be unchanged');
+        self::assertSame($body, $message->getBodyInOriginalFormat(), 'Decoded body must be unchanged');
 
-        $this->assertNotEmpty((string) $message);
+        self::assertNotEmpty((string) $message);
 
         $attributes = $message->getAttributes();
-        $this->assertArrayHasKey('content_type', $attributes);
-        $this->assertArrayHasKey('routing_key', $attributes);
+        self::assertArrayHasKey('content_type', $attributes);
+        self::assertArrayHasKey('routing_key', $attributes);
 
-        $this->assertSame('puzzle/ui', $message->getAppId());
+        self::assertSame('puzzle/ui', $message->getAppId());
     }
 
-    public function testJson()
+    public function testJson(): void
     {
         $decodedBody = [
             'burger' => 'McFat',
@@ -67,12 +70,12 @@ TEXT;
         
         $message = (new MessageAdapterFactory())->build($swarrotMessage);
         
-        $this->assertSame($decodedBody, $message->getBodyInOriginalFormat());
+        self::assertSame($decodedBody, $message->getBodyInOriginalFormat());
 
-        $this->assertNotEmpty((string) $message);
+        self::assertNotEmpty((string) $message);
     }
 
-    public function testGetRoutingKeyFromHeader()
+    public function testGetRoutingKeyFromHeader(): void
     {
         $swarrotMessage = new Message('body', [
             'headers' => [
@@ -84,11 +87,11 @@ TEXT;
 
         $message = (new MessageAdapterFactory())->build($swarrotMessage);
 
-        $this->assertSame('my.routing.key', $message->getRoutingKey());
-        $this->assertSame('my.routing.key.from.header', $message->getRoutingKeyFromHeader());
+        self::assertSame('my.routing.key', $message->getRoutingKey());
+        self::assertSame('my.routing.key.from.header', $message->getRoutingKeyFromHeader());
     }
 
-    public function testGetMissingRoutingKeyFromHeader()
+    public function testGetMissingRoutingKeyFromHeader(): void
     {
         $swarrotMessage = new Message('body', [
             'headers' => [
@@ -100,11 +103,11 @@ TEXT;
 
         $message = (new MessageAdapterFactory())->build($swarrotMessage);
 
-        $this->assertSame('my.routing.key', $message->getRoutingKey());
-        $this->assertNull($message->getRoutingKeyFromHeader());
+        self::assertSame('my.routing.key', $message->getRoutingKey());
+        self::assertNull($message->getRoutingKeyFromHeader());
     }
 
-    public function testGetNonStandardAttribute()
+    public function testGetNonStandardAttribute(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -117,7 +120,7 @@ TEXT;
         $message->getAttribute('not_an_amqp_attribute');
     }
 
-    public function testInvalidConstruction()
+    public function testInvalidConstruction(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -128,10 +131,8 @@ TEXT;
         $message = (new MessageAdapterFactory())->build($swarrotMessage);
     }
 
-    /**
-     * @dataProvider providerTestIsLastRetry
-     */
-    public function testIsLastRetry($nbTries, $max, $expected)
+    #[DataProvider('providerTestIsLastRetry')]
+    public function testIsLastRetry($nbTries, $max, $expected): void
     {
         $message = new MessageAdapter(new Message('', [
             'content_type' => ContentType::EMPTY_CONTENT,
@@ -140,10 +141,10 @@ TEXT;
             ]
         ]));
 
-        $this->assertSame($expected, $message->isLastRetry($max));
+        self::assertSame($expected, $message->isLastRetry($max));
     }
 
-    public function providerTestIsLastRetry()
+    public static function providerTestIsLastRetry(): array
     {
         return [
             [0, 3, false],
@@ -162,22 +163,20 @@ TEXT;
         ];
     }
 
-    public function testIsLastRetryWithoutHeader()
+    public function testIsLastRetryWithoutHeader(): void
     {
         $message = new MessageAdapter(new Message('', [
             'content_type' => ContentType::EMPTY_CONTENT,
             'headers' => [],
         ]));
 
-        $this->assertFalse($message->isLastRetry());
-        $this->assertFalse($message->isLastRetry(0));
-        $this->assertFalse($message->isLastRetry(-1));
+        self::assertFalse($message->isLastRetry());
+        self::assertFalse($message->isLastRetry(0));
+        self::assertFalse($message->isLastRetry(-1));
     }
 
-    /**
-     * @dataProvider providerTestCloneIntoWritableMessage
-     */
-    public function testCloneIntoWritableMessage($copyOldRoutingKey, $expectingRoutingKey)
+    #[DataProvider('providerTestCloneIntoWritableMessage')]
+    public function testCloneIntoWritableMessage($copyOldRoutingKey, $expectingRoutingKey): void
     {
         $readableMessage = InMemory::build('old.routing.key', new Text('This is fine'), [
                 'h1' => 'title',
@@ -193,21 +192,21 @@ TEXT;
             $copyOldRoutingKey
         );
 
-        $this->assertTrue($message instanceof WritableMessage);
-        $this->assertSame($expectingRoutingKey, $message->getRoutingKey());
+        self::assertInstanceOf(WritableMessage::class, $message);
+        self::assertSame($expectingRoutingKey, $message->getRoutingKey());
 
         $headers = $message->getHeaders();
         $this->assertSameArrayExceptOrder(
                 ['h1', 'h2', 'h3', 'author', 'routing_key', 'app_id', 'message_datetime'],
                 array_keys($headers)
                 );
-        $this->assertSame('subtitle', $headers['h2']);
-        $this->assertSame($jeanPierre, $headers['author']);
+        self::assertSame('subtitle', $headers['h2']);
+        self::assertSame($jeanPierre, $headers['author']);
 
-        $this->assertSame($iso, $message->getAttribute('content_encoding'));
+        self::assertSame($iso, $message->getAttribute('content_encoding'));
     }
 
-    public function providerTestCloneIntoWritableMessage()
+    public static function providerTestCloneIntoWritableMessage(): array
     {
         return [
             [true, 'old.routing.key'],
@@ -215,14 +214,14 @@ TEXT;
         ];
     }
 
-    public function testToStringInvalidUtf8()
+    public function testToStringInvalidUtf8(): void
     {
         $invalidUTF8Message = new Message(
-            utf8_decode('Nêv£r gonnà lét yôù d¤wn'),
+            mb_convert_encoding('Nêv£r gonnà lét yôù d¤wn', 'ISO-8859-1', 'UTF-8'),
             ['content_type' => ContentType::TEXT, 'routing_key' => 'zboui']
         );
 
-        $this->assertNotEmpty(
+        self::assertNotEmpty(
             (string) (new MessageAdapterFactory())->build($invalidUTF8Message)
         );
     }

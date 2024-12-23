@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Workers;
 
 use Puzzle\AMQP\ReadableMessage;
@@ -11,8 +13,9 @@ use Puzzle\Pieces\Json;
 
 class MessageAdapter implements ReadableMessage
 {
-    private
-        $message,
+    private \Swarrot\Broker\Message
+        $message;
+    private Body
         $body;
 
     public function __construct(\Swarrot\Broker\Message $message)
@@ -21,42 +24,42 @@ class MessageAdapter implements ReadableMessage
         $this->body = new EmptyBody();
     }
     
-    public function setBody(Body $body)
+    public function setBody(Body $body): void
     {
         $this->body = $body;
     }
 
-    public function getRoutingKey()
+    public function getRoutingKey(): string
     {
         return $this->getAttribute('routing_key');
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         return $this->getAttribute('content_type');
     }
 
-    public function getAppId()
+    public function getAppId(): string
     {
         return $this->getAttribute('app_id');
     }
 
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->getAttribute('headers');
     }
 
-    public function getBodyInOriginalFormat()
+    public function getBodyInOriginalFormat(): mixed
     {
         return $this->body->inOriginalFormat();
     }
     
-    public function getBodyAsTransported()
+    public function getBodyAsTransported(): ?string
     {
         return $this->message->getBody();
     }
 
-    public function getAttribute($attributeName)
+    public function getAttribute(string $attributeName): mixed
     {
         $messageProperties = $this->message->getProperties();
         if(array_key_exists($attributeName, $messageProperties))
@@ -82,7 +85,7 @@ class MessageAdapter implements ReadableMessage
         }
     }
 
-    private function getHeader($headerName)
+    private function getHeader(string $headerName): mixed
     {
         $headers = $this->getHeaders();
         if(array_key_exists($headerName, $headers))
@@ -93,24 +96,24 @@ class MessageAdapter implements ReadableMessage
         return null;
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->message->getProperties();
     }
 
-    public function isLastRetry($retryOccurence = \Puzzle\AMQP\Consumers\Retry::DEFAULT_RETRY_OCCURENCE)
+    public function isLastRetry($retryOccurence = \Puzzle\AMQP\Consumers\Retry::DEFAULT_RETRY_OCCURENCE): bool
     {
         $retryHeader = $this->getHeader(\Puzzle\AMQP\Consumers\Retry::DEFAULT_RETRY_HEADER);
 
         return ($retryHeader !== null && (int) $retryHeader >= $retryOccurence);
     }
 
-    public function getRoutingKeyFromHeader()
+    public function getRoutingKeyFromHeader(): ?string
     {
         return $this->getHeader('routing_key');
     }
 
-    public function cloneIntoWritableMessage(WritableMessage $writable, $copyRoutingKey = false)
+    public function cloneIntoWritableMessage(WritableMessage $writable, bool $copyRoutingKey = false): WritableMessage
     {
         if($copyRoutingKey === true)
         {

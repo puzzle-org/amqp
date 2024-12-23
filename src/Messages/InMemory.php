@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages;
 
 use Puzzle\AMQP\Messages\Bodies\EmptyBody;
+use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Workers\MessageAdapterFactory;
 
 class InMemory
 {
-    /**
-     * @return \Puzzle\AMQP\ReadableMessage
-     */
-    public static function build($routingKey, Body $body = null, array $additionalHeaders = [], array $additionalAttributes = [])
+    public static function build($routingKey, ?Body $body = null, array $additionalHeaders = [], array $additionalAttributes = []): ReadableMessage
     {
         if(! $body instanceof Body)
         {
@@ -21,7 +21,7 @@ class InMemory
             'content_type' => $body->getContentType(),
             'routing_key' => $routingKey,
             'content_encoding' => 'utf8',
-            'message_id' => uniqid(true),
+            'message_id' => uniqid('', true),
         ], $additionalAttributes);
 
         $attributes['headers'] = array_merge([

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Clients;
 
 use PHPUnit\Framework\TestCase;
@@ -8,7 +10,7 @@ use Puzzle\AMQP\Messages\Processors\NullProcessor;
 
 class InMemoryTest extends TestCase
 {
-    public function testAll()
+    public function testAll(): void
     {
         $client = new InMemory();
         $client->setMessageProcessors([
@@ -16,21 +18,21 @@ class InMemoryTest extends TestCase
             new NullProcessor(),
         ]);
 
-        $this->assertEmpty($client->getSentMessages());
+        self::assertEmpty($client->getSentMessages());
 
         $message = new Message('key');
         $client->publish('myEx', $message);
 
         $sentMessages = $client->getSentMessages();
-        $this->assertCount(1, $sentMessages);
+        self::assertCount(1, $sentMessages);
         foreach($sentMessages as $messageInfo)
         {
-            $this->assertSame($message, $messageInfo['message']);
+            self::assertSame($message, $messageInfo['message']);
         }
 
-        $this->assertCount(1, $client->getSentMessages(), 'idempotent');
+        self::assertCount(1, $client->getSentMessages(), 'idempotent');
 
         $client->dropSentMessages();
-        $this->assertEmpty($client->getSentMessages());
+        self::assertEmpty($client->getSentMessages());
     }
 }

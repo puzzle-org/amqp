@@ -1,18 +1,21 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Contexts;
 
 use Puzzle\AMQP\Messages\Message;
 use Puzzle\AMQP\Messages\Bodies\Json;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\Processors\GZip;
+use PHPUnit\Framework\Assert;
 
-class SendContext extends AbstractRabbitMQContext
+final class SendContext extends AbstractRabbitMQContext
 {
     /**
      * @Given The queue :queue is empty
      */
-    public function theQueueIsEmpty($queue)
+    public function theQueueIsEmpty(string $queue): void
     {
         $this->client->getQueue($queue)->purge();
 
@@ -22,7 +25,7 @@ class SendContext extends AbstractRabbitMQContext
     /**
      * @When I send the text message :bodyContent
      */
-    public function iSendTheTextMessageWithRoutingKey($bodyContent)
+    public function iSendTheTextMessageWithRoutingKey(string $bodyContent): void
     {
         $message = new Message(self::TEXT_ROUTING_KEY);
         $message->setText($bodyContent);
@@ -33,7 +36,7 @@ class SendContext extends AbstractRabbitMQContext
     /**
      * @When I send the xml message :bodyContent
      */
-    public function iSendTheXmlMessage($bodyContent)
+    public function iSendTheXmlMessage(string $bodyContent): void
     {
         $message = new Message(self::XML_ROUTING_KEY);
         $message->setAttribute('content_type', 'application/xml');
@@ -45,7 +48,7 @@ class SendContext extends AbstractRabbitMQContext
     /**
      * @When I send the json message :bodyContent
      */
-    public function iSendTheJsonMessageWithRoutingKey($bodyContent)
+    public function iSendTheJsonMessageWithRoutingKey(string $bodyContent): void
     {
         $message = new Message(self::JSON_ROUTING_KEY);
         
@@ -59,7 +62,7 @@ class SendContext extends AbstractRabbitMQContext
     /**
      * @When I send the gzipped text message :bodyContent
      */
-    public function iSendTheGzippedTextMessage($bodyContent)
+    public function iSendTheGzippedTextMessage(string $bodyContent): void
     {
         $message = new Message(self::TEXT_ROUTING_KEY);
         $message->setText($bodyContent);
@@ -68,7 +71,7 @@ class SendContext extends AbstractRabbitMQContext
         $this->iSendMessage($message);
     }
 
-    private function iSendMessage(Message $message)
+    private function iSendMessage(Message $message): void
     {
         $result = $this->client->publish(self::EXCHANGE, $message);
         
@@ -78,15 +81,15 @@ class SendContext extends AbstractRabbitMQContext
     /**
      * @Then The queue :queue must contain :nbMessages message
      */
-    public function theQueueMustContainMessage($queue, $nbMessages)
+    public function theQueueMustContainMessage(string $queue, int $nbMessages): void
     {
-        $this->assertMessagesInQueue($queue, (int) $nbMessages);
+        $this->assertMessagesInQueue($queue, $nbMessages);
     }
     
     /**
      * @Then The message in queue :queueName contains :content and is a text message
      */
-    public function theMessageInQueueContainsAndIsATextMessage($content, $queueName)
+    public function theMessageInQueueContainsAndIsATextMessage(string $content, string $queueName): void
     {
         $this->theMessageInQueueContains(self::TEXT_ROUTING_KEY, $content, $queueName, "text/plain");
     }
@@ -94,7 +97,7 @@ class SendContext extends AbstractRabbitMQContext
     /**
      * @Then The message in queue :queueName contains :content and is a xml message
      */
-    public function theMessageInQueueContainsAndIsAXmlMessage($content, $queueName)
+    public function theMessageInQueueContainsAndIsAXmlMessage(string $content, string $queueName): void
     {
         $this->theMessageInQueueContains(self::XML_ROUTING_KEY, $content, $queueName, "application/xml");
     }
@@ -102,7 +105,7 @@ class SendContext extends AbstractRabbitMQContext
     /**
      * @Then The message in queue :queueName contains :content and is a json message
      */
-    public function theMessageInQueueContainsAndIsAJsonMessage($content, $queueName)
+    public function theMessageInQueueContainsAndIsAJsonMessage(string $content, string $queueName): void
     {
         $this->theMessageInQueueContains(self::JSON_ROUTING_KEY, $content, $queueName, "application/json");
     }
@@ -110,36 +113,36 @@ class SendContext extends AbstractRabbitMQContext
     /**
      * @Then The message in queue :queueName contains a gzipped message
      */
-    public function theMessageInQueueContainsAGzippedMessage($queueName)
+    public function theMessageInQueueContainsAGzippedMessage(string $queueName): void
     {
         $message = $this->theMessageInQueueContains(self::TEXT_ROUTING_KEY, false, $queueName, ContentType::BINARY);
 
         $headers = $message['properties']['headers'];
 
-        \PHPUnit\Framework\Assert::assertTrue(is_array($headers));
-        \PHPUnit\Framework\Assert::assertArrayHasKey(GZip::HEADER_COMPRESSION, $headers);
-        \PHPUnit\Framework\Assert::assertArrayHasKey(GZip::HEADER_COMPRESSION_CONTENT_TYPE, $headers);
-        \PHPUnit\Framework\Assert::assertSame(Gzip::COMPRESSION_ALGORITHM, $headers[Gzip::HEADER_COMPRESSION]);
-        \PHPUnit\Framework\Assert::assertSame(ContentType::TEXT, $headers[Gzip::HEADER_COMPRESSION_CONTENT_TYPE]);
+        Assert::assertIsArray($headers);
+        Assert::assertArrayHasKey(GZip::HEADER_COMPRESSION, $headers);
+        Assert::assertArrayHasKey(GZip::HEADER_COMPRESSION_CONTENT_TYPE, $headers);
+        Assert::assertSame(Gzip::COMPRESSION_ALGORITHM, $headers[Gzip::HEADER_COMPRESSION]);
+        Assert::assertSame(ContentType::TEXT, $headers[Gzip::HEADER_COMPRESSION_CONTENT_TYPE]);
     }
     
-    private function theMessageInQueueContains($routingKey, $content, $queueName, $contentType)
+    private function theMessageInQueueContains(string $routingKey, string|bool $content, string $queueName, string $contentType): array
     {
         $firstMessageOptions = ['count' => 1, 'ackmode' => 'ack_requeue_true', 'encoding' => 'auto', 'truncate' => 50000];
         $message = $this->httpClient->getMessages($this->vhost, $queueName, $firstMessageOptions)[0];
 
-        \PHPUnit\Framework\Assert::assertSame($routingKey, $message['routing_key']);
-        \PHPUnit\Framework\Assert::assertSame($contentType,  $message['properties']['content_type']);
+        Assert::assertSame($routingKey, $message['routing_key']);
+        Assert::assertSame($contentType,  $message['properties']['content_type']);
 
         if($content !== false)
         {
-            \PHPUnit\Framework\Assert::assertSame($content, $message['payload']);
+            Assert::assertSame($content, $message['payload']);
         }
 
         return $message;
     }
     
-    private function assertMessagesInQueue($queue, $expectedNbMessages, $waitingSeconds = 11)
+    private function assertMessagesInQueue(string $queue, int $expectedNbMessages, int $waitingSeconds = 11): void
     {
         $nbMessages = $this->nbMessagesInQueue($queue);
         $nbTries = 0;
@@ -152,7 +155,7 @@ class SendContext extends AbstractRabbitMQContext
             $nbMessages = $this->nbMessagesInQueue($queue);
         }
         
-        \PHPUnit\Framework\Assert::assertSame($expectedNbMessages, $nbMessages);
+        Assert::assertSame($expectedNbMessages, $nbMessages);
     }
     
     private function nbMessagesInQueue(string $queueName): int

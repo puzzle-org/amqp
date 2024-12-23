@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages;
 
 interface BodyFactory
 {
-    /**
-     * @return Body
-     */
-    public function build($contentType, $contentAsTransported);
+    public function build($contentType, $contentAsTransported): Body;
 }

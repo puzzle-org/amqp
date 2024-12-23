@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Bodies;
 
 use PHPUnit\Framework\TestCase;
 
 class NullBodyTest extends TestCase
 {
-    public function testNullBody()
+    public function testNullBody(): void
     {
         $body = new EmptyBody();
         
-        $this->assertSame('', $body->inOriginalFormat());
-        $this->assertSame('', $body->asTransported());
-        $this->assertEmpty((string) $body);
+        self::assertSame('', $body->inOriginalFormat());
+        self::assertSame('', $body->asTransported());
+        self::assertEmpty((string) $body);
     }
 }

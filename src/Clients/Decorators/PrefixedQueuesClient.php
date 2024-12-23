@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Clients\Decorators;
 
 use Puzzle\AMQP\Client;
@@ -9,39 +11,40 @@ use Puzzle\AMQP\Messages\Processor;
 
 class PrefixedQueuesClient implements Client
 {
-    const
+    const string
         DELIMITER = '.';
 
     use LoggerAwareTrait;
 
-    private
-        $client,
+    private Client
+        $client;
+    private ?string
         $queueNamePrefix;
 
-    public function __construct(Client $client, $queueNamePrefix)
+    public function __construct(Client $client, ?string $queueNamePrefix)
     {
         $this->client = $client;
         $this->queueNamePrefix = $queueNamePrefix;
     }
 
-    public function publish($exchangeName, WritableMessage $message)
+    public function publish(string $exchangeName, WritableMessage $message): bool
     {
         return $this->client->publish($exchangeName, $message);
     }
 
-    public function getQueue($queueName)
+    public function getQueue(string $queueName): \AMQPQueue
     {
         $prefixedQueueName = $this->computePrefixedQueueName($queueName);
 
         return $this->client->getQueue($prefixedQueueName);
     }
 
-    public function getExchange($exchangeName)
+    public function getExchange(?string $exchangeName): \AMQPExchange
     {
         return $this->client->getExchange($exchangeName);
     }
 
-    private function computePrefixedQueueName($queueName)
+    private function computePrefixedQueueName($queueName): string
     {
         $queueNameParts = [];
 
@@ -55,12 +58,12 @@ class PrefixedQueuesClient implements Client
         return implode(self::DELIMITER, $queueNameParts);
     }
     
-    public function appendMessageProcessor(Processor $processor)
+    public function appendMessageProcessor(Processor $processor): Client
     {
         return $this->client->appendMessageProcessor($processor);
     }
 
-    public function setMessageProcessors(array $processors)
+    public function setMessageProcessors(array $processors): Client
     {
         return $this->client->setMessageProcessors($processors);
     }

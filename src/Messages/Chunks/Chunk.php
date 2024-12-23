@@ -1,27 +1,31 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Chunks;
 
 final class Chunk
 {
-    private
-        $metadata,
-        $messageMetadata,
+    private ChunkMetadata
+        $metadata;
+    private ChunkedMessageMetadata
+        $messageMetadata;
+    private string
         $content;
 
-    public function __construct($playhead, $offset, $content, ChunkedMessageMetadata $messageMetadata)
+    public function __construct(int $playhead, int $offset, string $content, ChunkedMessageMetadata $messageMetadata)
     {
         $this->metadata = new ChunkMetadata($playhead, $offset, strlen($content));
         $this->messageMetadata = $messageMetadata;
         $this->content = $content;
     }
 
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }
 
-    public function size()
+    public function size(): int
     {
         return $this->metadata->size();
     }

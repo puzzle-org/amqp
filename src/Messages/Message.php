@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages;
 
 use Psr\Log\InvalidArgumentException;
@@ -9,40 +11,43 @@ use Puzzle\Pieces\ConvertibleToString;
 
 class Message implements WritableMessage, ConvertibleToString
 {
-    const
+    const string
         ATTRIBUTE_CONTENT_TYPE = 'content_type';
 
     use BodySetter;
 
-    private
-        $body,
+    private Body
+        $body;
+    private bool
         $canBeDroppedSilently,
-        $allowCompression,
-        $userContentType,
+        $allowCompression;
+    private ?string
+        $userContentType;
+    private array
         $headers,
         $attributes;
 
-    public function __construct($routingKey = '')
+    public function __construct(string $routingKey = '')
     {
         $this->body = new EmptyBody();
 
         $this->canBeDroppedSilently = true;
         $this->allowCompression = false;
         $this->userContentType = null;
-        $this->headers = array();
+        $this->headers = [];
         $this->initializeAttributes();
 
         $this->changeRoutingKey($routingKey);
     }
 
-    public function changeRoutingKey($routingKey)
+    public function changeRoutingKey(string $routingKey): void
     {
         $this->setAttribute('routing_key', $routingKey);
     }
 
-    private function initializeAttributes()
+    private function initializeAttributes(): void
     {
-        $this->attributes = array(
+        $this->attributes = [
             'routing_key' => null,
             self::ATTRIBUTE_CONTENT_TYPE=> $this->getContentType(),
             'content_encoding' => 'utf8',
@@ -60,35 +65,35 @@ class Message implements WritableMessage, ConvertibleToString
             'type' => null,
             'reply_to' => null,
             'correlation_id' => null,
-            'headers' => function($timestamp) {
+            'headers' => function(int $timestamp) {
                 return $this->packHeaders($timestamp);
             },
-        );
+        ];
     }
 
-    private function generateBodyId()
+    private function generateBodyId(): string
     {
         if($this->body instanceof Footprintable)
         {
             return $this->body->footprint();
         }
 
-        return uniqid(true);
+        return uniqid('', true);
     }
 
-    public function canBeDroppedSilently()
+    public function canBeDroppedSilently(): bool
     {
         return $this->canBeDroppedSilently;
     }
 
-    public function disallowSilentDropping()
+    public function disallowSilentDropping(): static
     {
         $this->canBeDroppedSilently = false;
 
         return $this;
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         if($this->userContentType === null)
         {
@@ -98,17 +103,17 @@ class Message implements WritableMessage, ConvertibleToString
         return $this->userContentType;
     }
 
-    public function getRoutingKey()
+    public function getRoutingKey(): string
     {
         return $this->getAttribute('routing_key');
     }
 
-    public function getBodyInTransportFormat()
+    public function getBodyInTransportFormat(): string|\Generator
     {
         return $this->body->asTransported();
     }
 
-    public function setBody(Body $body)
+    public function setBody(Body $body): static
     {
         $this->body = $body;
         $this->updateContentType();
@@ -116,19 +121,19 @@ class Message implements WritableMessage, ConvertibleToString
         return $this;
     }
 
-    private function updateContentType()
+    private function updateContentType(): void
     {
         $this->attributes[self::ATTRIBUTE_CONTENT_TYPE] = $this->getContentType();
     }
 
-    public function addHeader($headerName, $value)
+    public function addHeader(string $headerName, mixed $value): static
     {
         $this->headers[$headerName] = $value;
 
         return $this;
     }
 
-    public function addHeaders(array $headers)
+    public function addHeaders(array $headers): static
     {
         foreach($headers as $name => $value)
         {
@@ -138,14 +143,14 @@ class Message implements WritableMessage, ConvertibleToString
         return $this;
     }
 
-    public function setAuthor($author)
+    public function setAuthor(string $author): static
     {
         $this->addHeader('author', $author);
 
         return $this;
     }
 
-    public function packAttributes($timestamp = false)
+    public function packAttributes(int|bool $timestamp = false): array
     {
         $this->updateContentType();
 
@@ -154,7 +159,7 @@ class Message implements WritableMessage, ConvertibleToString
             $timestamp = (new \DateTime("now"))->getTimestamp();
         }
 
-        return array_map(function($value) use($timestamp) {
+        return array_map(static function($value) use($timestamp) {
 
             if($value instanceof \Closure)
             {
@@ -166,14 +171,14 @@ class Message implements WritableMessage, ConvertibleToString
         }, $this->attributes);
     }
 
-    private function packHeaders($timestamp)
+    private function packHeaders(int $timestamp): array
     {
         $this->headers['message_datetime'] = date('Y-m-d H:i:s', $timestamp);
 
         return $this->headers;
     }
 
-    public function setAttribute($attributeName, $value)
+    public function setAttribute(string $attributeName, mixed $value): static
     {
         if($attributeName !== 'headers')
         {
@@ -191,14 +196,14 @@ class Message implements WritableMessage, ConvertibleToString
         return $this;
     }
 
-    public function getHeaders()
+    public function getHeaders(): array
     {
         $attributes = $this->packAttributes();
 
         return $attributes['headers'];
     }
 
-    public function getAttribute($attributeName)
+    public function getAttribute(string $attributeName): mixed
     {
         if(array_key_exists($attributeName, $this->attributes))
         {
@@ -208,7 +213,7 @@ class Message implements WritableMessage, ConvertibleToString
         throw new InvalidArgumentException(sprintf('Property "%s" is unknown or is not a message property', $attributeName));
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return json_encode(array(
             'routing_key' => $this->getRoutingKey(),
@@ -218,28 +223,28 @@ class Message implements WritableMessage, ConvertibleToString
         ));
     }
 
-    public function setExpiration($expirationInSeconds)
+    public function setExpiration(int $expirationInSeconds): static
     {
-        $ttlInMs = 1000 * (int) $expirationInSeconds;
+        $ttlInMs = 1000 * $expirationInSeconds;
 
         $this->setAttribute('expiration', (string) $ttlInMs);
 
         return $this;
     }
 
-    public function isCompressionAllowed()
+    public function isCompressionAllowed(): bool
     {
         return $this->allowCompression;
     }
 
-    public function allowCompression($allow = true)
+    public function allowCompression(bool $allow = true): static
     {
-        $this->allowCompression = (bool) $allow;
+        $this->allowCompression = $allow;
 
         return $this;
     }
 
-    public function isChunked()
+    public function isChunked(): bool
     {
         return $this->body->isChunked();
     }

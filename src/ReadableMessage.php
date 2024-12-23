@@ -1,41 +1,22 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP;
 
 interface ReadableMessage extends MessageMetadata
 {
-    /**
-     * @return mixed
-     */
-    public function getBodyInOriginalFormat();
+    public function getBodyInOriginalFormat(): mixed;
     
-    /**
-     * @return mixed
-     */
-    public function getBodyAsTransported();
+    public function getBodyAsTransported(): mixed;
 
-    /**
-     * @return string
-     */
-    public function getAppId();
+    public function getAppId(): string;
 
-    /**
-     * @return array
-     */
-    public function getAttributes();
+    public function getAttributes(): array;
     
-    /**
-     * @return boolean
-     */
-    public function isLastRetry();
+    public function isLastRetry(): bool;
     
-    /**
-     *  @return string
-     */
-    public function getRoutingKeyFromHeader();
+    public function getRoutingKeyFromHeader(): ?string;
 
-    /**
-     * @return \Puzzle\AMQP\WritableMessage
-     */
-    public function cloneIntoWritableMessage(WritableMessage $writable, $copyRoutingKey = false);
+    public function cloneIntoWritableMessage(WritableMessage $writable, bool $copyRoutingKey = false): WritableMessage;
 }

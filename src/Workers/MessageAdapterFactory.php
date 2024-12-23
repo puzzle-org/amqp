@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Workers;
 
 use Puzzle\AMQP\Messages\BodyFactory;
@@ -7,10 +9,10 @@ use Puzzle\AMQP\Messages\BodyFactories\Standard;
 
 class MessageAdapterFactory
 {
-    private
+    private BodyFactory
         $bodyFactory;
 
-    public function __construct(BodyFactory $bodyFactory = null)
+    public function __construct(?BodyFactory $bodyFactory = null)
     {
         if(! $bodyFactory instanceof BodyFactory)
         {
@@ -20,10 +22,7 @@ class MessageAdapterFactory
         $this->bodyFactory = $bodyFactory;
     }
     
-    /**
-     * @return \Puzzle\AMQP\Workers\MessageAdapter
-     */
-    public function build(\Swarrot\Broker\Message $message)
+    public function build(\Swarrot\Broker\Message $message): MessageAdapter
     {
         $adapter = new MessageAdapter($message);
         

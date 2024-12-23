@@ -1,30 +1,20 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP;
 
 interface MessageMetadata
 {
-    const
+    const int
         TRANSIENT = 1,
         PERSISTENT = 2;
 
-    /**
-     * @return string
-     */
-    public function getRoutingKey();
+    public function getRoutingKey(): string;
     
-    /**
-     * @return string
-     */
-    public function getContentType();
+    public function getContentType(): string;
 
-    /**
-     * @return array
-     */
-    public function getHeaders();
+    public function getHeaders(): array;
     
-    /**
-     * @return mixed
-     */
-    public function getAttribute($attributeName);
+    public function getAttribute(string $attributeName): mixed;
 }

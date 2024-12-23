@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Consumers;
 
 use Swarrot\Processor\ProcessorInterface;
 use Puzzle\AMQP\Client;
 use Puzzle\AMQP\Workers\WorkerContext;
+use Swarrot\Processor\MaxExecutionTime\MaxExecutionTimeProcessor;
+use Swarrot\Processor\Ack\AckProcessor;
+use Swarrot\Processor\InstantRetry\InstantRetryProcessor;
 
 class InstantRetry extends AbstractConsumer
 {
@@ -25,9 +30,9 @@ class InstantRetry extends AbstractConsumer
         parent::consume($processor, $client, $queue);
 
         $stack = $this->getBaseStack()
-            ->push('Swarrot\Processor\MaxExecutionTime\MaxExecutionTimeProcessor', $this->logger)
-            ->push('Swarrot\Processor\Ack\AckProcessor', $this->messageProvider, $this->logger)
-            ->push('Swarrot\Processor\InstantRetry\InstantRetryProcessor', $this->logger)
+            ->push(MaxExecutionTimeProcessor::class, $this->logger)
+            ->push(AckProcessor::class, $this->messageProvider, $this->logger)
+            ->push(InstantRetryProcessor::class, $this->logger)
         ;
 
         $consumer = $this->getSwarrotConsumer($stack);

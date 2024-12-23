@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Bodies;
 
 use PHPUnit\Framework\TestCase;
@@ -7,9 +9,9 @@ use Puzzle\AMQP\Clients\InMemory;
 use Puzzle\AMQP\Messages\Message;
 use Puzzle\AMQP\Messages\Chunks\ChunkSize;
 
-class classTest extends TestCase
+class StreamedFileTest extends TestCase
 {
-    public function testPublish()
+    public function testPublish(): void
     {
         $client = new InMemory();
 
@@ -18,38 +20,38 @@ class classTest extends TestCase
 
         $result = $client->publish('myEx', $message);
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $message = new Message('key');
         $message->setStreamedFile(__FILE__);
 
-        $this->assertTrue(is_string($message->__toString()));
+        self::assertIsString($message->__toString());
     }
 
-    public function testAsTransportedWithoutChunkSize()
+    public function testAsTransportedWithoutChunkSize(): void
     {
         $body = new StreamedFile(__FILE__);
 
         $message = new Message('key');
         $message->setBody($body);
 
-        $this->assertSame(
+        self::assertSame(
             $body->inOriginalFormat(),
             $message->getBodyInTransportFormat()
         );
     }
 
-    public function testCannotConstruct()
+    public function testCannotConstruct(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
         new StreamedFile('/does/not/exist');
     }
 
-    public function testAsTransported()
+    public function testAsTransported(): void
     {
         $filepath = __FILE__;
         $size = new ChunkSize('100K');
@@ -57,9 +59,15 @@ class classTest extends TestCase
 
         $parts = ceil(filesize($filepath) / $size->toBytes());
 
-        $this->assertCount(
+        $streamedParts = [];
+        foreach($body->asTransported() as $part)
+        {
+            $streamedParts[] = $part;
+        }
+
+        self::assertCount(
             (int) $parts,
-            $body->asTransported()
+            $streamedParts
         );
     }
 }

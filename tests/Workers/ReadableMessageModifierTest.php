@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Workers;
 
 use PHPUnit\Framework\TestCase;
@@ -20,34 +22,33 @@ class ReadableMessageModifierTest extends TestCase
             'X-Name' => 'Josselin Vacheron',
             'X-Override' => 'Must change'
         ]);
-        
     }
     
-    private function assertBodyIsUnchanged(ReadableMessage $message)
+    private function assertBodyIsUnchanged(ReadableMessage $message): void
     {
-        $this->assertSame(ContentType::EMPTY_CONTENT, $message->getContentType());
-        $this->assertEmpty($message->getBodyInOriginalFormat());
+        self::assertSame(ContentType::EMPTY_CONTENT, $message->getContentType());
+        self::assertEmpty($message->getBodyInOriginalFormat());
     }
     
-    private function assertRoutingKeyIsUnchanged(ReadableMessage $message)
+    private function assertRoutingKeyIsUnchanged(ReadableMessage $message): void
     {
-        $this->assertSame('my.key', $message->getRoutingKey());
+        self::assertSame('my.key', $message->getRoutingKey());
     }
     
-    private function assertHeadersAreUnchanged(ReadableMessage $message)
+    private function assertHeadersAreUnchanged(ReadableMessage $message): void
     {
         $headers = $message->getHeaders();
-        
-        $this->assertArrayHasKey('X-PlusY', $headers);
-        $this->assertArrayHasKey('X-Name', $headers);
-        $this->assertArrayHasKey('X-Override', $headers);
-        
-        $this->assertSame(42, $headers['X-PlusY']);
-        $this->assertSame('Josselin Vacheron', $headers['X-Name']);
-        $this->assertSame('Must change', $headers['X-Override']);
+
+        self::assertArrayHasKey('X-Name', $headers);
+        self::assertArrayHasKey('X-Override', $headers);
+        self::assertArrayHasKey('X-PlusY', $headers);
+
+        self::assertSame(42, $headers['X-PlusY']);
+        self::assertSame('Josselin Vacheron', $headers['X-Name']);
+        self::assertSame('Must change', $headers['X-Override']);
     }
     
-    public function testModifyHeaders()
+    public function testModifyHeaders(): void
     {
         $builder = new ReadableMessageModifier($this->originalMessage);
         
@@ -59,19 +60,19 @@ class ReadableMessageModifierTest extends TestCase
         
         $headers = $message->getHeaders();
         
-        $this->assertArrayHasKey('X-PlusY', $headers);
-        $this->assertArrayHasKey('X-Override', $headers);
-        $this->assertArrayHasKey('X-New', $headers);
-        $this->assertArrayNotHasKey('X-Name', $headers);
+        self::assertArrayHasKey('X-PlusY', $headers);
+        self::assertArrayHasKey('X-Override', $headers);
+        self::assertArrayHasKey('X-New', $headers);
+        self::assertArrayNotHasKey('X-Name', $headers);
         
-        $this->assertSame('new new', $headers['X-New']);
-        $this->assertSame('has been changed', $headers['X-Override']);
+        self::assertSame('new new', $headers['X-New']);
+        self::assertSame('has been changed', $headers['X-Override']);
         
         $this->assertRoutingKeyIsUnchanged($message);
         $this->assertBodyIsUnchanged($message);
     }
     
-    public function testChangeRoutingKey()
+    public function testChangeRoutingKey(): void
     {
         $builder = new ReadableMessageModifier($this->originalMessage);
         
@@ -79,14 +80,14 @@ class ReadableMessageModifierTest extends TestCase
             ->changeRoutingKey('plouf')
             ->build();
 
-        $this->assertSame('plouf', $message->getRoutingKey());
-        $this->assertSame('my.key', $message->getRoutingKeyFromHeader());
+        self::assertSame('plouf', $message->getRoutingKey());
+        self::assertSame('my.key', $message->getRoutingKeyFromHeader());
         
         $this->assertBodyIsUnchanged($message);
         $this->assertHeadersAreUnchanged($message);
     }
     
-    public function testChangeBody()
+    public function testChangeBody(): void
     {
         $builder = new ReadableMessageModifier($this->originalMessage);
         
@@ -96,8 +97,8 @@ class ReadableMessageModifierTest extends TestCase
             ->changeBody(new Json($content))
             ->build();
 
-        $this->assertSame($content, $message->getBodyInOriginalFormat());
-        $this->assertSame(ContentType::JSON, $message->getContentType());
+        self::assertSame($content, $message->getBodyInOriginalFormat());
+        self::assertSame(ContentType::JSON, $message->getContentType());
 
         $this->assertRoutingKeyIsUnchanged($message);
         $this->assertHeadersAreUnchanged($message);

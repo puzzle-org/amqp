@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Workers;
 
 use PHPUnit\Framework\TestCase;
@@ -12,7 +14,7 @@ class FooBar
 
 class MessageAdapterFactoryAwareTest extends TestCase
 {
-    public function testFallbackConstructionWithStandardImplementation()
+    public function testFallbackConstructionWithStandardImplementation(): void
     {
         $foobar = new FooBar();
         $foobar->setMessageAdapterFactory(null);
@@ -24,6 +26,6 @@ class MessageAdapterFactoryAwareTest extends TestCase
 
         $adapter = $foobar->createMessageAdapter($message);
 
-        $this->assertTrue($adapter instanceof MessageAdapter);
+        self::assertInstanceOf(MessageAdapter::class, $adapter);
     }
 }

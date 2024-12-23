@@ -1,18 +1,21 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Chunks;
 
 final class ChunkSize
 {
-    private
-        $size,
+    private int
+        $size;
+    private ?string
         $unit;
 
     public function __construct($size)
     {
         $exception = new \InvalidArgumentException("Given chunk size is not valid");
 
-        if(preg_match("~^(\d+)(K|M)?$~", $size, $matches) !== 1)
+        if(preg_match("~^(\d+)(K|M)?$~", (string) $size, $matches) !== 1)
         {
             throw $exception;
         }
@@ -30,11 +33,11 @@ final class ChunkSize
         }
     }
 
-    public function toBytes()
+    public function toBytes(): int
     {
         $unitsConversion = [
             "K" => 1024,
-            "M" => pow(1024, 2),
+            "M" => 1024 ** 2,
         ];
 
         if(empty($this->unit))

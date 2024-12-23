@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Commands\Worker;
 
 use Symfony\Component\Console\Command\Command;
@@ -21,7 +23,7 @@ class ListAll extends Command
         $this->provider = $provider;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('list')
             ->setDescription('List AMQP workers');

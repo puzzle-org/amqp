@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages;
 
 use Puzzle\AMQP\ReadableMessage;
 
 interface OnConsumeProcessor extends Processor
 {
-    /**
-     * @return \Puzzle\AMQP\ReadableMessage
-     */
-    public function onConsume(ReadableMessage $message);
+    public function onConsume(ReadableMessage $message): ReadableMessage;
 }

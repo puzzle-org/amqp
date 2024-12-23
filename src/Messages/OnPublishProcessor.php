@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages;
 
 use Puzzle\AMQP\WritableMessage;
 
 interface OnPublishProcessor extends Processor
 {
-    /**
-     * @return void
-     */
-    public function onPublish(WritableMessage $message);
+    public function onPublish(WritableMessage $message): void;
 }

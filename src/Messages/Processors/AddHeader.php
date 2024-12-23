@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Processors;
 
 use Puzzle\AMQP\WritableMessage;
@@ -11,7 +13,7 @@ class AddHeader implements OnPublishProcessor
 {
     use LoggerAwareTrait;
     
-    private
+    private array
         $headers;
     
     public function __construct(array $headers = [])
@@ -20,14 +22,14 @@ class AddHeader implements OnPublishProcessor
         $this->logger = new NullLogger();
     }
     
-    public function addHeader($name, $value)
+    public function addHeader($name, $value): static
     {
         $this->headers[$name] = $value;
         
         return $this;
     }
         
-    public function onPublish(WritableMessage $message)
+    public function onPublish(WritableMessage $message): void
     {
         $alreadySetHeaders = $message->getHeaders();
         

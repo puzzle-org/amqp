@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages;
 
 interface ContentType
 {
-    const
+    const string
         TEXT = 'text/plain',
         JSON = 'application/json',
         BINARY = 'application/octet-stream',

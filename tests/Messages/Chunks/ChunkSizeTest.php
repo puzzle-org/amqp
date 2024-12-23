@@ -1,22 +1,23 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\Chunks;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ChunkSizeTest extends TestCase
 {
-    /**
-     * @dataProvider providerTestValidChunkSize
-     */
-    public function testValidChunkSize($expected, $size)
+    #[DataProvider('providerTestValidChunkSize')]
+    public function testValidChunkSize($expected, $size): void
     {
         $chunkSize = new ChunkSize($size);
 
-        $this->assertSame($expected, $chunkSize->toBytes());
+        self::assertSame($expected, $chunkSize->toBytes());
     }
 
-    public function providerTestValidChunkSize()
+    public static function providerTestValidChunkSize(): array
     {
         return [
             [ 3945, 3945 ],
@@ -26,17 +27,15 @@ class ChunkSizeTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider providerTestInvalidSize
-     */
-    public function testInvalidSize($size)
+    #[DataProvider('providerTestInvalidSize')]
+    public function testInvalidSize($size): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
         new ChunkSize($size);
     }
 
-    public function providerTestInvalidSize()
+    public static function providerTestInvalidSize(): array
     {
         return [
             [ 'pony' ],

@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Services;
 
 use Gaufrette\Filesystem;
 use Gaufrette\Adapter\InMemory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\NullOutput;
 
 class SupervisorConfigurationGeneratorTest extends TestCase
 {
-    /**
-     * @dataProvider providerTestGenerate
-     */
-    public function testGenerate($server, $workers, $autostart, $autorestart, $expectedFilenames, $expectedTemplates)
+    #[DataProvider('providerTestGenerate')]
+    public function testGenerate($workers, $autostart, $autorestart, $files, $templates): void
     {
         $workers = $this->generateWorkers($workers);
 
@@ -26,14 +27,14 @@ class SupervisorConfigurationGeneratorTest extends TestCase
 
         foreach($filesystem->keys() as $filename)
         {
-            $this->assertTrue(in_array($filename, $expectedFilenames), sprintf('The file %s cannot be found in %s', $filename, implode(',', $expectedFilenames)));
+            self::assertTrue(in_array($filename, $files), sprintf('The file %s cannot be found in %s', $filename, implode(',', $files)));
 
-            $key = array_search($filename, $expectedFilenames);
-            $this->assertEquals($expectedTemplates[$key], $filesystem->get($filename)->getContent());
+            $key = array_search($filename, $files);
+            self::assertEquals($templates[$key], $filesystem->get($filename)->getContent());
         }
     }
 
-    public function providerTestGenerate()
+    public static function providerTestGenerate(): array
     {
         $appId = 'burger_poney';
 
@@ -41,7 +42,6 @@ class SupervisorConfigurationGeneratorTest extends TestCase
 
             'one worker, one server'
                 => array(
-                    'server' => 'worker',
                     'workers' => [
                         'poney.run',
                     ],
@@ -51,13 +51,12 @@ class SupervisorConfigurationGeneratorTest extends TestCase
                         'burger_poney--poney.run.conf',
                     ],
                     'templates' => [
-                        $this->generateExpectedTemplate($appId, 'poney.run', true, true),
+                        self::generateExpectedTemplate($appId, 'poney.run', true, true),
                     ]
             ),
 
             'many worker, one server'
                 => array(
-                    'server' => 'worker',
                     'workers' => [
                         'poney.run',
                         'poney.eat',
@@ -71,15 +70,14 @@ class SupervisorConfigurationGeneratorTest extends TestCase
                         'burger_poney--poney.sleep.conf'
                     ],
                     'templates' => [
-                        $this->generateExpectedTemplate($appId, 'poney.run', true, true),
-                        $this->generateExpectedTemplate($appId, 'poney.eat', true, true),
-                        $this->generateExpectedTemplate($appId, 'poney.sleep', true, true)
+                        self::generateExpectedTemplate($appId, 'poney.run', true, true),
+                        self::generateExpectedTemplate($appId, 'poney.eat', true, true),
+                        self::generateExpectedTemplate($appId, 'poney.sleep', true, true)
                     ],
                 ),
 
             'autostart disabled, autorestart enabled'
                 => array(
-                    'server' => 'worker',
                     'workers' => [
                         'poney.run',
                         'poney.eat',
@@ -93,15 +91,14 @@ class SupervisorConfigurationGeneratorTest extends TestCase
                         'burger_poney--poney.sleep.conf'
                     ],
                     'templates' => [
-                        $this->generateExpectedTemplate($appId, 'poney.run', false, true),
-                        $this->generateExpectedTemplate($appId, 'poney.eat', false, true),
-                        $this->generateExpectedTemplate($appId, 'poney.sleep', false, true)
+                        self::generateExpectedTemplate($appId, 'poney.run', false, true),
+                        self::generateExpectedTemplate($appId, 'poney.eat', false, true),
+                        self::generateExpectedTemplate($appId, 'poney.sleep', false, true)
                     ],
                 ),
 
             'autostart disabled, autorestart disabled'
                 => array(
-                    'server' => 'worker',
                     'workers' => [
                         'poney.run',
                         'poney.eat',
@@ -115,15 +112,14 @@ class SupervisorConfigurationGeneratorTest extends TestCase
                         'burger_poney--poney.sleep.conf'
                     ],
                     'templates' => [
-                        $this->generateExpectedTemplate($appId, 'poney.run', false, false),
-                        $this->generateExpectedTemplate($appId, 'poney.eat', false, false),
-                        $this->generateExpectedTemplate($appId, 'poney.sleep', false, false)
+                        self::generateExpectedTemplate($appId, 'poney.run', false, false),
+                        self::generateExpectedTemplate($appId, 'poney.eat', false, false),
+                        self::generateExpectedTemplate($appId, 'poney.sleep', false, false)
                     ],
                 ),
 
             'autostart enabled, autorestart disabled'
                 => array(
-                    'server' => 'worker',
                     'workers' => [
                         'poney.run',
                         'poney.eat',
@@ -137,16 +133,16 @@ class SupervisorConfigurationGeneratorTest extends TestCase
                         'burger_poney--poney.sleep.conf'
                     ],
                     'templates' => [
-                        $this->generateExpectedTemplate($appId, 'poney.run', true, false),
-                        $this->generateExpectedTemplate($appId, 'poney.eat', true, false),
-                        $this->generateExpectedTemplate($appId, 'poney.sleep', true, false)
+                        self::generateExpectedTemplate($appId, 'poney.run', true, false),
+                        self::generateExpectedTemplate($appId, 'poney.eat', true, false),
+                        self::generateExpectedTemplate($appId, 'poney.sleep', true, false)
                     ],
                 ),
 
         ];
     }
 
-    private function generateExpectedTemplate($appId, $worker, $autostart, $autorestart)
+    private static function generateExpectedTemplate($appId, $worker, $autostart, $autorestart): string
     {
         $autostart = $autostart === true ? 'true' : 'false';
         $autorestart = $autorestart === true ? 'true' : 'false';
@@ -161,7 +157,7 @@ class SupervisorConfigurationGeneratorTest extends TestCase
             TXT;
     }
 
-    private function generateWorkers(array $workers)
+    private function generateWorkers(array $workers): array
     {
         return array_flip($workers);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP;
 
 use Psr\Log\LoggerAwareInterface;
@@ -7,28 +9,13 @@ use Puzzle\AMQP\Messages\Processor;
 
 interface Client extends LoggerAwareInterface
 {
-    /**
-     * @return boolean
-     */
-    public function publish($exchangeName, WritableMessage $message);
+    public function publish(string $exchangeName, WritableMessage $message): bool;
 
-    /**
-     * @return \AMQPQueue
-     */
-    public function getQueue($queueName);
+    public function getQueue(string $queueName): \AMQPQueue;
 
-    /**
-     * @return \AMQPExchange
-     */
-    public function getExchange($exchangeName);
+    public function getExchange(?string $exchangeName): \AMQPExchange;
 
-    /**
-     * @return self
-     */
-    public function setMessageProcessors(array $processors);
+    public function setMessageProcessors(array $processors): self;
 
-    /**
-     * @return self
-     */
-    public function appendMessageProcessor(Processor $processor);
+    public function appendMessageProcessor(Processor $processor): self;
 }

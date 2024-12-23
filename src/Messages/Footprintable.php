@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages;
 
 interface Footprintable
 {
-    /**
-     * @return string
-     */
-    public function footprint();
+    public function footprint(): string;
 }

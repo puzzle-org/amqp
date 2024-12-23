@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Messages\BodyFactories;
 
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
+use Puzzle\AMQP\Messages\Body;
 use Puzzle\AMQP\Messages\TypedBodyFactories;
 use Puzzle\AMQP\Messages\BodyFactory;
 use Puzzle\AMQP\Messages\ContentType;
@@ -14,16 +17,16 @@ class Standard implements BodyFactory
 {
     use LoggerAwareTrait;
     
-    private
+    private array
         $factories;
     
     public function __construct()
     {
-        $this->logger = new NullLogger();
         $this->initializeFactories();
+        $this->logger = new NullLogger();
     }
     
-    private function initializeFactories()
+    private function initializeFactories(): void
     {
         $this->factories = [
             ContentType::TEXT => new TypedBodyFactories\Text(),
@@ -32,14 +35,14 @@ class Standard implements BodyFactory
         ];
     }
     
-    public function handleContentType($contentType, TypedBodyFactory $factory)
+    public function handleContentType($contentType, TypedBodyFactory $factory): static
     {
         $this->factories[$contentType] = $factory;
         
         return $this;
     }
     
-    public function build($contentType, $contentAsTransported)
+    public function build($contentType, $contentAsTransported): Body
     {
         if(isset($this->factories[$contentType]))
         {

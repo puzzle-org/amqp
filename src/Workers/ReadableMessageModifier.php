@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Puzzle\AMQP\Workers;
 
 use Puzzle\AMQP\ReadableMessage;
@@ -7,10 +9,13 @@ use Puzzle\AMQP\Messages\Body;
 
 class ReadableMessageModifier
 {
-    private
-        $originalMessage,
-        $newRoutingKey,
-        $newBody,
+    private ReadableMessage
+        $originalMessage;
+    private string
+        $newRoutingKey;
+    private ?Body
+        $newBody;
+    private array
         $newAttributeValues,
         $newHeaders,
         $droppedHeaders;
@@ -27,41 +32,42 @@ class ReadableMessageModifier
         $this->droppedHeaders = [];
     }
     
-    public function changeRoutingKey($newRoutingKey)
+    public function changeRoutingKey(string $newRoutingKey): static
     {
         $this->newRoutingKey = $newRoutingKey;
         
         return $this;
     }
     
-    public function changeBody(Body $newBody)
+    public function changeBody(Body $newBody): static
     {
         $this->newBody = $newBody;
         
         return $this;
     }
     
-    public function changeAttribute($name, $value)
+    public function changeAttribute(string $name, mixed $value): static
     {
         $this->newAttributeValues[$name] = $value;
         
         return $this;
     }
     
-    public function addHeader($headerName, $value)
+    public function addHeader(string $headerName, mixed $value): static
     {
         $this->newHeaders[$headerName] = $value;
         
         return $this;
     }
-    public function dropHeader($headerName)
+
+    public function dropHeader(string $headerName): static
     {
         $this->droppedHeaders[] = $headerName;
         
         return $this;
     }
     
-    public function build()
+    public function build(): MessageAdapter
     {
         $properties = $this->buildAttributes(
             $this->originalMessage->getAttributes()
@@ -78,7 +84,7 @@ class ReadableMessageModifier
         );
     }
     
-    private function extractHeaders(array $properties)
+    private function extractHeaders(array $properties): mixed
     {
         $headers = [];
 
@@ -90,7 +96,7 @@ class ReadableMessageModifier
         return $headers;
     }
     
-    private function buildBody()
+    private function buildBody(): mixed
     {
         if($this->newBody instanceof Body)
         {
@@ -100,7 +106,7 @@ class ReadableMessageModifier
         return $this->originalMessage->getBodyAsTransported();
     }
     
-    private function buildAttributes(array $attributes)
+    private function buildAttributes(array $attributes): array
     {
         if($this->newBody instanceof Body)
         {
@@ -120,7 +126,7 @@ class ReadableMessageModifier
         return $attributes;
     }
     
-    private function buildHeaders(array $headers)
+    private function buildHeaders(array $headers): array
     {
         foreach($this->droppedHeaders as $droppedHeader)
         {
