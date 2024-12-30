@@ -11,8 +11,8 @@ interface MessageMetadata
         PERSISTENT = 2;
 
     public function getRoutingKey(): string;
-    
-    public function getContentType(): string;
+
+    public function getContentType(): ?string;
 
     public function getHeaders(): array;
     

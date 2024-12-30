@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Swarrot\Broker\Message;
 use Puzzle\AMQP\Messages\ContentType;
-use Puzzle\AMQP\Messages\Bodies\Json;
 use Puzzle\AMQP\Messages\Bodies\Text;
 use Puzzle\AMQP\Messages\InMemory;
 use Puzzle\AMQP\WritableMessage;
@@ -118,6 +117,45 @@ TEXT;
         $message = (new MessageAdapterFactory())->build($swarrotMessage);
 
         $message->getAttribute('not_an_amqp_attribute');
+    }
+
+    #[DataProvider('providerTestAppId')]
+    public function testAppId(?string $appId): void
+    {
+        $swarrotMessage = new Message('', [
+            'content_type' => ContentType::EMPTY_CONTENT,
+            'app_id' => $appId,
+        ]);
+        $message = (new MessageAdapterFactory())->build($swarrotMessage);
+
+        self::assertEquals($appId, $message->getAppId());
+    }
+
+    public static function providerTestAppId(): array
+    {
+        return [
+            'nominal' => ['killing_application'],
+            'is nullable' => [null],
+        ];
+    }
+
+    #[DataProvider('providerTestContentType')]
+    public function testContentType(?string $contentType): void
+    {
+        $swarrotMessage = new Message('', [
+            'content_type' => $contentType,
+        ]);
+        $message = (new MessageAdapterFactory())->build($swarrotMessage);
+
+        self::assertEquals($contentType, $message->getContentType());
+    }
+
+    public static function providerTestContentType(): array
+    {
+        return [
+            'nominal' => [ ContentType::BINARY ],
+            'is nullable' => [null],
+        ];
     }
 
     public function testInvalidConstruction(): void

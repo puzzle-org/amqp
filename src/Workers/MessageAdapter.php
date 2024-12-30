@@ -34,12 +34,12 @@ class MessageAdapter implements ReadableMessage
         return $this->getAttribute('routing_key');
     }
 
-    public function getContentType(): string
+    public function getContentType(): ?string
     {
         return $this->getAttribute('content_type');
     }
 
-    public function getAppId(): string
+    public function getAppId(): ?string
     {
         return $this->getAttribute('app_id');
     }
