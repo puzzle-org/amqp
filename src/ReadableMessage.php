@@ -10,7 +10,7 @@ interface ReadableMessage extends MessageMetadata
     
     public function getBodyAsTransported(): mixed;
 
-    public function getAppId(): string;
+    public function getAppId(): ?string;
 
     public function getAttributes(): array;
     
