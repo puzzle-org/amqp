@@ -157,6 +157,6 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
             ->dropHeader(self::HEADER_COMPRESSION)
             ->dropHeader(self::HEADER_COMPRESSION_CONTENT_TYPE);
             
-        return $builder->build();
+        return $builder->build($this->bodyFactory);
     }
 }
