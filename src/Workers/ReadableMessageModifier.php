@@ -4,8 +4,10 @@ declare(strict_types = 1);
 
 namespace Puzzle\AMQP\Workers;
 
+use Puzzle\AMQP\Messages\BodyFactory;
 use Puzzle\AMQP\ReadableMessage;
 use Puzzle\AMQP\Messages\Body;
+use Swarrot\Broker\Message;
 
 class ReadableMessageModifier
 {
@@ -67,7 +69,7 @@ class ReadableMessageModifier
         return $this;
     }
     
-    public function build(): MessageAdapter
+    public function build(?BodyFactory $bodyFactory = null): MessageAdapter
     {
         $properties = $this->buildAttributes(
             $this->originalMessage->getAttributes()
@@ -76,11 +78,11 @@ class ReadableMessageModifier
         $properties['headers'] = $this->buildHeaders(
             $this->extractHeaders($properties)
         );
-        
-        $factory = new MessageAdapterFactory();
+
+        $factory = new MessageAdapterFactory($bodyFactory);
         
         return $factory->build(
-            new \Swarrot\Broker\Message($this->buildBody(), $properties)
+            new Message($this->buildBody(), $properties)
         );
     }
     
