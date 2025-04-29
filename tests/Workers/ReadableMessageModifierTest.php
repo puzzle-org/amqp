@@ -2,7 +2,10 @@
 
 namespace Puzzle\AMQP\Workers;
 
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Puzzle\AMQP\Messages\Bodies\Text;
+use Puzzle\AMQP\Messages\BodyFactories\Standard;
 use Puzzle\AMQP\Messages\InMemory;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\ReadableMessage;
@@ -101,5 +104,23 @@ class ReadableMessageModifierTest extends TestCase
 
         $this->assertRoutingKeyIsUnchanged($message);
         $this->assertHeadersAreUnchanged($message);
+    }
+
+    public function testBuildWithCustomBodyFactory(): void
+    {
+        $factory = new Standard();
+        $factory->handleContentType('application/pouet', new \Puzzle\AMQP\Messages\TypedBodyFactories\Json());
+
+        $content = '{"a":1}';
+        $body = new Text($content);
+        $originalMessage = InMemory::build('my.key', $body, [], ['content_type' => 'application/pouet']);
+        Assert::assertEquals($content, $originalMessage->getBodyAsTransported());
+
+        $builder = new ReadableMessageModifier($originalMessage);
+
+        $message = $builder->build($factory);
+
+        Assert::assertEquals(['a' => 1], $message->getBodyInOriginalFormat());
+        Assert::assertEquals($content, $message->getBodyAsTransported());
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Puzzle\AMQP\Messages\Processors;
 
+use Puzzle\AMQP\Messages\ContentType;
+use Puzzle\AMQP\Messages\Message;
 use Puzzle\AMQP\WritableMessage;
 use Puzzle\AMQP\Messages\Bodies\Binary;
 use Psr\Log\LoggerAwareTrait;
@@ -114,6 +116,7 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
         ]);
         
         $message->setBody(new Binary($compressedContent));
+        $message->setAttribute(Message::ATTRIBUTE_CONTENT_TYPE, ContentType::BINARY);
     }
     
     public function onConsume(ReadableMessage $message)
@@ -157,6 +160,6 @@ class GZip implements OnPublishProcessor, OnConsumeProcessor
             ->dropHeader(self::HEADER_COMPRESSION)
             ->dropHeader(self::HEADER_COMPRESSION_CONTENT_TYPE);
             
-        return $builder->build();
+        return $builder->build($this->bodyFactory);
     }
 }
