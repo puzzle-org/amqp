@@ -124,7 +124,7 @@ class MessageAdapter implements ReadableMessage
         $writable->addHeaders($this->getHeaders());
 
         $attributes = $this->getAttributes();
-        $skippedAttributes = array('timestamp', 'headers', 'app_id', 'routing_key');
+        $skippedAttributes = array('timestamp', 'headers', 'app_id', 'routing_key', 'content_type');
         foreach($attributes as $attributeName => $value)
         {
             if(! in_array($attributeName, $skippedAttributes))
