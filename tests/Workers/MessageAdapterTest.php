@@ -2,9 +2,9 @@
 
 namespace Puzzle\AMQP\Workers;
 
+use Puzzle\AMQP\Messages\Bodies\Binary;
 use Swarrot\Broker\Message;
 use Puzzle\AMQP\Messages\ContentType;
-use Puzzle\AMQP\Messages\Bodies\Json;
 use Puzzle\AMQP\Messages\Bodies\Text;
 use Puzzle\AMQP\Messages\InMemory;
 use Puzzle\AMQP\WritableMessage;
@@ -214,5 +214,30 @@ TEXT;
             [true, 'old.routing.key'],
             [false, 'new.routing.key'],
         ];
+    }
+
+    public function testCloneIntoWritableMessageFromCompressedMessage()
+    {
+        $readableMessage = InMemory::build('old.routing.key', new Binary('This is fine'), [
+            'compression' => 'gzip',
+            'compression_content-type' => 'application/json',
+        ], [
+            'content_type' => 'application/octet-stream',
+        ]);
+
+        $message = $readableMessage->cloneIntoWritableMessage(
+            new \Puzzle\AMQP\Messages\Message('new.routing.key'),
+        );
+
+        $this->assertTrue($message instanceof WritableMessage::class);
+        $this->assertSame('new.routing.key', $message->getRoutingKey());
+
+        $headers = $message->getHeaders();
+        $this->assertSameArrayExceptOrder(
+            ['compression', 'compression_content-type', 'routing_key', 'app_id', 'message_datetime'],
+            array_keys($headers)
+        );
+        $this->assertSame('application/json', $headers['compression_content-type']);
+        $this->assertSame('gzip', $headers['compression']);
     }
 }
