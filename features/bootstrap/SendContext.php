@@ -111,9 +111,9 @@ final class SendContext extends AbstractRabbitMQContext
     }
     
     /**
-     * @Then The message in queue :queueName contains a gzipped message
+     * @Then The message in queue :queueName contains :content and is a gzipped message
      */
-    public function theMessageInQueueContainsAGzippedMessage(string $queueName): void
+    public function theMessageInQueueContainsAGzippedMessage(string $content, string $queueName): void
     {
         $message = $this->theMessageInQueueContains(self::TEXT_ROUTING_KEY, false, $queueName, ContentType::BINARY);
 
@@ -124,6 +124,7 @@ final class SendContext extends AbstractRabbitMQContext
         Assert::assertArrayHasKey(GZip::HEADER_COMPRESSION_CONTENT_TYPE, $headers);
         Assert::assertSame(Gzip::COMPRESSION_ALGORITHM, $headers[Gzip::HEADER_COMPRESSION]);
         Assert::assertSame(ContentType::TEXT, $headers[Gzip::HEADER_COMPRESSION_CONTENT_TYPE]);
+        Assert::assertSame($content, gzdecode(base64_decode($message['payload'])));
     }
     
     private function theMessageInQueueContains(string $routingKey, string|bool $content, string $queueName, string $contentType): array
