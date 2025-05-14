@@ -226,10 +226,10 @@ TEXT;
         ]);
 
         $message = $readableMessage->cloneIntoWritableMessage(
-            new \Puzzle\AMQP\Messages\Message('new.routing.key'),
+            new \Puzzle\AMQP\Messages\Message('new.routing.key')
         );
 
-        $this->assertTrue($message instanceof WritableMessage::class);
+        $this->assertTrue($message instanceof WritableMessage);
         $this->assertSame('new.routing.key', $message->getRoutingKey());
 
         $headers = $message->getHeaders();
