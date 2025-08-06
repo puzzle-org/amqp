@@ -8,7 +8,7 @@ RMQ_USER=guest
 -include .settings.mk
 
 export RMQ_PORT
-export COMPOSE_PROJECT_NAME=puzzle-amqp
+export COMPOSE_PROJECT_NAME=puzzle_amqp
 
 CONTAINER_SOURCE_PATH=/usr/src/puzzle-amqp
 
@@ -27,8 +27,13 @@ wait:
 up: config
 	docker compose -f docker/docker-compose.yml up -d
 
+reup: down up
+
 build: config
 	docker compose -f docker/docker-compose.yml build
+
+build-no-cache: config
+	docker compose -f docker/docker-compose.yml build --no-cache
 
 rebuild: build up
 
@@ -53,13 +58,7 @@ reconfigure: clean-configuration configure
 #------------------------------------------------------------------------------
 # Behat test suite
 #------------------------------------------------------------------------------
-cli_exec = docker run -it --rm \
-	                 -v ${HOST_SOURCE_PATH}:${CONTAINER_SOURCE_PATH} \
-	                 -w ${CONTAINER_SOURCE_PATH} \
-	                 --link puzzle-amqp-rabbitmq:rabbitmq \
-	                 --net puzzle-amqp_default \
-	                 puzzle-amqp/app-server \
-	                 $1
+cli_exec = docker compose -f docker/docker-compose.yml exec app-server $1
 
 full-test: init run-behat down ## Run behat tests (and manage containers)
 
