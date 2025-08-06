@@ -4,6 +4,7 @@
 composer.phar
 composer.lock
 vendor/
+/.composer-home
 
 # =============================================================================
 # IDE files

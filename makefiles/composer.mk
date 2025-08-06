@@ -14,13 +14,16 @@ COMPOSER_OPTIONS=--no-plugins
 
 #------------------------------------------------------------------------------
 
-composer = $(DOCKER_RUN) --rm \
+composer-container = $(DOCKER_RUN) --rm \
                 -v ${HOST_SOURCE_PATH}:/var/www/app \
                 -v ~/.cache/composer:/tmp/composer \
+                -v ./.composer-home:/.composer \
                 -e COMPOSER_CACHE_DIR=/tmp/composer \
                 -w /var/www/app \
                 -u ${USER_ID}:${GROUP_ID} \
-                puzzle-amqp/app-server:latest php composer.phar ${COMPOSER_OPTIONS} $(COMPOSER_INTERACTIVE) $1 $2
+                puzzle-amqp/app-server:latest $1
+
+composer = $(call composer-container, php composer.phar ${COMPOSER_OPTIONS} $(COMPOSER_INTERACTIVE) $1 $2)
 
 # Spread cli arguments
 ifneq (,$(filter $(firstword $(MAKECMDGOALS)),composer))
@@ -63,6 +66,10 @@ composer-dumpautoload: -composer-init
 composer-version: -composer-init
 	$(call composer, --version)
 
+.PHONY: composer-bash
+composer-bash: -composer-init
+	$(call composer-container, bash)
+
 #------------------------------------------------------------------------------
 # Non PHONY targets
 #------------------------------------------------------------------------------
@@ -73,10 +80,13 @@ vendor/: composer.json
 #------------------------------------------------------------------------------
 
 .PHONY: -composer-init
--composer-init: ~/.cache/composer composer.phar
+-composer-init: .composer-home ~/.cache/composer .composer-home composer.phar
 
 ~/.cache/composer:
 	mkdir -p ~/.cache/composer
+
+.composer-home:
+	mkdir .composer-home
 
 composer.phar:
 	wget https://getcomposer.org/download/2.2.25/composer.phar -O composer.phar
