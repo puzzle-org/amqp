@@ -6,6 +6,8 @@ GROUP_ID=$(shell id -g)
 export USER_ID
 export GROUP_ID
 
+ENV_INTERACTIVE?=true
+
 # Spread cli arguments for composer & phpunit
 ifneq (,$(filter $(firstword $(MAKECMDGOALS)),composer phpunit))
     CLI_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
@@ -16,6 +18,7 @@ endif
 # Includes
 #------------------------------------------------------------------------------
 
+include makefiles/executables.mk
 include makefiles/composer.mk
 include makefiles/whalephant.mk
 include makefiles/phpunit.mk

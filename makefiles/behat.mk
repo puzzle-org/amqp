@@ -38,7 +38,7 @@ down:
 #------------------------------------------------------------------------------
 # RabbitMQ configuration
 #------------------------------------------------------------------------------
-rabbitmqctl = docker exec --tty -i puzzle-amqp-rabbitmq rabbitmqctl $1
+rabbitmqctl = $(DOCKER_EXEC) puzzle_amqp-rabbitmq-1 rabbitmqctl $1
 
 configure:
 	$(call rabbitmqctl, add_vhost ${RMQ_VHOST})

@@ -1,15 +1,15 @@
 #------------------------------------------------------------------------------
 # Whalephant
 #------------------------------------------------------------------------------
-docker/images/phpunit/Dockerfile: whalephant 
-	docker run -it --rm --name whalephant \
+docker/images/phpunit/Dockerfile: whalephant
+	$(DOCKER_RUN) --rm --name whalephant \
                -v ${HOST_SOURCE_PATH}:${CONTAINER_SOURCE_PATH} \
                -w ${CONTAINER_SOURCE_PATH} \
                -u ${USER_ID}:${GROUP_ID} \
                php:8.2-cli \
                ./whalephant generate docker/images/phpunit
 
-clean-whalephant: 
+clean-whalephant:
 	rm -f whalephant
 
 whalephant:
