@@ -2,10 +2,6 @@
 # Composer
 #------------------------------------------------------------------------------
 
-COMPOSER_VERSION?=2
-
-#------------------------------------------------------------------------------
-
 #
 # COMPOSER_OPTION
 #    This variable defines options always passed to composer.
@@ -24,7 +20,7 @@ composer = $(DOCKER_RUN) --rm \
                 -e COMPOSER_CACHE_DIR=/tmp/composer \
                 -w /var/www/app \
                 -u ${USER_ID}:${GROUP_ID} \
-                composer:${COMPOSER_VERSION} ${COMPOSER_OPTIONS} $(COMPOSER_INTERACTIVE) $1 $2
+                puzzle-amqp/app-server:latest php composer.phar ${COMPOSER_OPTIONS} $(COMPOSER_INTERACTIVE) $1 $2
 
 # Spread cli arguments
 ifneq (,$(filter $(firstword $(MAKECMDGOALS)),composer))
@@ -36,7 +32,7 @@ endif
 COMPOSER_ARGS=
 ifeq (composer, $(firstword $(MAKECMDGOALS)))
     ifneq (,$(filter install update require,$(CLI_ARGS)))
-        COMPOSER_ARGS=--ignore-platform-reqs
+        COMPOSER_ARGS=
     endif
 endif
 
@@ -53,11 +49,11 @@ composer-install: -composer-init vendor/ ## Install dependencies via composer
 # just rm -rf vendor/<lib_path> + make composer-install-sources
 .PHONY: composer-install-sources
 composer-install-sources: -composer-init
-	$(call composer, install, --ignore-platform-reqs --prefer-source)
+	$(call composer, install, --prefer-source)
 
 .PHONY: composer-update
 composer-update: -composer-init
-	$(call composer, update, --ignore-platform-reqs)
+	$(call composer, update,)
 
 .PHONY: composer-dumpautoload
 composer-dumpautoload: -composer-init
@@ -77,10 +73,13 @@ vendor/: composer.json
 #------------------------------------------------------------------------------
 
 .PHONY: -composer-init
--composer-init: ~/.cache/composer
+-composer-init: ~/.cache/composer composer.phar
 
 ~/.cache/composer:
 	mkdir -p ~/.cache/composer
+
+composer.phar:
+	wget https://getcomposer.org/download/2.2.25/composer.phar -O composer.phar
 
 #------------------------------------------------------------------------------
 
