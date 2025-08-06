@@ -109,7 +109,7 @@ class SendContext extends AbstractRabbitMQContext
     /**
      * @Then The message in queue :queueName contains :content and is a gzipped message
      */
-    public function theMessageInQueueContainsAGzippedMessage(string $content, string $queueName)
+    public function theMessageInQueueContainsAGzippedMessage($content, $queueName)
     {
         $message = $this->theMessageInQueueContains(self::TEXT_ROUTING_KEY, false, $queueName, ContentType::BINARY);
 
