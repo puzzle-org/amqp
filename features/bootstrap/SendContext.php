@@ -121,7 +121,7 @@ class SendContext extends AbstractRabbitMQContext
         \PHPUnit_Framework_Assert::assertArrayHasKey(GZip::HEADER_COMPRESSION_CONTENT_TYPE, $headers);
         \PHPUnit_Framework_Assert::assertSame(Gzip::COMPRESSION_ALGORITHM, $headers[Gzip::HEADER_COMPRESSION]);
         \PHPUnit_Framework_Assert::assertSame(ContentType::TEXT, $headers[Gzip::HEADER_COMPRESSION_CONTENT_TYPE]);
-        \PHPUnit_Framework_Assert::assertSame($content, gzdecode(base64_decode($message['payload'])));
+        \PHPUnit_Framework_Assert::assertSame($content, gzdecode(base64_decode($message->payload)));
     }
 
     private function theMessageInQueueContains($routingKey, $content, $queueName, $contentType)
