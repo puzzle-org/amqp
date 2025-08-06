@@ -10,7 +10,10 @@ services:
         stop_signal: SIGKILL
         command: tail -f /dev/null
     rabbitmq:
-        image: rabbitmq:3-management-alpine
+        # Note :
+        #   We are using 3.6 here because the Rabbitmq API client used in functional tests
+        #   is not compatible with higher version
+        image: rabbitmq:3.6-management-alpine
         ports:
             - "${RMQ_PORT}:15672"
             - "<%amqp.port%>:5672"
