@@ -8,7 +8,7 @@ RMQ_USER=guest
 -include .settings.mk
 
 export RMQ_PORT
-export COMPOSE_PROJECT_NAME=puzzle-amqp
+export COMPOSE_PROJECT_NAME=puzzle_amqp
 
 CONTAINER_SOURCE_PATH=/usr/src/puzzle-amqp
 
@@ -16,7 +16,7 @@ CONTAINER_SOURCE_PATH=/usr/src/puzzle-amqp
 #------------------------------------------------------------------------------
 # Helpers
 #------------------------------------------------------------------------------
-init: up wait configure
+init: up wait configure composer-install
 
 wait:
 	sleep 5
@@ -25,20 +25,25 @@ wait:
 # Containers management
 #------------------------------------------------------------------------------
 up: config
-	docker-compose -f docker/docker-compose.yml up -d
+	docker compose -f docker/docker-compose.yml up -d
+
+reup: down up
 
 build: config
-	docker-compose -f docker/docker-compose.yml build
+	docker compose -f docker/docker-compose.yml build
+
+build-no-cache: config
+	docker compose -f docker/docker-compose.yml build --no-cache
 
 rebuild: build up
 
 down:
-	docker-compose -f docker/docker-compose.yml down --volumes
+	docker compose -f docker/docker-compose.yml down --volumes
 
 #------------------------------------------------------------------------------
 # RabbitMQ configuration
 #------------------------------------------------------------------------------
-rabbitmqctl = docker exec --tty -i puzzle-amqp-rabbitmq rabbitmqctl $1
+rabbitmqctl = $(DOCKER_EXEC) puzzle_amqp-rabbitmq-1 rabbitmqctl $1
 
 configure:
 	$(call rabbitmqctl, add_vhost ${RMQ_VHOST})
@@ -53,13 +58,7 @@ reconfigure: clean-configuration configure
 #------------------------------------------------------------------------------
 # Behat test suite
 #------------------------------------------------------------------------------
-cli_exec = docker run -it --rm \
-	                 -v ${HOST_SOURCE_PATH}:${CONTAINER_SOURCE_PATH} \
-	                 -w ${CONTAINER_SOURCE_PATH} \
-	                 --link puzzle-amqp-rabbitmq:rabbitmq \
-	                 --net puzzleamqp_default \
-	                 puzzle-amqp/app-server \
-	                 $1
+cli_exec = docker compose -f docker/docker-compose.yml exec app-server $1
 
 full-test: init run-behat down ## Run behat tests (and manage containers)
 

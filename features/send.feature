@@ -21,4 +21,4 @@ Scenario: Send json message
 Scenario: Send gzipped text message
     When I send the gzipped text message 'Compressed text'
     Then The queue 'test_1' must contain 1 message
-    And The message in queue 'test_1' contains a gzipped message
+    And The message in queue 'test_1' contains 'Compressed text' and is a gzipped message

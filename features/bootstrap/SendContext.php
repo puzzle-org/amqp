@@ -17,7 +17,7 @@ class SendContext extends AbstractRabbitMQContext
         $this->api->purgeQueue($this->vhost(), $queue);
         $this->assertMessagesInQueue($queue, 0);
     }
-    
+
     /**
      * @When I send the text message :bodyContent
      */
@@ -25,10 +25,10 @@ class SendContext extends AbstractRabbitMQContext
     {
         $message = new Message(self::TEXT_ROUTING_KEY);
         $message->setText($bodyContent);
-     
+
         $this->iSendMessage($message);
     }
-    
+
     /**
      * @When I send the xml message :bodyContent
      */
@@ -47,14 +47,14 @@ class SendContext extends AbstractRabbitMQContext
     public function iSendTheJsonMessageWithRoutingKey($bodyContent)
     {
         $message = new Message(self::JSON_ROUTING_KEY);
-        
+
         $body = new Json();
         $body->changeContentWithJson($bodyContent);
         $message->setBody($body);
-     
+
         $this->iSendMessage($message);
     }
-    
+
     /**
      * @When I send the gzipped text message :bodyContent
      */
@@ -70,10 +70,10 @@ class SendContext extends AbstractRabbitMQContext
     private function iSendMessage(Message $message)
     {
         $result = $this->client->publish($this->exchange, $message);
-        
+
         \PHPUnit_Framework_Assert::assertTrue($result);
     }
-    
+
     /**
      * @Then The queue :queue must contain :nbMessages message
      */
@@ -81,7 +81,7 @@ class SendContext extends AbstractRabbitMQContext
     {
         $this->assertMessagesInQueue($queue, (int) $nbMessages);
     }
-    
+
     /**
      * @Then The message in queue :queueName contains :content and is a text message
      */
@@ -89,7 +89,7 @@ class SendContext extends AbstractRabbitMQContext
     {
         $this->theMessageInQueueContains(self::TEXT_ROUTING_KEY, $content, $queueName, "text/plain");
     }
-    
+
     /**
      * @Then The message in queue :queueName contains :content and is a xml message
      */
@@ -97,7 +97,7 @@ class SendContext extends AbstractRabbitMQContext
     {
         $this->theMessageInQueueContains(self::XML_ROUTING_KEY, $content, $queueName, "application/xml");
     }
-    
+
     /**
      * @Then The message in queue :queueName contains :content and is a json message
      */
@@ -105,11 +105,11 @@ class SendContext extends AbstractRabbitMQContext
     {
         $this->theMessageInQueueContains(self::JSON_ROUTING_KEY, $content, $queueName, "application/json");
     }
-    
+
     /**
-     * @Then The message in queue :queueName contains a gzipped message
+     * @Then The message in queue :queueName contains :content and is a gzipped message
      */
-    public function theMessageInQueueContainsAGzippedMessage($queueName)
+    public function theMessageInQueueContainsAGzippedMessage($content, $queueName)
     {
         $message = $this->theMessageInQueueContains(self::TEXT_ROUTING_KEY, false, $queueName, ContentType::BINARY);
 
@@ -121,13 +121,14 @@ class SendContext extends AbstractRabbitMQContext
         \PHPUnit_Framework_Assert::assertArrayHasKey(GZip::HEADER_COMPRESSION_CONTENT_TYPE, $headers);
         \PHPUnit_Framework_Assert::assertSame(Gzip::COMPRESSION_ALGORITHM, $headers[Gzip::HEADER_COMPRESSION]);
         \PHPUnit_Framework_Assert::assertSame(ContentType::TEXT, $headers[Gzip::HEADER_COMPRESSION_CONTENT_TYPE]);
+        \PHPUnit_Framework_Assert::assertSame($content, gzdecode(base64_decode($message->payload)));
     }
-    
+
     private function theMessageInQueueContains($routingKey, $content, $queueName, $contentType)
     {
         $messages = $this->api->getMessagesFromQueue($this->vhost(), $queueName);
         $message = $messages->first();
-        
+
         \PHPUnit_Framework_Assert::assertSame($routingKey, $message->routing_key);
         \PHPUnit_Framework_Assert::assertSame($contentType, $message->properties['content_type']);
 
@@ -138,27 +139,27 @@ class SendContext extends AbstractRabbitMQContext
 
         return $message;
     }
-    
+
     private function assertMessagesInQueue($queue, $expectedNbMessages, $waitingSeconds = 11)
     {
         $nbMessages = $this->nbMessagesInQueue($queue);
         $nbTries = 0;
-        
+
         while($nbMessages !== $expectedNbMessages && $nbTries < $waitingSeconds)
         {
             sleep(1);
             $nbTries++;
-            
+
             $nbMessages = $this->nbMessagesInQueue($queue);
         }
-        
+
         \PHPUnit_Framework_Assert::assertSame($expectedNbMessages, $nbMessages);
     }
-    
+
     private function nbMessagesInQueue($queueName)
     {
         $queue = $this->api->getQueue($this->vhost(), $queueName);
-        
+
         return (int) $queue->messages;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Puzzle\AMQP\Workers;
 
+use Puzzle\AMQP\Messages\Bodies\Text;
+use Puzzle\AMQP\Messages\BodyFactories\Standard;
 use Puzzle\AMQP\Messages\InMemory;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\ReadableMessage;
@@ -19,7 +21,7 @@ class ReadableMessageModifierTest extends \PHPUnit_Framework_TestCase
             'X-Name' => 'Josselin Vacheron',
             'X-Override' => 'Must change'
         ]);
-        
+
     }
     
     private function assertBodyIsUnchanged(ReadableMessage $message)
@@ -36,11 +38,11 @@ class ReadableMessageModifierTest extends \PHPUnit_Framework_TestCase
     private function assertHeadersAreUnchanged(ReadableMessage $message)
     {
         $headers = $message->getHeaders();
-        
+
         $this->assertArrayHasKey('X-PlusY', $headers);
         $this->assertArrayHasKey('X-Name', $headers);
         $this->assertArrayHasKey('X-Override', $headers);
-        
+
         $this->assertSame(42, $headers['X-PlusY']);
         $this->assertSame('Josselin Vacheron', $headers['X-Name']);
         $this->assertSame('Must change', $headers['X-Override']);
@@ -100,5 +102,23 @@ class ReadableMessageModifierTest extends \PHPUnit_Framework_TestCase
 
         $this->assertRoutingKeyIsUnchanged($message);
         $this->assertHeadersAreUnchanged($message);
+    }
+
+    public function testBuildWithCustomBodyFactory()
+    {
+        $factory = new Standard();
+        $factory->handleContentType('application/pouet', new \Puzzle\AMQP\Messages\TypedBodyFactories\Json());
+
+        $content = '{"a":1}';
+        $body = new Text($content);
+        $originalMessage = InMemory::build('my.key', $body, [], ['content_type' => 'application/pouet']);
+        $this->assertSame($content, $originalMessage->getBodyAsTransported());
+
+        $builder = new ReadableMessageModifier($originalMessage);
+
+        $message = $builder->build($factory);
+
+        $this->assertSame(['a' => 1], $message->getBodyInOriginalFormat());
+        $this->assertSame($content, $message->getBodyAsTransported());
     }
 }
