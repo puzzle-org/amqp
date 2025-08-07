@@ -80,7 +80,7 @@ vendor/: composer.json
 #------------------------------------------------------------------------------
 
 .PHONY: -composer-init
--composer-init: .composer-home ~/.cache/composer .composer-home composer.phar
+-composer-init: .composer-home ~/.cache/composer composer.phar
 
 ~/.cache/composer:
 	mkdir -p ~/.cache/composer
