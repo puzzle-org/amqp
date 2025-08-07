@@ -6,6 +6,7 @@ namespace Puzzle\AMQP\Workers;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Puzzle\AMQP\Messages\Bodies\Binary;
 use Swarrot\Broker\Message;
 use Puzzle\AMQP\Messages\ContentType;
 use Puzzle\AMQP\Messages\Bodies\Text;
@@ -250,6 +251,31 @@ TEXT;
             [true, 'old.routing.key'],
             [false, 'new.routing.key'],
         ];
+    }
+
+    public function testCloneIntoWritableMessageFromCompressedMessage(): void
+    {
+        $readableMessage = InMemory::build('old.routing.key', new Binary('This is fine'), [
+            'compression' => 'gzip',
+            'compression_content-type' => 'application/json',
+        ], [
+            'content_type' => 'application/octet-stream',
+        ]);
+
+        $message = $readableMessage->cloneIntoWritableMessage(
+            new \Puzzle\AMQP\Messages\Message('new.routing.key'),
+        );
+
+        self::assertInstanceOf(WritableMessage::class, $message);
+        self::assertSame('new.routing.key', $message->getRoutingKey());
+
+        $headers = $message->getHeaders();
+        $this->assertSameArrayExceptOrder(
+            ['compression', 'compression_content-type', 'routing_key', 'app_id', 'message_datetime'],
+            array_keys($headers)
+        );
+        self::assertSame('application/json', $headers['compression_content-type']);
+        self::assertSame('gzip', $headers['compression']);
     }
 
     public function testToStringInvalidUtf8(): void
