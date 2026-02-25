@@ -19,22 +19,9 @@ RUN apt-get update && \
 
 ENV RABBITMQ_VERSION 0.11.0
 
-RUN cd /tmp && \
-    curl --stderr - -L -O https://github.com/alanxz/rabbitmq-c/archive/refs/tags/v${RABBITMQ_VERSION}.tar.gz && \
-    tar xf v${RABBITMQ_VERSION}.tar.gz && \
-    cd rabbitmq-c-${RABBITMQ_VERSION} && \
-    mkdir build && \
-    cd build && \
-    cmake .. && \
-    cmake --build . && \
-    cd /tmp && \
-    rm -rf rabbitmq-c-${RABBITMQ_VERSION} && \
-    rm v${RABBITMQ_VERSION}.tar.gz
-
-RUN pecl install xdebug amqp-1.11.0 && \
+RUN pecl install xdebug amqp && \
     docker-php-ext-enable xdebug amqp
 
 WORKDIR /var/www/puzzle-amqp
 
 COPY php.ini /usr/local/etc/php/conf.d
-
