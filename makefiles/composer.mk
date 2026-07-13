@@ -20,8 +20,10 @@ COMPOSER_OPTIONS=--no-plugins
 
 composer = $(DOCKER_RUN) --rm \
                 -v ${HOST_SOURCE_PATH}:/var/www/app \
-                -v ~/.cache/composer:/tmp/composer \
-                -e COMPOSER_CACHE_DIR=/tmp/composer \
+                -v ~/.cache/composer:/tmp/composer-cache \
+                -e COMPOSER_CACHE_DIR=/tmp/composer-cache \
+                -v ~/.config/composer:/tmp/composer-home \
+                -e COMPOSER_HOME=/tmp/composer-home \
                 -w /var/www/app \
                 -u ${USER_ID}:${GROUP_ID} \
                 composer:${COMPOSER_VERSION} ${COMPOSER_OPTIONS} $(COMPOSER_INTERACTIVE) $1 $2
@@ -77,10 +79,13 @@ vendor/: composer.json
 #------------------------------------------------------------------------------
 
 .PHONY: -composer-init
--composer-init: ~/.cache/composer
+-composer-init: ~/.cache/composer ~/.config/composer
 
 ~/.cache/composer:
 	mkdir -p ~/.cache/composer
+
+~/.config/composer:
+	mkdir -p ~/.config/composer
 
 #------------------------------------------------------------------------------
 

@@ -16,16 +16,16 @@ use Puzzle\AMQP\Messages\TypedBodyFactory;
 class Standard implements BodyFactory
 {
     use LoggerAwareTrait;
-    
+
     private array
         $factories;
-    
+
     public function __construct()
     {
         $this->initializeFactories();
         $this->logger = new NullLogger();
     }
-    
+
     private function initializeFactories(): void
     {
         $this->factories = [
@@ -34,23 +34,23 @@ class Standard implements BodyFactory
             ContentType::BINARY => new TypedBodyFactories\Binary(),
         ];
     }
-    
+
     public function handleContentType($contentType, TypedBodyFactory $factory): static
     {
         $this->factories[$contentType] = $factory;
-        
+
         return $this;
     }
-    
+
     public function build($contentType, $contentAsTransported): Body
     {
-        if(isset($this->factories[$contentType]))
+        if(!is_null($contentType) && isset($this->factories[$contentType]))
         {
             return $this->factories[$contentType]->build($contentAsTransported);
         }
-        
+
         $this->logger->warning(__CLASS__ . ": unknown content-type, use empty body");
-        
+
         return new EmptyBody();
     }
 }

@@ -32,7 +32,7 @@
         "knplabs/gaufrette": "~0.2",
         "puzzle/assert": "~1.1",
         "pimple/pimple": "~3.0",
-        "odolbeau/rabbit-mq-admin-toolkit": "v5.4.0",
+        "odolbeau/rabbit-mq-admin-toolkit": "^5.4.1",
         "behat/behat": "~3.3",
         "symfony/debug": "~3.2",
         "groall/rabbitmq-http-api-client-php": "^0.2.4"

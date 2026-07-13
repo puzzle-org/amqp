@@ -34,6 +34,7 @@ clean-phpunit: clean-phpunit-image
 
 clean-phpunit-image:
 	-rm docker/images/phpunit/Dockerfile
+	-rm docker/images/phpunit/php.ini
 	docker rmi ${IMAGE_NAME}
 
 .PHONY: phpunit phpunit-dox phpunit-coverage create-phpunit-image clean-phpunit-image
