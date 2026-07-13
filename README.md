@@ -5,10 +5,10 @@ PHP 5.6 & 7.x users, please use < 5.x versions.
 QA
 --
 
-| Service                 | Result |
-|-------------------------| --- |
-| **CI** (PHP 8.3 .. 8.4) | [![CI](https://github.com/puzzle-org/configuration/actions/workflows/ci.yml/badge.svg)](https://github.com/puzzle-org/amqp/actions/workflows/ci.yml)
-| **Packagist**           | [![Latest Stable Version](https://poser.pugx.org/puzzle/amqp/v/stable.png)](https://packagist.org/packages/puzzle/amqp) [![Total Downloads](https://poser.pugx.org/puzzle/amqp/downloads.svg)](https://packagist.org/packages/puzzle/amqp) |
+| Service                    | Result |
+|----------------------------| --- |
+| **CI** (PHP 8.3, 8.4, 8.5) | [![CI](https://github.com/puzzle-org/configuration/actions/workflows/ci.yml/badge.svg)](https://github.com/puzzle-org/amqp/actions/workflows/ci.yml)
+| **Packagist**              | [![Latest Stable Version](https://poser.pugx.org/puzzle/amqp/v/stable.png)](https://packagist.org/packages/puzzle/amqp) [![Total Downloads](https://poser.pugx.org/puzzle/amqp/downloads.svg)](https://packagist.org/packages/puzzle/amqp) |
 
 Configuration
 -------------
@@ -115,6 +115,11 @@ class ExampleWorker implements Worker
 
 BC Breaks changelog
 -------------------
+
+**5.x -> 8.x**
+- Since version 8.3 : version name follows minimal supported php version
+- For version changelog : see Github's release description
+
 **4.x -> 5.x**
 
  - Drop support for php 5.6 & 7.x
